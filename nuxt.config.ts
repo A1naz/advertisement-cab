@@ -28,6 +28,7 @@ export default defineNuxtConfig({
   auth: {
     enableGlobalAppMiddleware: true,
     origin: process.env.AUTH_ORIGIN,
+    defaultProvider: 'credentials'
   },
   ssr: false,
   runtimeConfig: {
