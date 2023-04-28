@@ -30,6 +30,10 @@ const UserSchema = new Schema({
     type: String,
     default: '',
   },
+  isEmailConfirmed: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 export const User = model('User', UserSchema);

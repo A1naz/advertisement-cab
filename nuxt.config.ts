@@ -27,14 +27,14 @@ export default defineNuxtConfig({
   },
   auth: {
     enableGlobalAppMiddleware: true,
-    origin: 'http://localhost:3000',
+    origin: process.env.AUTH_ORIGIN,
   },
   ssr: false,
   runtimeConfig: {
     mongoDbUri: process.env.MONGO_URI,
-    jwtAccessSecret: process.env.JWT_ACCESS_TOKEN_SECRET,
-    jwtRefreshSecret: process.env.JWT_REFRESH_TOKEN_SECRET,
     SECRET: process.env.SECRET,
+    MAIL_USER: process.env.MAIL_USER,
+    MAIL_PASSWORD: process.env.MAIL_PASSWORD,
   },
   app: {
     pageTransition: { name: 'fade', mode: 'out-in' },

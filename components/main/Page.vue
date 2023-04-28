@@ -6,6 +6,18 @@ import { useUserStore } from '~/stores/userStore';
 const { status, data, signIn, signOut } = useAuth();
 const store = useUserStore();
 const headers = useRequestHeaders(['cookie']) as HeadersInit;
+const isActive = computed(() => {
+  if (
+    form.firstName === store.client?.firstName &&
+    form.lastName === store.client?.lastName &&
+    form.email === store.client?.email &&
+    form.userName === store.client?.userName
+  ) {
+    return true;
+  } else {
+    return false;
+  }
+});
 
 async function handleSignOut() {
   await signOut();
@@ -22,11 +34,13 @@ const show = (severity: any, summary: string, detail: string) => {
 
 onMounted(async () => {
   await store.getClient();
+
+  form.firstName = store.client?.firstName || '';
+  form.lastName = store.client?.lastName || '';
+  form.email = store.client?.email || '';
+  form.userName = store.client?.userName || '';
+
   updateInitital();
-  form.firstName = store.client.firstName;
-  form.lastName = store.client.lastName;
-  form.email = store.client.email;
-  form.userName = store.client.userName;
 });
 
 const form = reactive({
@@ -53,18 +67,18 @@ const items = ref([
 const toast = useToast();
 
 function updateInitital() {
-  initialForm.firstName = store.client.firstName;
-  initialForm.lastName = store.client.lastName;
+  initialForm.firstName = store.client?.firstName || '';
+  initialForm.lastName = store.client?.lastName || '';
   initialForm.email = store.client.email;
-  initialForm.username = store.client.username;
+  initialForm.username = store.client?.username || '';
 }
 
 async function update() {
   if (
-    form.firstName == store.client.firstName &&
-    form.lastName == store.client.lastName &&
-    form.email == store.client.email &&
-    form.userName == store.client.userName
+    form.firstName === store.client.firstName &&
+    form.lastName === store.client.lastName &&
+    form.email === store.client.email &&
+    form.userName === store.client.userName
   ) {
     show('error', 'Измените данные', '');
     return;
@@ -72,11 +86,12 @@ async function update() {
 
   const { data, error } = await useFetch('/api/users/update', {
     method: 'POST',
-    body: JSON.stringify(form),
+    body: form,
     headers,
   });
   if (error.value) {
     console.log(error.value);
+    show('error', error.value.message, '');
   } else {
     show('success', 'Данные обновлены', '');
 
@@ -140,7 +155,11 @@ async function update() {
               <div class="py-3 sm:py-5 sm:gap-4 sm:px-6">
                 <dd class="mt-1 text-gray-900 sm:mt-0">
                   <div class="flex flex-col">
-                    <Button label="Сохранить изменения" @click="update" />
+                    <Button
+                      label="Сохранить изменения"
+                      :disabled="isActive"
+                      @click="update"
+                    />
                   </div>
                 </dd>
               </div>

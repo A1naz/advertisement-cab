@@ -1,7 +1,7 @@
 <template >
     <div ref="app">
       <NuxtLayout>
-        <NuxtPage />
+        <NuxtPage :key="$route.fullPath"/>
       </NuxtLayout>
     </div>
 </template>

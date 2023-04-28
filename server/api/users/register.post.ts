@@ -1,7 +1,9 @@
-import { sendError } from 'h3';
 import { User } from './index';
 import bcrypt from 'bcryptjs';
 import { userTransformer } from '~/server/transformers/user';
+import validator from 'validator'
+import { getServerSession } from '#auth'
+import {sendConfirmationEmail} from '~/server/lib/mailService'
 
 export default defineEventHandler(async (event) => {
   const body = await readBody(event);
@@ -14,6 +16,16 @@ export default defineEventHandler(async (event) => {
       statusMessage: 'Введите все данные!',
     });
   }
+
+
+  if (!validator.isEmail(email)) {
+    return {
+      status: 'error',
+      error: 'Некорректный email.',
+    }
+  }
+
+  
 
   if (password != repeatPassword) {
     throw createError({
