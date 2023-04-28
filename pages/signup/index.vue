@@ -1,56 +1,43 @@
 <script setup>
-import { useVuelidate } from '@vuelidate/core'
-import { email, helpers, minLength, required } from '@vuelidate/validators'
 import { useNotification } from '@kyvg/vue3-notification'
 
-const { notify } = useNotification()
 definePageMeta({
-  title: 'Вход',
   auth: {
     unauthenticatedOnly: true,
     navigateAuthenticatedTo: '/profile',
   },
+  title: 'Регистрация',
 })
+const { $client } = useNuxtApp()
 
-const { status, data, signIn, signOut } = useAuth()
-const form = reactive({
-  email: '',
-  password: '',
-})
-
-const rules = {
-  email: {
-    required: helpers.withMessage('Введите email', required),
-    email: helpers.withMessage('Введите корректный email', email),
-  },
-  password: {
-    required: helpers.withMessage('Введите пароль', required),
-    minLength: helpers.withMessage(
-      'Пароль должен быть длиннее 6 символов',
-      minLength(6),
-    ),
-  },
-}
-
-const v$ = useVuelidate(rules, form)
+const name = ref('')
+const email = ref('')
+const password = ref('')
+const { ruleEmail, rulePassLen, ruleRequired } = useFormRules()
+const { notify } = useNotification()
 async function submit() {
-  const result = await v$.value.$validate()
-  if (!result)
+  if (ruleEmail(email.value) !== true || rulePassLen(password.value) !== true || ruleRequired(name.value) !== true)
     return
-  const { error, url } = await signIn('credentials', {
-    redirect: false,
-    callbackUrl: '/profile',
-    email: form.email,
-    password: form.password,
-  })
-  if (error) {
+
+  const { data, error } = await useAsyncData(() => $client.auth.register.mutate({
+    username: name.value,
+    email: email.value,
+    password: password.value,
+  }))
+  if (error.value) {
     notify({
-      title: 'Ошибка входа',
-      text: error,
+      type: 'error',
+      title: 'Ошибка',
+      text: error.value.message,
     })
   }
-
-  else { return navigateTo(url, { external: true }) }
+  if (data.value) {
+    notify({
+      type: 'success',
+      title: 'Пользователь успешно зарегистрирован',
+      text: 'Для активации аккаунта перейдите по ссылке в письме.',
+    })
+  }
 }
 </script>
 
@@ -60,49 +47,50 @@ async function submit() {
       <VCol cols="12" md="6" lg="5" sm="6">
         <VRow no-gutters align="center" justify="center">
           <VCol cols="12" md="6">
-            <h1>Вход</h1>
+            <h1>Регистрация</h1>
 
             <VForm class="mt-7" @submit.prevent="submit">
+              <div>
+                <label class="label text-grey-darken-2" for="name">Имя</label>
+                <VTextField
+                  id="name"
+                  v-model="name"
+                  :rules="[ruleRequired]"
+                  prepend-inner-icon="fluent:person-24-regular"
+                  name="name"
+                />
+              </div>
               <div class="mt-1">
                 <label class="label text-grey-darken-2" for="email">Email</label>
                 <VTextField
                   id="email"
-                  v-model="form.email"
-                  :error-messages="v$.email.$errors.map(e => e.$message)"
+                  v-model="email"
+                  :rules="[ruleRequired, ruleEmail]"
+                  type="email"
                   prepend-inner-icon="fluent:mail-24-regular"
                   name="email"
-                  type="email"
-                  @input="v$.email.$touch"
-                  @blur="v$.email.$touch"
                 />
               </div>
               <div class="mt-1">
                 <label class="label text-grey-darken-2" for="password">Пароль</label>
                 <VTextField
                   id="password"
-                  v-model="form.password"
-                  :error-messages="v$.password.$errors.map(e => e.$message)"
+                  v-model="password"
+                  :rules="[ruleRequired, rulePassLen]"
+                  type="password"
                   prepend-inner-icon="fluent:password-20-regular"
                   name="password"
-                  type="password"
-                  @input="v$.password.$touch"
-                  @blur="v$.password.$touch"
                 />
               </div>
               <div class="mt-5">
-                <VBtn type="submit" block min-height="44" class="gradient primary">
-                  Войти
+                <VBtn type="submit" block min-height="45" class="gradient primary">
+                  Создать аккаунт
                 </VBtn>
               </div>
             </VForm>
             <p class="text-body-2 mt-10">
-              <NuxtLink to="/reset-password" class="font-weight-bold text-primary">
-                Забыли пароль?
-              </NuxtLink>
-            </p>
-            <p class="text-body-2 mt-4">
-              <span>Еще не зарегистрированы?
-                <NuxtLink to="/signup" class="font-weight-bold text-primary">Регистрация</NuxtLink></span>
+              <span>Уже зарегистрированы?
+                <NuxtLink to="/" class="font-weight-bold text-primary">Войти</NuxtLink></span>
             </p>
           </VCol>
         </VRow>

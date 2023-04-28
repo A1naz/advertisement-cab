@@ -1,33 +1,62 @@
-import { link } from 'fs';
-import nodemailer from 'nodemailer';
+import nodemailer from 'nodemailer'
+
 const config = useRuntimeConfig()
+const { smtpHost, smtpPort, smtpUser, smtpPass, privateKey, NAME } = config
+const alias = 'support@topvtop.com'
+class MailService {
+  transporter: nodemailer.Transporter
+  constructor() {
+    this.transporter = nodemailer.createTransport({
+      host: smtpHost,
+      port: smtpPort,
+      secure: false,
+      auth: {
+        user: smtpUser,
+        pass: smtpPass,
+      },
+      dkim: {
+        domainName: 'openbomber.com',
+        keySelector: 'google',
+        privateKey,
+      },
+    })
+  }
 
-const transporter = nodemailer.createTransport({
-  service: 'Mail.ru',
-  //   host: 'smtp.mail.ru',
-  //   port: 465,
-  //   secure: true,
-  auth: {
-    user: 'mr_flane@mail.ru',
-    pass: 'M1fwVpi5WjVnyfrwnajn',
-  },
-});
-
-export const sendConfirmationEmail = async (to: string | undefined, link: string) => {
-  await transporter
-    .sendMail({
-      from: config.MAIL_USER,
-      to,
-      subject: 'Активация аккаунта на Advertisement-cab',
-      text: '',
-      html: `
+  async sendActivationMail(to: string | undefined, link: string) {
+    const result = await this.transporter
+      .sendMail({
+        from: alias,
+        to,
+        subject: `Активация аккаунта на ${NAME}`,
+        text: '',
+        html: `
                 <div>
                     <h1>Для активации аккаунта перейдите по ссылке</h1>
                     <a href="${link}">${link}</a>
                 </div>
             `,
-    })
-    .then((info) => {
-      console.log(info);
-    });
-};
+      })
+    return result
+  }
+
+  async sendChangePasswordMail(to: string | undefined, link: string, username: string) {
+    const result = await this.transporter
+      .sendMail({
+        from: alias,
+        to,
+        subject: `Смена пароля на ${NAME}`,
+        text: '',
+        html: `
+                <div>
+                    <h1>Привет, ${username}!</h1>
+                    <h2>Вы собираетесь сменить пароль! Если это сделали не вы, то проигнорируйте это сообщение.</h2>
+                    <h2>Для подтверждения смены пароля на перейдите по ссылке</h2>
+                    <a href="${link}">Ссылка</a>
+                </div>
+            `,
+      })
+    return result
+  }
+}
+
+export default new MailService()

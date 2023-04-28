@@ -1,44 +1,51 @@
-<template >
-    <div ref="app">
-      <NuxtLayout>
-        <NuxtPage :key="$route.fullPath"/>
-      </NuxtLayout>
-    </div>
+<script>
+import { useNotification } from '@kyvg/vue3-notification'
+
+const { notify } = useNotification()
+</script>
+
+<template>
+  <div>
+    <SeoKit />
+    <notifications position="bottom right">
+      <template #body="props">
+        <div style="padding: 1rem">
+          <div class="notify-card">
+            <p class="notify-title">
+              {{ props.item.title }}
+            </p>
+            <div class="notify-text" v-html="props.item.text" />
+          </div>
+        </div>
+      </template>
+    </notifications>
+    <NuxtLayout>
+      <NuxtPage />
+    </NuxtLayout>
+  </div>
 </template>
+
 <style>
-.list-enter-active,
-.list-leave-active {
-  transition: all 0.5s ease-in-out;
+.notify-text {
+  font-size: 0.9rem;
+  font-weight: 400;
+  margin-bottom: 0.5rem;
+  color: gray
 }
-.list-enter-from,
-.list-leave-to {
-  opacity: 0;
-  transform: translateY(30px);
+
+.notify-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: white
 }
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.2s linear;
-}
-.fade-enter,
-.fade-leave-to {
-  opacity: 0;
-}
-.pop-enter-active,
-.pop-leave-active {
-  transition: transform 0.4s cubic-bezier(0.5, 0, 0.5, 1), opacity 0.4s linear;
-}
-.pop-enter,
-.pop-leave-to {
-  opacity: 0;
-  transform: scale(0.3) translateY(-50%);
-}
-.page-enter-active,
-.page-leave-active {
-  transition: all 0.1s;
-}
-.page-enter-from,
-.page-leave-to {
-  opacity: 0;
-  filter: blur(0.1rem);
+
+.notify-card {
+  padding: 1rem;
+  background-color: #121212;
+  border-radius: 0.5rem;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+  width: 300px;
+  max-width: 100%;
 }
 </style>

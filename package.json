@@ -1,41 +1,47 @@
 {
-  "name": "nuxt-app",
   "private": true,
   "scripts": {
     "build": "nuxt build",
     "dev": "nuxt dev",
     "generate": "nuxt generate",
+    "reset": "rm -rf .nuxt node_modules .output package-lock.json && npm install",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare"
-  },
-  "devDependencies": {
-    "@nuxtjs/tailwindcss": "^6.6.6",
-    "@sidebase/nuxt-auth": "^0.5.0",
-    "@types/bcryptjs": "^2.4.2",
-    "@types/jsonwebtoken": "^9.0.1",
-    "@types/node": "^18",
-    "@types/nodemailer": "^6.4.7",
-    "@types/validator": "^13.7.15",
-    "autoprefixer": "^10.4.14",
-    "nuxt": "^3.4.2",
-    "postcss": "^8.4.23",
-    "primeflex": "^3.3.0",
-    "primeicons": "^6.0.1",
-    "primevue": "^3.27.0",
-    "tailwindcss": "^3.3.2"
+    "postinstall": "nuxt prepare",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
   },
   "dependencies": {
+    "@kyvg/vue3-notification": "^2.9.0",
     "@pinia/nuxt": "^0.4.9",
+    "@trpc/client": "^10.21.2",
+    "@trpc/server": "^10.21.2",
+    "@unhead/schema-org-vue": "^0.5.0",
     "@vuelidate/core": "^2.0.2",
     "@vuelidate/validators": "^2.0.2",
-    "bcryptjs": "^2.4.3",
-    "install": "^0.13.0",
-    "jsonwebtoken": "^9.0.0",
-    "mongoose": "^7.0.5",
-    "next-auth": "^4.21.1",
+    "bcrypt": "^5.1.0",
+    "mongoose": "^7.1.0",
+    "next-auth": "4.21.1",
     "nodemailer": "^6.9.1",
-    "npm": "^9.6.5",
+    "nuxt-snackbar": "^1.0.3",
+    "pinia": "^2.0.35",
+    "trpc-nuxt": "^0.9.0",
+    "uuid": "^9.0.0",
+    "vite-plugin-vuetify": "^1.0.2",
+    "zod": "^3.21.4"
+  },
+  "devDependencies": {
+    "@antfu/eslint-config": "^0.38.5",
+    "@iconify/vue": "^4.1.1",
+    "@kevinmarrec/nuxt-pwa": "^0.17.0",
+    "@nuxtjs/google-fonts": "^3.0.0",
+    "@sidebase/nuxt-auth": "0.5.0",
+    "@types/bcrypt": "^5.0.0",
+    "@types/nodemailer": "^6.4.7",
+    "@types/uuid": "^9.0.1",
+    "eslint": "^8.39.0",
+    "nuxt": "3.4.2",
+    "nuxt-seo-kit": "^1.3.7",
     "sass": "^1.62.0",
-    "validator": "^13.9.0"
+    "vuetify": "^3.1.15"
   }
 }
