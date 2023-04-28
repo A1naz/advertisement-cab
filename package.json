@@ -27,6 +27,8 @@
     "trpc-nuxt": "^0.9.0",
     "uuid": "^9.0.0",
     "vite-plugin-vuetify": "^1.0.2",
+    "vue": "^3.2.47",
+    "vue-router": "^4.1.6",
     "zod": "^3.21.4"
   },
   "devDependencies": {
