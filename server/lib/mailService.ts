@@ -1,7 +1,8 @@
 import nodemailer from 'nodemailer'
 
 const config = useRuntimeConfig()
-const { smtpHost, smtpPort, smtpUser, smtpPass, privateKey, NAME } = config
+const { smtpHost, smtpPort, smtpUser, smtpPass, privateKey } = config
+const NAME = config.public.NAME
 const alias = 'support@topvtop.com'
 class MailService {
   transporter: nodemailer.Transporter
