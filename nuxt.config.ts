@@ -31,7 +31,7 @@ export default defineNuxtConfig({
   },
   ssr: false,
   runtimeConfig: {
-    mongoDbUri: process.env.MONGO_URI,
+    MONGO_URI: process.env.MONGO_URI,
     SECRET: process.env.SECRET,
     MAIL_USER: process.env.MAIL_USER,
     MAIL_PASSWORD: process.env.MAIL_PASSWORD,
