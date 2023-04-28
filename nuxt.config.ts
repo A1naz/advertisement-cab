@@ -1,11 +1,11 @@
 import vuetify from 'vite-plugin-vuetify'
 
 // PWA Config
-const title = 'Vuetify 3 + Nuxt 3 Starter'
-const shortTitle = 'Vuetify 3 + Nuxt 3 Starter'
+const title = process.env.NAME
+const shortTitle = process.env.NAME
 const description
-  = 'Template to get you up and running with Nuxt 3 & Vuetify 3'
-const image = 'https://vuetify3nuxt3starter.behonbaker.com/starter.png'
+  = 'Рекламный кабинет Wildberries'
+const image = 'https://i.imgur.com/TuGniGD.png'
 
 // https://v3.nuxtjs.org/api/configuration/nuxt.config
 export default defineNuxtConfig({
