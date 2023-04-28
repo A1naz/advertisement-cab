@@ -6,6 +6,7 @@ import { publicProcedure, router } from '../trpc'
 import { User } from '~/server/lib/models/User'
 import mailService from '~/server/lib/mailService'
 
+const config = useRuntimeConfig()
 export const authRouter = router({
   register: publicProcedure
     .input(
@@ -25,12 +26,11 @@ export const authRouter = router({
           message: 'Пользователь уже существует',
         })
       }
-      const url = useRuntimeConfig().PUBLIC_SITE_URL
+
+      const url = config.public.PUBLIC_SITE_URL
       const user = await User.create({ email, password: bcrypt.hashSync(password, 7), username, uuid: uuid() })
       const link = `${url}/activate?uuid=${user.uuid}`
       const emailSend = await mailService.sendActivationMail(email, link)
-      console.log(user)
-      console.log(emailSend)
       return {
         status: 'ok',
         email: user.email,

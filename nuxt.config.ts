@@ -46,7 +46,7 @@ export default defineNuxtConfig({
       trailingSlash: true,
       siteDescription: 'Рекламный кабинет Wildberries',
       language: 'ru',
-      PUBLIC_SITE_URL: process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : process.env.PUBLIC_SITE_URL,
+      PUBLIC_SITE_URL: process.env.PUBLIC_SITE_URL,
     },
     MONGO_URI: process.env.MONGO_URI,
     SECRET: process.env.SECRET,
