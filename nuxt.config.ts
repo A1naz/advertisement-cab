@@ -6,7 +6,6 @@ const shortTitle = 'Vuetify 3 + Nuxt 3 Starter'
 const description
   = 'Template to get you up and running with Nuxt 3 & Vuetify 3'
 const image = 'https://vuetify3nuxt3starter.behonbaker.com/starter.png'
-const url = 'https://vuetify3nuxt3starter.behonbaker.com/'
 
 // https://v3.nuxtjs.org/api/configuration/nuxt.config
 export default defineNuxtConfig({
@@ -70,7 +69,7 @@ export default defineNuxtConfig({
       link: [
         { rel: 'stylesheet', href: 'https://rsms.me/inter/inter.css' },
         { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
-        { rel: 'canonical', href: url },
+        { rel: 'canonical', href: process.env.PUBLIC_SITE_URL },
       ],
       meta: [
         {
@@ -83,7 +82,7 @@ export default defineNuxtConfig({
         {
           hid: 'og:url',
           property: 'og:url',
-          content: url,
+          content: process.env.PUBLIC_SITE_URL,
         },
         {
           hid: 'og:image:secure_url',
@@ -110,7 +109,7 @@ export default defineNuxtConfig({
         {
           hid: 'twitter:url',
           name: 'twitter:url',
-          content: url,
+          content: process.env.PUBLIC_SITE_URL,
         },
         {
           hid: 'twitter:title',
