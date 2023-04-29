@@ -1,5 +1,10 @@
-<script>
+<script setup lang="ts">
 import { useNotification } from '@kyvg/vue3-notification'
+
+const userStore = useUserStore()
+const { status } = useAuth()
+if (status.value === 'authenticated')
+  await userStore.getClient()
 
 const { notify } = useNotification()
 </script>
@@ -9,13 +14,8 @@ const { notify } = useNotification()
     <SeoKit />
     <notifications position="bottom right">
       <template #body="props">
-        <div style="padding: 1rem">
-          <div class="notify-card">
-            <p class="notify-title">
-              {{ props.item.title }}
-            </p>
-            <div class="notify-text" v-html="props.item.text" />
-          </div>
+        <div style="margin: 0.5rem">
+          <v-alert border :text="props.item.text" :type="props.item.type" closable :title="props.item.title" />
         </div>
       </template>
     </notifications>

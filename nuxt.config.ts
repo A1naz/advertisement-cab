@@ -18,6 +18,7 @@ export default defineNuxtConfig({
     '@kevinmarrec/nuxt-pwa',
     '@sidebase/nuxt-auth',
     '@pinia/nuxt',
+    '@vueuse/nuxt',
 
     async (options, nuxt) => {
       nuxt.hooks.hook('vite:extendConfig', config =>

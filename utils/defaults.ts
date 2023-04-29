@@ -18,4 +18,10 @@ export const defaults: DefaultsInstance = {
     variant: 'outlined',
     density: 'comfortable',
   },
+  VNavigationDrawer: {
+    absolute: true,
+    width: 192,
+    border: false,
+
+  },
 }
