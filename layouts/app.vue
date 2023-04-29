@@ -1,12 +1,10 @@
 <script setup lang="ts">
 const { signOut } = useAuth()
-
 </script>
 
 <template>
   <div>
     <VApp>
-      <v-app-bar title="Рекламный кабинет" />
       <v-navigation-drawer
         permanent
         :mini-variant="true"

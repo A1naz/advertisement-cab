@@ -7,6 +7,7 @@ export const useUserStore = defineStore('user', {
 
   actions: {
     async getClient() {
+      const { $client } = useNuxtApp()
     },
 
     setClient(client: object) {

@@ -11,7 +11,9 @@ export default NuxtAuthHandler({
     maxAge: 30 * 24 * 60 * 60, // 30 days
   },
   pages: {
+    signOut: '/',
     signIn: '/',
+    error: '/',
   },
   callbacks: {
     jwt: async ({ token, user }) => {
@@ -23,7 +25,7 @@ export default NuxtAuthHandler({
       return Promise.resolve(token)
     },
     // Callback whenever session is checked, see https://next-auth.js.org/configuration/callbacks#session-callback
-    session: async ({ session, token, user }) => {
+    session: async ({ session, token }) => {
       (session as any).email = token.email;
       (session as any)._id = token._id
       const found = await User.findOne({ _id: token._id })
