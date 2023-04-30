@@ -1,42 +1,131 @@
-import { TRPCError } from '@trpc/server'
-import { z } from 'zod'
-import { publicProcedure, router } from '../trpc'
-import { User } from '~/server/lib/models/User'
+import { TRPCError } from "@trpc/server";
+import { z } from "zod";
+import { publicProcedure, router } from "../trpc";
+import { User } from "~/server/lib/models/User";
+import bcrypt from "bcrypt";
 
-const config = useRuntimeConfig()
+const config = useRuntimeConfig();
 export const userRouter = router({
-  editProfile: publicProcedure.input(
-    z.object({
-      email: z.string().email(),
-    }),
-  ).mutation(async (opts) => {
-    const session = opts.ctx.session as any
-    const { input } = opts
-  }),
-  client: publicProcedure
-    .query(async (opts) => {
-      const session = opts.ctx.session as any
+  editProfile: publicProcedure
+    .input(
+      z.object({
+        username: z.string(),
+        firstName: z.string(),
+        lastName: z.string(),
+        email: z.string().email("Введите корректный email"),
+        password: z.string().min(6, "Не менее 6 символов"),
+      })
+    )
+    .mutation(async (opts) => {
+      const session = opts.ctx.session as any;
+      const { input } = opts;
+      const { email, username, firstName, lastName } = input;
+
       if (!session) {
         throw new TRPCError({
-          code: 'FORBIDDEN',
-          message: 'unauthorized',
-        })
+          code: "FORBIDDEN",
+          message: "unauthorized",
+        });
       }
-      const user = await User.findById(session._id)
+
+      const user = await User.findOne({ uuid: session.uuid });
+
       if (!user) {
         throw new TRPCError({
-          code: 'FORBIDDEN',
-          message: 'unauthorized',
-        })
+          code: "FORBIDDEN",
+          message: "unauthorized",
+        });
       }
-      const format = {
-        email: user.email,
-        balance: user.balance,
-        firstName: user.firstName,
-        lastName: user.lastName,
+
+      if (email !== session.email) {
+        const isUserExistByEmail = await User.findOne({ email: email });
+        if (isUserExistByEmail) {
+          throw new TRPCError({
+            code: "CONFLICT",
+            message: "Email занят",
+          });
+        }
       }
-      return { user: format }
+
+      user.username = username;
+      user.firstName = firstName;
+      user.lastName = lastName;
+      user.email = email;
+
+      await user.save();
+      return { status: "ok" };
     }),
-})
+
+  editPassword: publicProcedure
+    .input(
+      z.object({
+        oldPassword: z.string().min(6, "Не менее 6 символов"),
+        newPassword: z.string().min(6, "Не менее 6 символов"),
+      })
+    )
+    .mutation(async (opts) => {
+      const session = opts.ctx.session as any;
+
+      if (!session) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "unauthorized",
+        });
+      }
+
+      const { input } = opts;
+      const { oldPassword, newPassword } = input;
+      const user = await User.findById(session._id);
+
+      if (!user) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "unauthorized",
+        });
+      }
+
+      if (!user.password) {
+        user.password = bcrypt.hashSync(newPassword, 7);
+      }
+
+      if (!bcrypt.compareSync(oldPassword, user.password)) {
+        return {
+          status: "error",
+          error: "Неверный старый пароль.",
+        };
+      }
+
+      user.password = bcrypt.hashSync(newPassword, 7);
+
+      await user.save();
+      return {
+        status: "ok",
+      };
+    }),
+
+  client: publicProcedure.query(async (opts) => {
+    const session = opts.ctx.session as any;
+    if (!session) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "unauthorized",
+      });
+    }
+    const user = await User.findById(session._id);
+    if (!user) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "unauthorized",
+      });
+    }
+    const format = {
+      email: user.email,
+      balance: user.balance,
+      firstName: user.firstName,
+      lastName: user.lastName,
+    };
+    return { user: format };
+  }),
+});
 // export type definition of API
-export type AppRouter = typeof userRouter
+export type AppRouter = typeof userRouter;
