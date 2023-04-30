@@ -47,7 +47,6 @@ export default defineNuxtConfig({
       siteDescription: 'Рекламный кабинет Wildberries',
       language: 'ru',
       PUBLIC_SITE_URL: process.env.PUBLIC_SITE_URL,
-      smtpHost: process.env.smtpHost
     },
     MONGO_URI: process.env.MONGO_URI,
     SECRET: process.env.SECRET,

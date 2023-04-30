@@ -9,7 +9,6 @@ export const userRouter = router({
   editProfile: publicProcedure
     .input(
       z.object({
-        username: z.string(),
         firstName: z.string(),
         lastName: z.string(),
         email: z.string().email("Введите корректный email"),
@@ -19,7 +18,7 @@ export const userRouter = router({
     .mutation(async (opts) => {
       const session = opts.ctx.session as any;
       const { input } = opts;
-      const { email, username, firstName, lastName } = input;
+      const { email, firstName, lastName } = input;
 
       if (!session) {
         throw new TRPCError({
@@ -47,7 +46,6 @@ export const userRouter = router({
         }
       }
 
-      user.username = username;
       user.firstName = firstName;
       user.lastName = lastName;
       user.email = email;
