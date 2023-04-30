@@ -73,7 +73,7 @@ export const userRouter = router({
 
       const { input } = opts;
       const { oldPassword, newPassword } = input;
-      const user = await User.findById(session._id);
+      const user = await User.findById(session.uuid);
 
       if (!user) {
         throw new TRPCError({
