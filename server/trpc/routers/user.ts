@@ -27,7 +27,7 @@ export const userRouter = router({
         });
       }
 
-      const user = await User.findOne({ uuid: session.uuid });
+      const user = await User.findById(session._id);
 
       if (!user) {
         throw new TRPCError({
