@@ -9,17 +9,15 @@ export const userRouter = router({
   editProfile: publicProcedure
     .input(
       z.object({
-        username: z.string(),
+        email: z.string().email("Введите корректный email"),
         firstName: z.string(),
         lastName: z.string(),
-        email: z.string().email("Введите корректный email"),
-        password: z.string().min(6, "Не менее 6 символов"),
       })
     )
     .mutation(async (opts) => {
       const session = opts.ctx.session as any;
       const { input } = opts;
-      const { email, username, firstName, lastName } = input;
+      const { email, firstName, lastName } = input;
 
       if (!session) {
         throw new TRPCError({
@@ -37,7 +35,7 @@ export const userRouter = router({
         });
       }
 
-      if (email !== session.email) {
+      if (email !== user.email) {
         const isUserExistByEmail = await User.findOne({ email: email });
         if (isUserExistByEmail) {
           throw new TRPCError({
@@ -45,12 +43,16 @@ export const userRouter = router({
             message: "Email занят",
           });
         }
+        user.firstName = firstName;
+        user.lastName = lastName;
+        user.email = email;
+
+        await user.save();
+        return { status: "ok" };
       }
 
-      user.username = username;
       user.firstName = firstName;
       user.lastName = lastName;
-      user.email = email;
 
       await user.save();
       return { status: "ok" };
