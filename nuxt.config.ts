@@ -55,6 +55,7 @@ export default defineNuxtConfig({
     smtpPass: process.env.smtpPass,
     smtpPort: process.env.smtpPort,
     smtpUser: process.env.smtpUser,
+    smtpHost: process.env.smtpHost
   },
   app: {
     pageTransition: { name: 'fade', mode: 'out-in' },
