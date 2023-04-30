@@ -38,7 +38,6 @@ async function savePassword() {
   );
 
   if (error.value) {
-    console.log(error.value);
 
     notify({
       type: "error",

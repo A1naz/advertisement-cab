@@ -85,16 +85,19 @@ export const userRouter = router({
           message: "unauthorized",
         });
       }
+      
 
       if (!user.password) {
-        user.password = bcrypt.hashSync(newPassword, 7);
+        user.password = await bcrypt.hashSync(newPassword, 7);
       }
 
+      console.log(bcrypt.compareSync(oldPassword, user.password));
+
       if (!bcrypt.compareSync(oldPassword, user.password)) {
-        return {
-          status: "error",
-          error: "Неверный старый пароль.",
-        };
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Неверный пароль",
+        });
       }
 
       user.password = bcrypt.hashSync(newPassword, 7);

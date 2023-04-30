@@ -96,6 +96,8 @@ export const authRouter = router({
     .mutation(async (opts) => {
       const { input } = opts;
       const { email, password, username } = input;
+      console.log(input);
+      
       const isUserExist = await User.findOne({ email });
       if (isUserExist) {
         throw new TRPCError({
