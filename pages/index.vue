@@ -1,9 +1,6 @@
 <script setup>
-import { useVuelidate } from '@vuelidate/core'
 import { email, helpers, minLength, required } from '@vuelidate/validators'
-import { useNotification } from '@kyvg/vue3-notification'
 
-const { notify } = useNotification()
 definePageMeta({
   title: 'Вход',
   auth: {
@@ -72,7 +69,7 @@ async function submit() {
                   prepend-inner-icon="fluent:mail-24-regular"
                   name="email"
                   type="email"
-                  @input="v$.email.$touch"
+                  @update:model-value="v$.email.$touch"
                   @blur="v$.email.$touch"
                 />
               </div>
@@ -85,12 +82,12 @@ async function submit() {
                   prepend-inner-icon="fluent:password-20-regular"
                   name="password"
                   type="password"
-                  @input="v$.password.$touch"
+                  @update:model-value="v$.password.$touch"
                   @blur="v$.password.$touch"
                 />
               </div>
               <div class="mt-5">
-                <VBtn type="submit" block min-height="44" class="gradient primary">
+                <VBtn type="submit" block min-height="44" class="gradient bg-primary">
                   Войти
                 </VBtn>
               </div>

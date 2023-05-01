@@ -7,6 +7,7 @@ import { getServerSession } from '#auth'
  * @link https://trpc.io/docs/context
  */
 export async function createContext(event: H3Event) {
+  
   const session = await getServerSession(event)
   return {
     session,

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 const email = ref('')
-const password = ref('')
+
 definePageMeta({
   auth: {
     unauthenticatedOnly: true,
@@ -8,9 +8,33 @@ definePageMeta({
   },
   title: 'Восстановление пароля',
 })
-const { ruleEmail, rulePassLen, ruleRequired } = useFormRules()
-
-async function submit() {}
+const loading = ref(false)
+const disabled = ref(false)
+const { $client } = useNuxtApp()
+const { ruleEmail, ruleRequired } = useFormRules()
+async function submit() {
+  if (ruleEmail(email.value) !== true)
+    return
+  loading.value = true
+  const { data, error } = await useAsyncData(() => $client.auth.sendResetPasswordMail.mutate({
+    email: email.value,
+  }))
+  if (data.value) {
+    notify({
+      type: 'success',
+      text: 'Инструкции были отправлены на ваш email',
+    })
+    disabled.value = true
+  }
+  if (error.value) {
+    notify({
+      type: 'error',
+      title: 'Ошибка',
+      text: error.value.message[0],
+    })
+  }
+  loading.value = false
+}
 </script>
 
 <template>
@@ -34,14 +58,14 @@ async function submit() {}
                 />
               </div>
               <div class="mt-5">
-                <VBtn type="submit" block min-height="44" class="gradient primary">
+                <VBtn :disabled="disabled" :loading="loading" type="submit" block min-height="44" class="gradient bg-primary">
                   Отправить инструкции
                 </VBtn>
               </div>
             </VForm>
             <p class="text-body-2 mt-10">
-              <span>Еще не зарегистрированы?
-                <NuxtLink to="/signup" class="font-weight-bold text-primary">Регистрация</NuxtLink></span>
+              <span>Вспомнили пароль?
+                <NuxtLink to="/" class="font-weight-bold text-primary">Войти</NuxtLink></span>
             </p>
           </VCol>
         </VRow>

@@ -8,9 +8,24 @@
  * @see https://trpc.io/docs/v10/procedures
  */
 import { initTRPC } from '@trpc/server'
+import { ZodError } from 'zod';
 import type { Context } from '~/server/trpc/context'
 
-const t = initTRPC.context<Context>().create()
+const t = initTRPC.context<Context>().create({
+  errorFormatter(opts) {
+    const { shape, error } = opts;
+    return {
+      ...shape,
+      data: {
+        ...shape.data,
+        zodError:
+          error.code === 'BAD_REQUEST' && error.cause instanceof ZodError
+            ? error.cause.flatten()
+            : null,
+      },
+    };
+  },
+})
 /**
  * Unprotected procedure
  **/

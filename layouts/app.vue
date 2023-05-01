@@ -1,10 +1,10 @@
 <script setup lang="ts">
-const { signOut } = useAuth();
-const { width, height } = useWindowSize();
-const name = useRuntimeConfig().public.NAME;
-const drawer = ref(false);
-const appbar = ref(width.value < 1280);
-drawer.value = width.value > 1280;
+const { signOut } = useAuth()
+const { width, height } = useWindowSize()
+const name = useRuntimeConfig().public.NAME
+const drawer = ref(false)
+const appbar = ref(width.value < 1280)
+drawer.value = width.value > 1280
 </script>
 
 <template>
@@ -29,7 +29,9 @@ drawer.value = width.value > 1280;
         </template>
         <v-app-bar-title>{{ name }}</v-app-bar-title>
         <template #append>
-          <v-btn prepend-icon="fluent:sign-out-24-filled" @click="signOut"> Выйти </v-btn>
+          <v-btn prepend-icon="fluent:sign-out-24-filled" @click="signOut">
+            Выйти
+          </v-btn>
         </template>
       </v-app-bar>
       <VMain>

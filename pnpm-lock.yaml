@@ -102,6 +102,9 @@ devDependencies:
   eslint:
     specifier: ^8.39.0
     version: 8.39.0
+  eslint-plugin-vuetify:
+    specifier: 2.0.0-beta.4
+    version: 2.0.0-beta.4(eslint@8.39.0)(vuetify@3.1.15)
   nuxt:
     specifier: 3.4.2
     version: 3.4.2(@types/node@18.16.2)(eslint@8.39.0)(sass@1.62.0)(typescript@5.0.4)
@@ -111,6 +114,9 @@ devDependencies:
   sass:
     specifier: ^1.62.0
     version: 1.62.0
+  seemly:
+    specifier: ^0.3.6
+    version: 0.3.6
   vuetify:
     specifier: ^3.1.15
     version: 3.1.15(vite-plugin-vuetify@1.0.2)(vue@3.2.47)
@@ -3208,6 +3214,20 @@ packages:
       - supports-color
     dev: true
 
+  /eslint-plugin-vuetify@2.0.0-beta.4(eslint@8.39.0)(vuetify@3.1.15):
+    resolution: {integrity: sha512-rebRbCrlPmDirqvggt9xFa7qQCGADKMFN40Hft5HCbCu5rF29UWC5Nk30sFRw6+j1ZS/PAmaVxY3fAxHRfjiAg==}
+    peerDependencies:
+      eslint: ^8.0.0
+      vuetify: ^3.0.0
+    dependencies:
+      eslint: 8.39.0
+      eslint-plugin-vue: 9.11.0(eslint@8.39.0)
+      requireindex: 1.2.0
+      vuetify: 3.1.15(vite-plugin-vuetify@1.0.2)(vue@3.2.47)
+    transitivePeerDependencies:
+      - supports-color
+    dev: true
+
   /eslint-plugin-yml@1.5.0(eslint@8.39.0):
     resolution: {integrity: sha512-iygN054g+ZrnYmtOXMnT+sx9iDNXt89/m0+506cQHeG0+5jJN8hY5iOPQLd3yfd50AfK/mSasajBWruf1SoHpQ==}
     engines: {node: ^14.17.0 || >=16.0.0}
@@ -6071,6 +6091,11 @@ packages:
     resolution: {integrity: sha512-fGxEI7+wsG9xrvdjsrlmL22OMTTiHRwAMroiEeMgq8gzoLC/PQr7RsRDSTLUg/bZAZtF+TVIkHc6/4RIKrui+Q==}
     engines: {node: '>=0.10.0'}
 
+  /requireindex@1.2.0:
+    resolution: {integrity: sha512-L9jEkOi3ASd9PYit2cwRfyppc9NoABujTP8/5gFcbERmo5jUoAKovIC3fsF17pkTnGsrByysqX+Kxd2OTNI1ww==}
+    engines: {node: '>=0.10.5'}
+    dev: true
+
   /requires-port@1.0.0:
     resolution: {integrity: sha512-KigOCHcocU3XODJxsu8i/j8T9tzT4adHiecwORRQ0ZZFcp7ahwXuRU1m+yuO90C5ZUyGeGfocHDI14M3L3yDAQ==}
 
@@ -6220,6 +6245,10 @@ packages:
 
   /scule@1.0.0:
     resolution: {integrity: sha512-4AsO/FrViE/iDNEPaAQlb77tf0csuq27EsVpy6ett584EcRTp6pTDLoGWVxCD77y5iU5FauOvhsI4o1APwPoSQ==}
+
+  /seemly@0.3.6:
+    resolution: {integrity: sha512-lEV5VB8BUKTo/AfktXJcy+JeXns26ylbMkIUco8CYREsQijuz4mrXres2Q+vMLdwkuLxJdIPQ8IlCIxLYm71Yw==}
+    dev: true
 
   /semver@5.7.1:
     resolution: {integrity: sha512-sauaDf/PZdVgrLTNYHRtpXa1iRiKcaebiKQ1BJdpQlWH2lCvexQdX55snPFyK7QzpudqbCI0qXFfOasHdyNDGQ==}

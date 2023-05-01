@@ -1,13 +1,14 @@
-import nodemailer from 'nodemailer'
+import type { TransportOptions, Transporter } from 'nodemailer'
+import { createTransport } from 'nodemailer'
 
 const config = useRuntimeConfig()
 const { smtpHost, smtpPort, smtpUser, smtpPass, privateKey } = config
 const NAME = config.public.NAME
 const alias = 'support@topvtop.com'
 class MailService {
-  transporter: nodemailer.Transporter
+  transporter: Transporter
   constructor() {
-    this.transporter = nodemailer.createTransport({
+    this.transporter = createTransport(<TransportOptions>{
       host: smtpHost,
       port: smtpPort,
       secure: false,
@@ -51,7 +52,7 @@ class MailService {
                 <div>
                     <h1>Привет, ${username}!</h1>
                     <h2>Вы собираетесь сменить пароль! Если это сделали не вы, то проигнорируйте это сообщение.</h2>
-                    <h2>Для подтверждения смены пароля на перейдите по ссылке</h2>
+                    <h2>Для восстановления пароля перейдите по ссылке</h2>
                     <a href="${link}">Ссылка</a>
                 </div>
             `,

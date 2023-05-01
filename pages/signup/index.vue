@@ -83,7 +83,7 @@ async function submit() {
                 />
               </div>
               <div class="mt-5">
-                <VBtn type="submit" block min-height="45" class="gradient primary">
+                <VBtn type="submit" block min-height="45" class="gradient bg-primary">
                   Создать аккаунт
                 </VBtn>
               </div>
