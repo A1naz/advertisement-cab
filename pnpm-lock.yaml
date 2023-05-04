@@ -107,7 +107,7 @@ devDependencies:
     version: 2.0.0-beta.4(eslint@8.39.0)(vuetify@3.1.15)
   nuxt:
     specifier: 3.4.2
-    version: 3.4.2(@types/node@18.16.2)(eslint@8.39.0)(sass@1.62.0)(typescript@5.0.4)
+    version: 3.4.2(@types/node@18.16.3)(eslint@8.39.0)(sass@1.62.0)(typescript@5.0.4)
   nuxt-seo-kit:
     specifier: ^1.3.7
     version: 1.3.7(@unhead/vue@1.1.26)(vue@3.2.47)
@@ -1093,7 +1093,7 @@ packages:
   /@nuxt/ui-templates@1.1.1:
     resolution: {integrity: sha512-PjVETP7+iZXAs5Q8O4ivl4t6qjWZMZqwiTVogUXHoHGZZcw7GZW3u3tzfYfE1HbzyYJfr236IXqQ02MeR8Fz2w==}
 
-  /@nuxt/vite-builder@3.4.2(@types/node@18.16.2)(eslint@8.39.0)(sass@1.62.0)(typescript@5.0.4)(vue@3.2.47):
+  /@nuxt/vite-builder@3.4.2(@types/node@18.16.3)(eslint@8.39.0)(sass@1.62.0)(typescript@5.0.4)(vue@3.2.47):
     resolution: {integrity: sha512-uLyy0sklOvGqj+yHAxSBE+wxyHvHZmYEfFjx03UEdMbYwpJlhPcqrt0pnWFJAkPWf8ZgpKymr8LNngsyYtNtAA==}
     engines: {node: ^14.18.0 || ^16.10.0 || ^17.0.0 || ^18.0.0 || ^19.0.0}
     peerDependencies:
@@ -1129,8 +1129,8 @@ packages:
       strip-literal: 1.0.1
       ufo: 1.1.1
       unplugin: 1.3.1
-      vite: 4.3.3(@types/node@18.16.2)(sass@1.62.0)
-      vite-node: 0.30.1(@types/node@18.16.2)(sass@1.62.0)
+      vite: 4.3.3(@types/node@18.16.3)(sass@1.62.0)
+      vite-node: 0.30.1(@types/node@18.16.3)(sass@1.62.0)
       vite-plugin-checker: 0.5.6(eslint@8.39.0)(typescript@5.0.4)(vite@4.3.3)
       vue: 3.2.47
       vue-bundle-renderer: 1.0.3
@@ -1372,7 +1372,7 @@ packages:
   /@types/bcrypt@5.0.0:
     resolution: {integrity: sha512-agtcFKaruL8TmcvqbndlqHPSJgsolhf/qPWchFlgnW1gECTN/nKbFcoFnvKAQRFfKbh+BO6A3SWdJu9t+xF3Lw==}
     dependencies:
-      '@types/node': 18.16.2
+      '@types/node': 18.16.3
     dev: true
 
   /@types/estree@1.0.1:
@@ -1382,7 +1382,7 @@ packages:
     resolution: {integrity: sha512-MxObHvNl4A69ofaTRU8DFqvgzzv8s9yRtaPPm5gud9HDNvpB3GPQFvNuTWAI59B9huVGV5jXYJwbCsmBsOGYWA==}
     dependencies:
       '@types/jsonfile': 6.1.1
-      '@types/node': 18.16.2
+      '@types/node': 18.16.3
     dev: true
 
   /@types/json-schema@7.0.11:
@@ -1396,13 +1396,13 @@ packages:
   /@types/jsonfile@6.1.1:
     resolution: {integrity: sha512-GSgiRCVeapDN+3pqA35IkQwasaCh/0YFH5dEF6S88iDvEn901DjOeH3/QPY+XYP1DFzDZPvIvfeEgk+7br5png==}
     dependencies:
-      '@types/node': 18.16.2
+      '@types/node': 18.16.3
     dev: true
 
   /@types/jsonwebtoken@9.0.2:
     resolution: {integrity: sha512-drE6uz7QBKq1fYqqoFKTDRdFCPHd5TCub75BM+D+cMx7NU9hUz7SESLfC2fSCXVFMO5Yj8sOWHuGqPgjc+fz0Q==}
     dependencies:
-      '@types/node': 18.16.2
+      '@types/node': 18.16.3
     dev: true
 
   /@types/mdast@3.0.11:
@@ -1415,13 +1415,13 @@ packages:
     resolution: {integrity: sha512-w+tIMs3rq2afQdsPJlODhoUEKzFP1ayaoyl1CcnwtIlsVe7K7bA1NGm4s3PraqTLlXnbIN84zuBlxBWo1u9BLw==}
     dev: true
 
-  /@types/node@18.16.2:
-    resolution: {integrity: sha512-GQW/JL/5Fz/0I8RpeBG9lKp0+aNcXEaVL71c0D2Q0QHDTFvlYKT7an0onCUXj85anv7b4/WesqdfchLc0jtsCg==}
+  /@types/node@18.16.3:
+    resolution: {integrity: sha512-OPs5WnnT1xkCBiuQrZA4+YAV4HEJejmHneyraIaxsbev5yCEr6KMwINNFP9wQeFIw8FWcoTqF3vQsa5CDaI+8Q==}
 
   /@types/nodemailer@6.4.7:
     resolution: {integrity: sha512-f5qCBGAn/f0qtRcd4SEn88c8Fp3Swct1731X4ryPKqS61/A3LmmzN8zaEz7hneJvpjFbUUgY7lru/B/7ODTazg==}
     dependencies:
-      '@types/node': 18.16.2
+      '@types/node': 18.16.3
     dev: true
 
   /@types/normalize-package-data@2.4.1:
@@ -1434,7 +1434,7 @@ packages:
   /@types/sax@1.2.4:
     resolution: {integrity: sha512-pSAff4IAxJjfAXUG6tFkO7dsSbTmf8CtUpfhhZ5VhkRpC4628tJhh3+V6H1E+/Gs9piSzYKT5yzHO5M4GG9jkw==}
     dependencies:
-      '@types/node': 18.16.2
+      '@types/node': 18.16.3
     dev: true
 
   /@types/semver@7.3.13:
@@ -1460,7 +1460,7 @@ packages:
   /@types/whatwg-url@8.2.2:
     resolution: {integrity: sha512-FtQu10RWgn3D9U4aazdwIE2yzphmTJREDqNdODHrbrZmmMqI0vMheC/6NE/J1Yveaj8H+ela+YwWTjq5PGmuhA==}
     dependencies:
-      '@types/node': 18.16.2
+      '@types/node': 18.16.3
       '@types/webidl-conversions': 7.0.0
     dev: false
 
@@ -1682,7 +1682,7 @@ packages:
       '@babel/core': 7.21.4
       '@babel/plugin-transform-typescript': 7.21.3(@babel/core@7.21.4)
       '@vue/babel-plugin-jsx': 1.1.1(@babel/core@7.21.4)
-      vite: 4.3.3(@types/node@18.16.2)(sass@1.62.0)
+      vite: 4.3.3(@types/node@18.16.3)(sass@1.62.0)
       vue: 3.2.47
     transitivePeerDependencies:
       - supports-color
@@ -1694,7 +1694,7 @@ packages:
       vite: ^4.0.0
       vue: ^3.2.25
     dependencies:
-      vite: 4.3.3(@types/node@18.16.2)(sass@1.62.0)
+      vite: 4.3.3(@types/node@18.16.3)(sass@1.62.0)
       vue: 3.2.47
 
   /@vue/babel-helper-vue-transform-on@1.0.2:
@@ -1866,7 +1866,7 @@ packages:
       '@vueuse/core': 10.1.0(vue@3.2.47)
       '@vueuse/metadata': 10.1.0
       local-pkg: 0.4.3
-      nuxt: 3.4.2(@types/node@18.16.2)(eslint@8.39.0)(sass@1.62.0)(typescript@5.0.4)
+      nuxt: 3.4.2(@types/node@18.16.3)(eslint@8.39.0)(sass@1.62.0)(typescript@5.0.4)
       vue-demi: 0.14.0(vue@3.2.47)
     transitivePeerDependencies:
       - '@vue/composition-api'
@@ -2333,7 +2333,7 @@ packages:
     engines: {node: '>=12.13.0'}
     hasBin: true
     dependencies:
-      '@types/node': 18.16.2
+      '@types/node': 18.16.3
       escape-string-regexp: 4.0.0
       is-wsl: 2.2.0
       lighthouse-logger: 1.3.0
@@ -5185,7 +5185,7 @@ packages:
       - vue
     dev: true
 
-  /nuxt@3.4.2(@types/node@18.16.2)(eslint@8.39.0)(sass@1.62.0)(typescript@5.0.4):
+  /nuxt@3.4.2(@types/node@18.16.3)(eslint@8.39.0)(sass@1.62.0)(typescript@5.0.4):
     resolution: {integrity: sha512-4v+oeBL4ZI8nHzF0Dm1p5kF9VCNlzrpvOt7wu3BnmzlueXsu4A/LfmFvpfZLxws+r5U74eM5Ut/LMD8B8LrZIw==}
     engines: {node: ^14.18.0 || ^16.10.0 || ^17.0.0 || ^18.0.0 || ^19.0.0}
     hasBin: true
@@ -5201,8 +5201,8 @@ packages:
       '@nuxt/schema': 3.4.2
       '@nuxt/telemetry': 2.2.0
       '@nuxt/ui-templates': 1.1.1
-      '@nuxt/vite-builder': 3.4.2(@types/node@18.16.2)(eslint@8.39.0)(sass@1.62.0)(typescript@5.0.4)(vue@3.2.47)
-      '@types/node': 18.16.2
+      '@nuxt/vite-builder': 3.4.2(@types/node@18.16.3)(eslint@8.39.0)(sass@1.62.0)(typescript@5.0.4)(vue@3.2.47)
+      '@types/node': 18.16.3
       '@unhead/ssr': 1.1.26
       '@unhead/vue': 1.1.26(vue@3.2.47)
       '@vue/shared': 3.2.47
@@ -7085,7 +7085,7 @@ packages:
       spdx-expression-parse: 3.0.1
     dev: true
 
-  /vite-node@0.30.1(@types/node@18.16.2)(sass@1.62.0):
+  /vite-node@0.30.1(@types/node@18.16.3)(sass@1.62.0):
     resolution: {integrity: sha512-vTikpU/J7e6LU/8iM3dzBo8ZhEiKZEKRznEMm+mJh95XhWaPrJQraT/QsT2NWmuEf+zgAoMe64PKT7hfZ1Njmg==}
     engines: {node: '>=v14.18.0'}
     hasBin: true
@@ -7095,7 +7095,7 @@ packages:
       mlly: 1.2.0
       pathe: 1.1.0
       picocolors: 1.0.0
-      vite: 4.3.3(@types/node@18.16.2)(sass@1.62.0)
+      vite: 4.3.3(@types/node@18.16.3)(sass@1.62.0)
     transitivePeerDependencies:
       - '@types/node'
       - less
@@ -7150,7 +7150,7 @@ packages:
       strip-ansi: 6.0.1
       tiny-invariant: 1.3.1
       typescript: 5.0.4
-      vite: 4.3.3(@types/node@18.16.2)(sass@1.62.0)
+      vite: 4.3.3(@types/node@18.16.3)(sass@1.62.0)
       vscode-languageclient: 7.0.0
       vscode-languageserver: 7.0.0
       vscode-languageserver-textdocument: 1.0.8
@@ -7166,13 +7166,13 @@ packages:
       '@vuetify/loader-shared': 1.7.1(vue@3.2.47)(vuetify@3.1.15)
       debug: 4.3.4
       upath: 2.0.1
-      vite: 4.3.3(@types/node@18.16.2)(sass@1.62.0)
+      vite: 4.3.3(@types/node@18.16.3)(sass@1.62.0)
       vuetify: 3.1.15(vite-plugin-vuetify@1.0.2)(vue@3.2.47)
     transitivePeerDependencies:
       - supports-color
       - vue
 
-  /vite@4.3.3(@types/node@18.16.2)(sass@1.62.0):
+  /vite@4.3.3(@types/node@18.16.3)(sass@1.62.0):
     resolution: {integrity: sha512-MwFlLBO4udZXd+VBcezo3u8mC77YQk+ik+fbc0GZWGgzfbPP+8Kf0fldhARqvSYmtIWoAJ5BXPClUbMTlqFxrA==}
     engines: {node: ^14.18.0 || >=16.0.0}
     hasBin: true
@@ -7197,7 +7197,7 @@ packages:
       terser:
         optional: true
     dependencies:
-      '@types/node': 18.16.2
+      '@types/node': 18.16.3
       esbuild: 0.17.18
       postcss: 8.4.23
       rollup: 3.21.0

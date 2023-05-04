@@ -8,7 +8,7 @@ export default defineNuxtPlugin((app) => {
     // add theme
     blueprint: md3,
     theme: {
-      defaultTheme: LIGHT_THEME,
+      defaultTheme: DARK_THEME,
       themes: {
         light,
         dark,
