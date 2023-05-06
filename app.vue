@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { useNotification } from '@kyvg/vue3-notification'
+import { useNotification } from "@kyvg/vue3-notification";
 
-const userStore = useUserStore()
-const { status } = useAuth()
-if (status.value === 'authenticated')
-  await userStore.getClient()
+const userStore = useUserStore();
+const { status } = useAuth();
 
-const { notify } = useNotification()
+if (status.value === "authenticated") await userStore.getClient();
+
+const { notify } = useNotification();
 </script>
 
 <template>
@@ -15,7 +15,13 @@ const { notify } = useNotification()
     <notifications position="bottom right">
       <template #body="props">
         <div style="margin: 0.5rem">
-          <v-alert border :text="props.item.text" :type="props.item.type" closable :title="props.item.title" />
+          <v-alert
+            border
+            :text="props.item.text"
+            :type="props.item.type"
+            closable
+            :title="props.item.title"
+          />
         </div>
       </template>
     </notifications>
@@ -30,14 +36,14 @@ const { notify } = useNotification()
   font-size: 0.9rem;
   font-weight: 400;
   margin-bottom: 0.5rem;
-  color: gray
+  color: gray;
 }
 
 .notify-title {
   font-size: 1.25rem;
   font-weight: 600;
   margin-bottom: 0.5rem;
-  color: white
+  color: white;
 }
 
 .notify-card {
@@ -47,15 +53,5 @@ const { notify } = useNotification()
   box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
   width: 300px;
   max-width: 100%;
-}
-
-.page-enter-active,
-.page-leave-active {
-  transition: all 0.4s;
-}
-.page-enter-from,
-.page-leave-to {
-  opacity: 0;
-  filter: blur(1rem);
 }
 </style>

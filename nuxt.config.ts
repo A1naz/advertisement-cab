@@ -15,6 +15,7 @@ export default defineNuxtConfig({
   typescript: { shim: false },
   build: { transpile: ['vuetify', 'trpc-nuxt'] },
   modules: [
+    '@nuxtjs/tailwindcss',
     '@kevinmarrec/nuxt-pwa',
     '@sidebase/nuxt-auth',
     '@pinia/nuxt',

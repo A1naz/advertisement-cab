@@ -15,13 +15,20 @@ const toggleTheme = () => {
 
 onMounted(() => {
   theme.global.name.value = localStorage.getItem("theme") || "light";
-});``
+});
+``;
 </script>
 
 <template>
   <div>
     <VApp>
-      <v-navigation-drawer v-model="drawer" location="left" width="250">
+      <v-navigation-drawer
+        v-model="drawer"
+        location="left"
+        :rail="false"
+        rail-width="250"
+        width="250"
+      >
         <template #prepend />
 
         <v-list density="compact" class="h-auto d-flex flex-column" nav>
@@ -35,11 +42,11 @@ onMounted(() => {
           />
           <v-list-item
             prepend-icon="mdi-briefcase "
-            title="Рекламные кампании"
+            title="Управление рекламой"
             value="advertisement"
-            :active="$route.path === '/campaign'"
+            :active="$route.path === '/cabinet'"
             active-color="primary"
-            to="/campaign"
+            to="/cabinet"
           />
         </v-list>
       </v-navigation-drawer>

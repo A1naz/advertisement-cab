@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@kyvg/vue3-notification": "^2.9.0",
+    "@nuxtjs/tailwindcss": "^6.6.7",
     "@pinia/nuxt": "^0.4.9",
     "@trpc/client": "^10.21.2",
     "@trpc/server": "^10.21.2",

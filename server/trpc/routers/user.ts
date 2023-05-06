@@ -129,6 +129,7 @@ export const userRouter = router({
       firstName: user.firstName,
       lastName: user.lastName,
     };
+    
     return { user: format };
   }),
 });
