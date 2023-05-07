@@ -59,11 +59,7 @@ export default defineNuxtConfig({
     smtpHost: process.env.smtpHost,
   },
   app: {
-    pageTransition: { name: 'fade', mode: 'out-in' },
-    layoutTransition: {
-      name: 'slide',
-      mode: 'out-in',
-    },
+   
     head: {
       title: process.env.NAME,
       titleTemplate: '%pageTitle %titleSeparator %siteName',

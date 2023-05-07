@@ -7,6 +7,7 @@ export const useUserStore = defineStore('user', () => {
     const { $client } = useNuxtApp()
     const { user } = await $client.user.client.query()
     client.value = user
+    
   }
 
   function setClient(newClient: object) {

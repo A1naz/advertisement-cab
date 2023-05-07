@@ -19,13 +19,12 @@ async function saveChanges() {
   if (error.value) {
     notify({
       type: "error",
-      title: "Ошибка",
       text: error.value.message,
     });
   }
 
   if (data.value) {
-    notify({ type: "success", title: "Успешно", text: "Профиль обновлен" });
+    notify({ type: "success", text: "Профиль обновлен" });
   }
 }
 
@@ -44,11 +43,10 @@ async function savePassword() {
   if (error.value) {
     notify({
       type: "error",
-      title: "Ошибка",
       text: error.value.message,
     });
   }
-  if (data.value) notify({ type: "success", title: "Успешно", text: "Пароль обновлен" });
+  if (data.value) notify({ type: "success", text: "Пароль обновлен" });
 }
 
 definePageMeta({

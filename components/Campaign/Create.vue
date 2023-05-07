@@ -1,0 +1,71 @@
+<script setup>
+import { useNotification } from "@kyvg/vue3-notification";
+
+const cabinetStore = useCabinetStore();
+const { $client } = useNuxtApp();
+const { rulePhone, ruleRequired, ruleNameLen } = useFormRules();
+const { notify } = useNotification();
+
+let radios = ref("Через номер телефона");
+let dialog = ref(false);
+const isLoading = ref(false);
+const isBtnDisabled = ref(false);
+
+const campaignForm = reactive({
+  title: "",
+  category: "",
+});
+</script>
+
+<template>
+  <v-row justify="end">
+    <v-dialog v-model="dialog" width="1024">
+      <v-progress-linear
+        :active="isLoading"
+        :indeterminate="isLoading"
+        color="deep-purple-accent-4"
+      ></v-progress-linear>
+      <template v-if="!isLoading" v-slot:activator="{ props }">
+        <div class="mr-3">
+          <v-btn color="primary" class="flex justify-end" v-bind="props">
+            Создать новую кампанию
+          </v-btn>
+        </div>
+      </template>
+      <v-card>
+        <v-col>
+          <span class="text-h6">Подключение рекламного кабинета</span>
+        </v-col>
+        <v-card-title class="mt-2 ml-2"> </v-card-title>
+        <v-card-text>
+          <v-container>
+            <v-row>
+              <v-col cols="12" v-if="radios === 'Через номер телефона'">
+                <v-text-field
+                  :rules="[]"
+                  label="Название"
+                  v-model="campaignForm.title"
+                  variant="underlined"
+                ></v-text-field>
+              </v-col>
+              <v-col cols="12" v-if="radios === 'Через номер телефона'">
+                <v-text-field
+                  :rules="[]"
+                  label="Категория"
+                  v-model="campaignForm.category"
+                  variant="underlined"
+                ></v-text-field>
+              </v-col>
+            </v-row>
+          </v-container>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn> Добавить кампанию </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+  </v-row>
+</template>
+
+<style scoped></style>

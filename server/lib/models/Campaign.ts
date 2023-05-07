@@ -9,7 +9,7 @@ const CampaignSchema = new Schema(
       type: String,
       default: "Карточка товара",
     },
-    name: {
+    title: {
       type: String,
       default: "",
     },
@@ -60,14 +60,6 @@ const CampaignSchema = new Schema(
     CR: {
       type: Number,
     },
-    user: {
-      type: Schema.Types.ObjectId,
-      ref: "User",
-    },
-    cabinet: {
-      type: Schema.Types.ObjectId,
-      ref: "Cabinet",
-    },
     idAdjusted: {
       type: Boolean,
       default: false,
@@ -108,9 +100,16 @@ const CampaignSchema = new Schema(
       type: String,
       default: "",
     },
+    user: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+    },
+    cabinet: {
+      type: Schema.Types.ObjectId,
+      ref: "Cabinet",
+    },
   },
-
   { timestamps: true }
 );
 
-export const User = model("Campaign", CampaignSchema);
+export const Campaign = model("Campaign", CampaignSchema);

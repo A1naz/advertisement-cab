@@ -1,7 +1,6 @@
 <script setup>
 import { useNotification } from "@kyvg/vue3-notification";
 
-const { status } = useAuth();
 const cabinetStore = useCabinetStore();
 const { $client } = useNuxtApp();
 const { rulePhone, ruleRequired, ruleNameLen } = useFormRules();
@@ -9,8 +8,8 @@ const { notify } = useNotification();
 
 let radios = ref("Через номер телефона");
 let dialog = ref(false);
-
-if (status.value === "authenticated") await cabinetStore.getCabinets();
+const isLoading = ref(false);
+const isBtnDisabled = ref(false);
 
 const cabinetForm = reactive({
   title: "",
@@ -22,6 +21,7 @@ const cabinetForm = reactive({
 });
 
 async function addCabinet() {
+  isBtnDisabled.value = true;
   if (
     ruleNameLen(cabinetForm.title) !== true ||
     ruleRequired(cabinetForm.xSupplierID) !== true ||
@@ -31,21 +31,22 @@ async function addCabinet() {
   ) {
     notify({
       type: "error",
-      title: "Ошибка",
       text: "Заполните все поля",
     });
+    isBtnDisabled.value = false;
     return;
   }
 
   if (rulePhone(cabinetForm.phoneNumber) !== true && ruleRequired(cabinetForm.wbToken) !== true) {
     notify({
       type: "error",
-      title: "Ошибка",
       text: "Заполните все поля",
     });
+    isBtnDisabled.value = false;
     return;
-    console.log("sdsdsd");
   }
+  isBtnDisabled.value = true;
+  isLoading.value = true;
 
   const { data, error } = await useAsyncData(() =>
     $client.cabinet.createCabinet.mutate({
@@ -63,22 +64,34 @@ async function addCabinet() {
     console.log(error);
     notify({
       type: "error",
-      title: "Ошибка",
       text: error.value.message,
     });
   }
 
   if (data.value) {
-    notify({ type: "success", title: "Успешно", text: "Кабинет добавлен" });
+    (cabinetForm.title = ""),
+      (cabinetForm.xSupplierID = ""),
+      (cabinetForm.apiKeyAdvertisement = ""),
+      (cabinetForm.apiKeyStatistic = ""),
+      (cabinetForm.wbToken = ""),
+      notify({ type: "success", text: "Кабинет добавлен" });
     cabinetStore.getCabinets();
   }
+  dialog.value = false;
+  isBtnDisabled.value = false;
+  isLoading.value = false;
 }
 </script>
 
 <template>
   <v-row justify="end">
     <v-dialog v-model="dialog" width="1024">
-      <template v-slot:activator="{ props }">
+      <v-progress-linear
+        :active="isLoading"
+        :indeterminate="isLoading"
+        color="deep-purple-accent-4"
+      ></v-progress-linear>
+      <template v-if="!isLoading" v-slot:activator="{ props }">
         <div class="mr-3">
           <v-btn color="primary" class="flex justify-end" v-bind="props"> Добавить кабинет </v-btn>
         </div>
@@ -156,7 +169,9 @@ async function addCabinet() {
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="blue-darken-1" variant="text" @click="dialog = false"> Закрыть </v-btn>
-          <v-btn color="blue-darken-1" variant="text" @click="addCabinet"> Добавить </v-btn>
+          <v-btn :disabled="isBtnDisabled" color="blue-darken-1" variant="text" @click="addCabinet">
+            Добавить
+          </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>

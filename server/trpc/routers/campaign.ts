@@ -3,34 +3,24 @@ import { TRPCError } from "@trpc/server";
 import { v4 as uuid } from "uuid";
 import { publicProcedure, router } from "../trpc";
 import { User } from "~/server/lib/models/User";
-import { Cabinet } from "~/server/lib/models/Cabinet";
+import { Campaign } from "~/server/lib/models/Campaign";
 
 const config = useRuntimeConfig();
-export const cabinetRouter = router({
-  createCabinet: publicProcedure
+export const campaignRouter = router({
+  createCampign: publicProcedure
     .input(
       z.object({
+        type: z.string(),
+        cabinetId: z.string().min(10, "Id должен быть корректным"),
         title: z.string().min(3, "Название должно содержать не менее 3 символов"),
-        connectingMethod: z.string(),
-        phoneNumber: z.string(),
-        xSupplierId: z.string(),
-        apiKeyAdvertisement: z.string(),
-        apiKeyStatistic: z.string(),
-        wbToken: z.string(),
+        category: z.string().min(3, "Название категории должно содержать не менее 3 символов"),
+        article: z.string().array().nonempty({ message: "Минимум 1 артикул" }),
       })
     )
     .mutation(async (opts) => {
       const session = opts.ctx.session as any;
       const { input } = opts;
-      const {
-        title,
-        connectingMethod,
-        phoneNumber,
-        xSupplierId,
-        apiKeyAdvertisement,
-        apiKeyStatistic,
-        wbToken,
-      } = input;
+      const { type, cabinetId, title, category, article } = input;
 
       if (!session) {
         throw new TRPCError({
@@ -48,22 +38,19 @@ export const cabinetRouter = router({
         });
       }
 
-      const cabinet = await Cabinet.create({
+      const campaign = await Campaign.create({
         uuid: uuid(),
+        type: type,
         title: title,
-        connectingMethod: connectingMethod,
-        wbToken: wbToken,
-        phoneNumber: phoneNumber,
-        xSupplierId: xSupplierId,
-        apiKeyAdvertisement: apiKeyAdvertisement,
-        apiKeyStatistic: apiKeyStatistic,
         user: session._id,
+        category: category,
+        article: article,
       });
 
-      return { cabinet };
+      return { campaign };
     }),
 
-  deleteteCabinet: publicProcedure
+  deleteteCampaign: publicProcedure
     .input(
       z.object({
         _id: z.string(),
@@ -90,32 +77,42 @@ export const cabinetRouter = router({
         });
       }
 
-      await Cabinet.findByIdAndDelete(_id);
+      await Campaign.findByIdAndDelete(_id);
 
       return { status: "ok" };
     }),
 
-  cabinets: publicProcedure.query(async (opts) => {
-    const session = opts.ctx.session as any;
+  campaigns: publicProcedure
+    .input(
+      z.object({
+        _id: z.string(),
+      })
+    )
+    .mutation(async (opts) => {
+      const session = opts.ctx.session as any;
+      const { input } = opts;
+      const { _id } = input;
 
-    if (!session) {
-      throw new TRPCError({
-        code: "FORBIDDEN",
-        message: "unauthorized",
-      });
-    }
-    const user = await User.findById(session._id);
-    if (!user) {
-      throw new TRPCError({
-        code: "FORBIDDEN",
-        message: "unauthorized",
-      });
-    }
+      if (!session) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "unauthorized",
+        });
+      }
 
-    const cabinets = await Cabinet.find({ user: session._id });
+      const user = await User.findById(session._id);
 
-    return cabinets;
-  }),
+      if (!user) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "unauthorized",
+        });
+      }
+
+      const campaigns = await Campaign.find({ cabinet: _id });
+
+      return campaigns;
+    }),
 });
 // export type definition of API
-export type AppRouter = typeof cabinetRouter;
+export type AppRouter = typeof campaignRouter;
