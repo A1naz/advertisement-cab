@@ -7,6 +7,14 @@ const { $client } = useNuxtApp();
 const { ruleEmail, rulePassLen, ruleRequired } = useFormRules();
 const { notify } = useNotification();
 
+async function connectApiKeyAdvertisement() {
+  const { data, error } = await useAsyncData(() =>
+    $client.cabinet.createCabinet.mutate({
+      apiKeyAdvertisement: wbForm.apiKeyAdvertisement,
+    })
+  );
+}
+
 async function saveChanges() {
   const { data, error } = await useAsyncData(() =>
     $client.user.editProfile.mutate({
@@ -32,6 +40,13 @@ const passwordForm = reactive({
   oldPassword: "",
   newPassword: "",
 });
+
+const wbForm = reactive({
+  apiKeyAdvertisement: "",
+  xSupplierId: "",
+  apiKeyStatistic: "",
+});
+
 async function savePassword() {
   const { data, error } = await useAsyncData(() =>
     $client.user.editPassword.mutate({
@@ -87,6 +102,39 @@ definePageMeta({
     <v-row justify="end">
       <v-col cols="12" lg="3">
         <v-btn block @click="saveChanges"> Сохранить </v-btn>
+      </v-col>
+    </v-row>
+    <v-row class="mt-6">
+      <v-col>
+        <h2>Подключение личного кабинета пользователя</h2>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col>
+        <v-text-field v-model="wbForm.xSupplierId" :rules="[ruleRequired]" label="X-Supplier-Id" />
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col>
+        <v-text-field
+          v-model="wbForm.apiKeyAdvertisement"
+          :rules="[ruleRequired]"
+          label="Api-ключ Реклама"
+        />
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col>
+        <v-text-field
+          v-model="wbForm.apiKeyStatistic"
+          :rules="[ruleRequired]"
+          label="Api-ключ Статистика"
+        />
+      </v-col>
+    </v-row>
+    <v-row justify="end">
+      <v-col cols="12" lg="3">
+        <v-btn block @click="connectApiKeyAdvertisement"> Подключить </v-btn>
       </v-col>
     </v-row>
     <v-row class="mt-6">

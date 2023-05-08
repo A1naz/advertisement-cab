@@ -1,39 +1,24 @@
 import { Schema, model } from "mongoose";
 
 const CabinetSchema = new Schema({
-  uuid: {
+  advertId: {
     type: String,
     default: "",
   },
-  title: {
+  name: {
     type: String,
   },
-  connectingMethod: {
-    type: String,
-    default: "phone number",
+  type: {
+    type: Number,
   },
-  wbToken: {
-    type: String,
-    default: "",
+  status: {
+    type: Number,
   },
-  status:{
-    type: String,
-    default: "Неактивен"
+  dailyBudget: {
+    type: Number,
   },
-  phoneNumber: {
-    type: String,
-    default: "",
-  },
-  xSupplierId: {
-    type: String,
-    default: "",
-  },
-  apiKeyAdvertisement: {
-    type: String,
-    default: "",
-  },
-  apiKeyStatistic: {
-    type: String,
+  nms: {
+    type: [{ type: String }],
     default: "",
   },
   user: {

@@ -5,11 +5,15 @@ const CampaignSchema = new Schema(
     uuid: {
       type: String,
     },
-    type: {
+    advertid: {
       type: String,
-      default: "Карточка товара",
+      default: "",
     },
-    title: {
+    type: {
+      type: Number,
+      default: 5,
+    },
+    name: {
       type: String,
       default: "",
     },
@@ -17,13 +21,13 @@ const CampaignSchema = new Schema(
       type: String,
       default: "",
     },
-    article: {
-      type: [{ type: String }],
+    params: {
+      type: [{ type: Object}],
       default: "",
     },
     status: {
-      type: String,
-      default: "Приостановлено",
+      type: Number,
+      default: 11,
     },
     campaignManagement: {
       type: Boolean,
@@ -60,7 +64,7 @@ const CampaignSchema = new Schema(
     CR: {
       type: Number,
     },
-    idAdjusted: {
+    isAdjusted: {
       type: Boolean,
       default: false,
     },
@@ -76,7 +80,7 @@ const CampaignSchema = new Schema(
       type: Number,
       default: 0,
     },
-    dailyLimit: {
+    dailyBudget: {
       type: Number,
       default: 0,
     },
@@ -104,9 +108,9 @@ const CampaignSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "User",
     },
-    cabinet: {
-      type: Schema.Types.ObjectId,
-      ref: "Cabinet",
+    createTime: {
+      type: String,
+      default: "",
     },
   },
   { timestamps: true }

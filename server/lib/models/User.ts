@@ -1,4 +1,4 @@
-import { Schema, model } from 'mongoose'
+import { Schema, model } from "mongoose";
 
 const UserSchema = new Schema({
   email: {
@@ -12,7 +12,7 @@ const UserSchema = new Schema({
   },
   role: {
     type: [{ type: String }],
-    default: 'USER',
+    default: "USER",
   },
   uuid: { type: String },
   balance: {
@@ -21,24 +21,36 @@ const UserSchema = new Schema({
   },
   firstName: {
     type: String,
-    default: '',
+    default: "",
   },
   lastName: {
     type: String,
-    default: '',
+    default: "",
   },
   phoneNumber: {
     type: String,
-    default: '',
+    default: "",
   },
   username: {
     type: String,
-    default: '',
+    default: "",
   },
   isEmailConfirmed: {
     type: Boolean,
     default: false,
   },
-})
+  xSupplierId: {
+    type: String,
+    default: "",
+  },
+  apiKeyAdvertisement: {
+    type: String,
+    default: "",
+  },
+  apiKeyStatistics: {
+    type: String,
+    default: "",
+  },
+});
 
-export const User = model('User', UserSchema)
+export const User = model("User", UserSchema);
