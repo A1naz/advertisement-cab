@@ -12,7 +12,7 @@ export const cabinetRouter = router({
     .input(
       z.object({
         // xSupplierId: z.string(),
-        apiKeyAdvertisement: z.string(),
+        apiKeyAdvertisement: z.string().min(10, "Некорректный ключ"),
         // apiKeyStatistic: z.string(),
         // wbToken: z.string(),
       })
@@ -43,60 +43,66 @@ export const cabinetRouter = router({
         });
       }
 
+      if (user.apiKeyAdvertisement === apiKeyAdvertisement) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Одинаковые ключи",
+        });
+      }
 
-
-      const campaigns: any[] = await $fetch(`https://advert-api.wb.ru/adv/v0/adverts`, {
-        method: "GET",
-        headers: {
-          Authorization: apiKeyAdvertisement,
-        },
-        params: {
-          type: 5, //Тип только карточки - надо потом поменять
-        },
-      });
-
-      campaigns.forEach(async (el) => {
-        const campaign: any = await $fetch(`https://advert-api.wb.ru/adv/v0/advert`, {
+      try {
+        const campaigns: any[] = await $fetch(`https://advert-api.wb.ru/adv/v0/adverts`, {
           method: "GET",
           headers: {
             Authorization: apiKeyAdvertisement,
           },
           params: {
-            id: el.advertId,
+            type: 5, //Тип только карточки - надо потом поменять
           },
         });
 
-        const newCampaign = await Campaign.create({
-          uuid: uuid(),
-          advertid: campaign.advertid,
-          type: campaign.type,
-          name: campaign.name,
-          status: campaign.status,
-          dailyBudget: campaign.dailyBudget,
-          createTime: campaign.createTime,
-          category: campaign.params[0].setName,
-          params: campaign.params,
-          user: session._id,
+        const isCabinetExist = await Campaign.find({
+          user: user._id,
         });
 
-        console.log(campaign.params[0]);
-      });
+        if (isCabinetExist) {
+          await Campaign.deleteMany({ user: user._id });
+        }
 
-      // console.log(cabinets);
+        user.apiKeyAdvertisement = apiKeyAdvertisement;
+        await user.save();
 
-      // const cabinet = await Cabinet.create({
-      //   uuid: uuid(),
-      //   title: title,
-      //   connectingMethod: connectingMethod,
-      //   wbToken: wbToken,
-      //   phoneNumber: phoneNumber,
-      //   xSupplierId: xSupplierId,
-      //   apiKeyAdvertisement: apiKeyAdvertisement,
-      //   apiKeyStatistic: apiKeyStatistic,
-      //   user: session._id,
-      // });
+        campaigns.forEach(async (el) => {
+          const campaign: any = await $fetch(`https://advert-api.wb.ru/adv/v0/advert`, {
+            method: "GET",
+            headers: {
+              Authorization: apiKeyAdvertisement,
+            },
+            params: {
+              id: el.advertId,
+            },
+          });
 
-      return { status: "ok" };
+          const newCampaign = await Campaign.create({
+            uuid: uuid(),
+            advertid: campaign.advertid,
+            type: campaign.type,
+            name: campaign.name,
+            status: campaign.status,
+            dailyBudget: campaign.dailyBudget,
+            params: campaign.params,
+            user: user._id,
+            createTime: campaign.createTime,
+          });
+        });
+
+        return { status: "ok" };
+      } catch (error) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Неверный Api-ключ Реклама",
+        });
+      }
     }),
 
   deleteteCabinet: publicProcedure
@@ -148,7 +154,9 @@ export const cabinetRouter = router({
       });
     }
 
-    const cabinets = await Cabinet.find({ user: session._id });
+    const cabinets: any[] = await Cabinet.find({ user: session._id });
+
+
 
     return cabinets;
   }),

@@ -82,37 +82,51 @@ export const campaignRouter = router({
       return { status: "ok" };
     }),
 
-  campaigns: publicProcedure
-    .input(
-      z.object({
-        _id: z.string(),
-      })
-    )
-    .mutation(async (opts) => {
-      const session = opts.ctx.session as any;
-      const { input } = opts;
-      const { _id } = input;
+  campaigns: publicProcedure.query(async (opts) => {
+    const session = opts.ctx.session as any;
 
-      if (!session) {
-        throw new TRPCError({
-          code: "FORBIDDEN",
-          message: "unauthorized",
-        });
+    if (!session) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "unauthorized",
+      });
+    }
+
+    const user = await User.findById(session._id);
+
+    if (!user) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "unauthorized",
+      });
+    }
+
+    const campaigns: any[] = await Campaign.find({ user: session._id });
+
+    campaigns.forEach((el) => {
+      let date = new Date(el.createTime);
+      let day = date.getDate();
+      let month = date.getMonth() + 1;
+      let year = date.getFullYear();
+      let trueDate = `${day}.${month}.${year}`;
+
+      if (day.toString().length < 2) {
+        trueDate = `0${day}.${month}.${year}`;
       }
 
-      const user = await User.findById(session._id);
-
-      if (!user) {
-        throw new TRPCError({
-          code: "FORBIDDEN",
-          message: "unauthorized",
-        });
+      if (month.toString().length < 2) {
+        trueDate = `${day}.0${month}.${year}`;
       }
 
-      const campaigns = await Campaign.find({ cabinet: _id });
+      if (month.toString().length < 2 && day.toString().length < 2) {
+        trueDate = `0${day}.0${month}.${year}`;
+      }
 
-      return campaigns;
-    }),
+      el.createTime = trueDate;
+    });
+
+    return campaigns;
+  }),
 });
 // export type definition of API
 export type AppRouter = typeof campaignRouter;

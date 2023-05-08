@@ -10,9 +10,20 @@ const { notify } = useNotification();
 async function connectApiKeyAdvertisement() {
   const { data, error } = await useAsyncData(() =>
     $client.cabinet.createCabinet.mutate({
-      apiKeyAdvertisement: wbForm.apiKeyAdvertisement,
+      apiKeyAdvertisement: client.apiKeyAdvertisement,
     })
   );
+
+  if (error.value) {
+    notify({
+      type: "error",
+      text: error.value.message,
+    });
+  }
+
+  if (data.value) {
+    notify({ type: "success", text: "Личный кабинет подключен" });
+  }
 }
 
 async function saveChanges() {
@@ -111,13 +122,13 @@ definePageMeta({
     </v-row>
     <v-row>
       <v-col>
-        <v-text-field v-model="wbForm.xSupplierId" :rules="[ruleRequired]" label="X-Supplier-Id" />
+        <v-text-field v-model="client.xSupplierId" :rules="[ruleRequired]" label="X-Supplier-Id" />
       </v-col>
     </v-row>
     <v-row>
       <v-col>
         <v-text-field
-          v-model="wbForm.apiKeyAdvertisement"
+          v-model="client.apiKeyAdvertisement"
           :rules="[ruleRequired]"
           label="Api-ключ Реклама"
         />
@@ -126,7 +137,7 @@ definePageMeta({
     <v-row>
       <v-col>
         <v-text-field
-          v-model="wbForm.apiKeyStatistic"
+          v-model="client.apiKeyStatistic"
           :rules="[ruleRequired]"
           label="Api-ключ Статистика"
         />

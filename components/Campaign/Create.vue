@@ -40,18 +40,32 @@ const campaignForm = reactive({
         <v-card-text>
           <v-container>
             <v-row>
-              <v-col cols="12" v-if="radios === 'Через номер телефона'">
+              <v-col cols="12">
+                <h2 class="ml-2 mb-2">Тип рекламной кампании</h2>
+                <v-radio-group inline v-model="radios">
+                  <v-radio label="Карточка товара" value="Через номер телефона"></v-radio>
+                </v-radio-group>
+              </v-col>
+              <v-col cols="12">
                 <v-text-field
                   :rules="[]"
-                  label="Название"
+                  label="Название рекламной кампании"
                   v-model="campaignForm.title"
                   variant="underlined"
                 ></v-text-field>
               </v-col>
-              <v-col cols="12" v-if="radios === 'Через номер телефона'">
+              <v-col cols="12">
                 <v-text-field
                   :rules="[]"
                   label="Категория"
+                  v-model="campaignForm.category"
+                  variant="underlined"
+                ></v-text-field>
+              </v-col>
+              <v-col cols="12">
+                <v-text-field
+                  :rules="[]"
+                  label="Предметы"
                   v-model="campaignForm.category"
                   variant="underlined"
                 ></v-text-field>
@@ -61,7 +75,7 @@ const campaignForm = reactive({
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn> Добавить кампанию </v-btn>
+          <v-btn color="blue-darken-1"> Добавить кампанию </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>

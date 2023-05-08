@@ -17,10 +17,6 @@ const CampaignSchema = new Schema(
       type: String,
       default: "",
     },
-    Category: {
-      type: String,
-      default: "",
-    },
     params: {
       type: [{ type: Object}],
       default: "",
@@ -104,13 +100,13 @@ const CampaignSchema = new Schema(
       type: String,
       default: "",
     },
-    user: {
-      type: Schema.Types.ObjectId,
-      ref: "User",
-    },
     createTime: {
       type: String,
       default: "",
+    },
+    user: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
     },
   },
   { timestamps: true }

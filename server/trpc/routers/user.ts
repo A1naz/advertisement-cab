@@ -85,7 +85,6 @@ export const userRouter = router({
           message: "unauthorized",
         });
       }
-      
 
       if (!user.password) {
         user.password = await bcrypt.hashSync(newPassword, 7);
@@ -128,8 +127,26 @@ export const userRouter = router({
       balance: user.balance,
       firstName: user.firstName,
       lastName: user.lastName,
+      xSupplierId:
+        user.xSupplierId == ""
+          ? user.xSupplierId
+          : user.xSupplierId.slice(0, 5) +
+            "***********************************************************************************************************************************************************" +
+            user.xSupplierId.slice(-5),
+      apiKeyStatistics:
+        user.apiKeyStatistics == ""
+          ? user.apiKeyStatistics
+          : user.apiKeyStatistics.slice(0, 5) +
+            "***********************************************************************************************************************************************************" +
+            user.apiKeyStatistics.slice(-5),
+      apiKeyAdvertisement:
+        user.apiKeyAdvertisement == ""
+          ? user.apiKeyAdvertisement
+          : user.apiKeyAdvertisement.slice(0, 5) +
+            "***********************************************************************************************************************************************************" +
+            user.apiKeyAdvertisement.slice(-5),
     };
-    
+
     return { user: format };
   }),
 });

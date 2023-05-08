@@ -3,11 +3,26 @@ import { useNotification } from "@kyvg/vue3-notification";
 
 const isLoading = ref(true);
 const { status } = useAuth();
-const cabinetStore = useCabinetStore();
-if (status.value === "authenticated") await cabinetStore.getCabinets();
+const campaignStore = useCampaignStore();
+if (status.value === "authenticated") await campaignStore.getCampaigns();
 isLoading.value = false;
 const { $client } = useNuxtApp();
 const { notify } = useNotification();
+const headers = ref({
+  headers: [
+    {
+      title: "Dessert (100g serving)",
+      align: "start",
+      sortable: false,
+      key: "name",
+    },
+    { title: "Calories", align: "end", key: "calories" },
+    { title: "Fat (g)", align: "end", key: "fat" },
+    { title: "Carbs (g)", align: "end", key: "carbs" },
+    { title: "Protein (g)", align: "end", key: "protein" },
+    { title: "Iron (%)", align: "end", key: "iron" },
+  ],
+});
 
 definePageMeta({
   title: "Рекламный кабинет",
@@ -35,7 +50,7 @@ async function deleteCabinet(cabinetId: any) {
   }
 
   if (data.value) {
-    await cabinetStore.getCabinets();
+    await campaignStore.getCampaigns();
     notify({
       type: "success",
       text: "Кабинет удален",
@@ -55,32 +70,28 @@ async function deleteCabinet(cabinetId: any) {
     <div class="pb-5 text-sm text-zinc-400">Здесь отображаются ваши рекламные кабинеты</div>
     <v-row class="mb-2">
       <v-col>
-        <h2>Управление кабинетами</h2>
+        <h2>Управление кампаниями</h2>
       </v-col>
       <v-col class="flex items-end">
-        <CabinetForm />
+        <CampaignCreate />
       </v-col>
     </v-row>
     <v-row class="mx-2 my-5">
       <div class="flex flex-col w-full">
-        <v-col v-for="cabinet in cabinetStore.cabinets" class="w-full">
-          <v-card
-            @click="routeTo(cabinet._id)"
-            :title="cabinet.title"
-            :subtitle="cabinet.status"
-            text=""
-            variant="tonal"
-          >
+        <v-col v-for="campaign in campaignStore.campaigns" class="w-full">
+          <v-card :title="campaign.name" :subtitle="'Дата создания: ' + campaign.createTime" text="" variant="tonal">
             <v-card-actions class="flex justify-between">
               <div class="flex flex-col md:flex-row">
                 <h2 class="mx-2">Кол-во кампании: 0</h2>
-                <h2 class="mx-2">Тип: {{ cabinet.connectingMethod }}</h2>
+                <h2 class="mx-2">Тип:</h2>
+                {{ campaign }}
               </div>
               <div @click.stop>
-                <v-btn prepend-icon="mdi-delete" @click="deleteCabinet(cabinet._id)">Удалить</v-btn>
+                <v-btn prepend-icon="mdi-delete" @click="">Удалить</v-btn>
               </div>
             </v-card-actions>
           </v-card>
+      
         </v-col>
       </div>
     </v-row>

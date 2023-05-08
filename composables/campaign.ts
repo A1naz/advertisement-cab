@@ -5,8 +5,9 @@ export const useCampaignStore = defineStore("campaign", () => {
 
   async function getCampaigns() {
     const { $client } = useNuxtApp();
-    const camps = await $client.cabinet.cabinets.query();
+    const camps = await $client.campaign.campaigns.query();
     campaigns.value = camps;
+    
   }
 
   return {
