@@ -1,7 +1,7 @@
 <script setup>
 import { useNotification } from "@kyvg/vue3-notification";
 
-const cabinetStore = useCabinetStore();
+const campaignStore = useCampaignStore();
 const { $client } = useNuxtApp();
 const { rulePhone, ruleRequired, ruleNameLen } = useFormRules();
 const { notify } = useNotification();
@@ -10,6 +10,12 @@ let radios = ref("Через номер телефона");
 let dialog = ref(false);
 const isLoading = ref(false);
 const isBtnDisabled = ref(false);
+const selectedCategory = ref("");
+const selectedArticles = ref([]);
+
+function sortItemsByCategory() {
+  campaignStore.sortItemsByCategory(selectedCategory.value);
+}
 
 const campaignForm = reactive({
   title: "",
@@ -55,20 +61,23 @@ const campaignForm = reactive({
                 ></v-text-field>
               </v-col>
               <v-col cols="12">
-                <v-text-field
-                  :rules="[]"
-                  label="Категория"
-                  v-model="campaignForm.category"
-                  variant="underlined"
-                ></v-text-field>
+                <v-select
+                  @change=""
+                  @update:menu="sortItemsByCategory"
+                  label="Группа предметов"
+                  :items="campaignStore.categories"
+                  v-model="selectedCategory"
+                ></v-select>
               </v-col>
               <v-col cols="12">
-                <v-text-field
-                  :rules="[]"
+                <v-select
+                  v-model="selectedArticles"
+                  :items="campaignStore.itemsByCategory"
                   label="Предметы"
-                  v-model="campaignForm.category"
-                  variant="underlined"
-                ></v-text-field>
+                  multiple
+                  hint="Выберите один или несколько предметов"
+                  persistent-hint
+                ></v-select>
               </v-col>
             </v-row>
           </v-container>

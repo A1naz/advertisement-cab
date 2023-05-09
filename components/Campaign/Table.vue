@@ -53,7 +53,7 @@ const options = ref([
             <div>
               {{ campaign.name }}
             </div>
-            <div class="text-sm mt-2">
+            <div class="text-sm mt-3">
               Тип:
               {{
                 campaign.type === 4
@@ -65,7 +65,7 @@ const options = ref([
                   : "Рекомендации"
               }}
             </div>
-            <div class="text-sm mt-2">ID: {{ campaign.advertId }}</div>
+            <div class="text-xs mt-2">ID: {{ campaign.advertId }}</div>
           </td>
           <td>
             <div v-for="param in campaign.params">
@@ -103,14 +103,14 @@ const options = ref([
           </td>
           <td>
             &nbsp;
-            <div class="my-1">Показы:{{ campaign.shows }}</div>
+            <div class="my-1">Показы: {{ campaign.shows }}</div>
             <div class="my-1">Клики: {{ campaign.clicks }}</div>
             <div class="my-1">CTR: {{ campaign.CTR }}</div>
             &nbsp;
           </td>
           <td>
-            <div class="my-1">Корзина:{{ campaign.cart }}</div>
-            <div class="my-1">Заказы:{{ campaign.orders }}</div>
+            <div class="my-1">Корзина: {{ campaign.cart }}</div>
+            <div class="my-1">Заказы: {{ campaign.orders }}</div>
             <div class="my-1">CR: {{ campaign.CR }}</div>
           </td>
           <td>

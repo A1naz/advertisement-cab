@@ -102,8 +102,17 @@ export const campaignRouter = router({
     }
 
     const campaigns: any[] = await Campaign.find({ user: session._id });
+    const allItems: any[] = [];
 
-    campaigns.forEach((el) => {
+    campaigns.forEach((el: any) => {
+      el.params.forEach((item: any) => {
+        const newItem = {
+          category: item.setName,
+          nms: item.nms,
+        };
+        allItems.push(newItem);
+      });
+
       let date = new Date(el.createTime);
       let day = date.getDate();
       let month = date.getMonth() + 1;
@@ -125,7 +134,19 @@ export const campaignRouter = router({
       el.createTime = trueDate;
     });
 
-    return campaigns;
+    const items = allItems
+      .reduce((acc, item) => {
+        const existingItem = acc.find((el: any) => el.category === item.category);
+        if (existingItem) {
+          existingItem.nms.push(item.nms[0].nm);
+        } else {
+          acc.push({ category: item.category, nms: [item.nms[0].nm] });
+        }
+        return acc;
+      }, [])
+      .map((item: any) => ({ category: item.category, nms: [...new Set(item.nms)] }));
+
+    return { campaigns, items };
   }),
 });
 // export type definition of API
