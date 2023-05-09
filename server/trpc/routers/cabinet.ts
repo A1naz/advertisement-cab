@@ -82,7 +82,8 @@ export const cabinetRouter = router({
               id: el.advertId,
             },
           });
-
+        
+          
   
           const newCampaign = await Campaign.create({
             uuid: uuid(),

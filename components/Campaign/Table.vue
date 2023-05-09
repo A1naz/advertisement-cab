@@ -2,7 +2,7 @@
 const campaignStore = useCampaignStore();
 const options = ref([
   "Все",
-  "Ативные",
+  "Активные",
   "Приостановленные",
   "Архив",
   "Под управлением",
@@ -11,14 +11,17 @@ const options = ref([
 </script>
 <template>
   <div class="mb-1">
-    <v-slide-group show-arrows>
+    <v-slide-group mandatory>
       <v-slide-group-item v-for="option in options" :key="option" v-slot="{ isSelected, toggle }">
         <v-btn
           density="compact"
           class="mx-1"
           variant="text"
           :color="isSelected ? 'secondary' : 'gray'"
-          @click="toggle"
+          @click="
+            campaignStore.sortCampaigns(option);
+            toggle();
+          "
         >
           {{ option }}
         </v-btn>
@@ -42,7 +45,7 @@ const options = ref([
         </tr>
       </thead>
       <tbody>
-        <tr v-for="campaign in campaignStore.campaigns" :key="campaign._id">
+        <tr v-for="campaign in campaignStore.sortedAndSeachedCampaigns" :key="campaign._id">
           <td>
             {{ campaign.createTime }}
           </td>

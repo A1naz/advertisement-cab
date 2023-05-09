@@ -4,6 +4,7 @@ import { useWindowSize } from "@vueuse/core";
 
 const isLoading = ref(true);
 const { width, height } = useWindowSize();
+const search = ref("");
 
 const { status } = useAuth();
 const campaignStore = useCampaignStore();
@@ -79,9 +80,28 @@ async function deleteCabinet(cabinetId: any) {
         <CampaignCreate />
       </v-col>
     </v-row>
+    <v-row>
+      <v-col>
+        <v-card class="mx-6" max-width="600">
+          <v-card-text>
+            <v-text-field
+              density="compact"
+              variant="solo"
+              label="Введите название кампании или ID"
+              append-inner-icon="mdi-magnify"
+              single-line
+              hide-details
+              v-model="search"
+              @input="campaignStore.searchCampaign(search)"
+              class="max-w-xl"
+            ></v-text-field>
+          </v-card-text>
+        </v-card>
+      </v-col>
+    </v-row>
     <v-row class="mx-2 my-5">
       <div class="flex flex-col w-full" v-if="width < 1200">
-        <v-col v-for="campaign in campaignStore.campaigns" class="w-full">
+        <v-col v-for="campaign in campaignStore.sortedAndSeachedCampaigns" class="w-full">
           <v-card
             :title="campaign.name"
             :subtitle="'Дата создания: ' + campaign.createTime"
