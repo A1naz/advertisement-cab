@@ -83,9 +83,10 @@ export const cabinetRouter = router({
             },
           });
 
+  
           const newCampaign = await Campaign.create({
             uuid: uuid(),
-            advertid: campaign.advertid,
+            advertId: campaign.advertId,
             type: campaign.type,
             name: campaign.name,
             status: campaign.status,
@@ -155,8 +156,6 @@ export const cabinetRouter = router({
     }
 
     const cabinets: any[] = await Cabinet.find({ user: session._id });
-
-
 
     return cabinets;
   }),

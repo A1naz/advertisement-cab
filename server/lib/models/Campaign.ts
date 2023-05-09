@@ -5,9 +5,8 @@ const CampaignSchema = new Schema(
     uuid: {
       type: String,
     },
-    advertid: {
-      type: String,
-      default: "",
+    advertId: {
+      type: Number,
     },
     type: {
       type: Number,
@@ -18,7 +17,7 @@ const CampaignSchema = new Schema(
       default: "",
     },
     params: {
-      type: [{ type: Object}],
+      type: [{ type: Object }],
       default: "",
     },
     status: {
@@ -59,20 +58,21 @@ const CampaignSchema = new Schema(
     },
     CR: {
       type: Number,
+      default: 0,
     },
     isAdjusted: {
       type: Boolean,
       default: false,
     },
-    budget: {
+    targetPosition: {
       type: Number,
       default: 0,
     },
-    targetPosition: {
-      type: String,
-      default: "",
-    },
     maxBet: {
+      type: Number,
+      default: 0,
+    },
+    budget: {
       type: Number,
       default: 0,
     },
@@ -99,6 +99,10 @@ const CampaignSchema = new Schema(
     deliveryTime: {
       type: String,
       default: "",
+    },
+    isTurnOn: {
+      type: Boolean,
+      default: false,
     },
     createTime: {
       type: String,

@@ -42,7 +42,7 @@ onMounted(() => {
           />
           <v-list-item
             prepend-icon="mdi-briefcase "
-            title="Управление рекламой"
+            title="Рекламные кампании"
             value="advertisement"
             :active="$route.path === '/cabinet'"
             active-color="primary"
