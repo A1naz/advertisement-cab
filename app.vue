@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useNotification } from "@kyvg/vue3-notification";
-
+import { useTheme } from "vuetify";
+const theme = useTheme();
 const userStore = useUserStore();
 const { status } = useAuth();
 
@@ -12,7 +13,7 @@ const { notify } = useNotification();
 <template>
   <div>
     <SeoKit />
-    <notifications position="bottom right">
+    <notifications position="top right">
       <template #body="props">
         <div style="margin: 0.5rem">
           <v-alert
@@ -26,6 +27,7 @@ const { notify } = useNotification();
       </template>
     </notifications>
     <NuxtLayout>
+      <NuxtLoadingIndicator :color =  "theme.global.name.value === 'light' ? '#570df8' : '#5d55e7'"/>
       <NuxtPage />
     </NuxtLayout>
   </div>

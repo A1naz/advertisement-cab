@@ -1,4 +1,5 @@
 <script setup>
+const dialog = ref(false);
 const campaignStore = useCampaignStore();
 const options = ref([
   "Все",
@@ -68,9 +69,9 @@ const options = ref([
             <div class="text-xs mt-2">ID: {{ campaign.advertId }}</div>
           </td>
           <td>
-            <div v-for="param in campaign.params">
-              <div v-for="nm in param.nms" class="my-1">
-                {{ nm.nm }}
+            <div v-for="nms in campaign.nms">
+              <div v-for="nm in nms.nms" class="my-1">
+                {{ nm }}
               </div>
             </div>
           </td>
@@ -126,9 +127,9 @@ const options = ref([
             </div>
 
             <div class="mt-2">
-              <v-btn border class="text-none" prepend-icon="mdi-cog" variant="text">
-                {{ campaign.isAdjusted ? "Настроена" : "Не настроена" }} ></v-btn
-              >
+              <v-row justify="center">
+                <CampaignOptions :campaign="campaign" />
+              </v-row>
             </div>
           </td>
         </tr>

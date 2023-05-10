@@ -16,7 +16,7 @@ const CampaignSchema = new Schema(
       type: String,
       default: "",
     },
-    params: {
+    nms: {
       type: [{ type: Object }],
       default: "",
     },

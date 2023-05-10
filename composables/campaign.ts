@@ -37,8 +37,8 @@ export const useCampaignStore = defineStore("campaign", () => {
   }
 
   function searchCampaign(searchValue: string) {
-    sortedAndSeachedCampaigns.value = sortedCampaigns.value;
-
+     sortedAndSeachedCampaigns.value = sortedCampaigns.value;
+     
     sortedAndSeachedCampaigns.value = sortedAndSeachedCampaigns.value.filter((el: any) =>
       el.name.toLowerCase().includes(searchValue.toLowerCase()) ||
       el.advertId.toString().includes(searchValue.toString()) ||

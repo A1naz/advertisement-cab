@@ -13,6 +13,10 @@ isLoading.value = false;
 const { $client } = useNuxtApp();
 const { notify } = useNotification();
 
+function searchCampaigns() {
+campaignStore.searchCampaign(search.value)
+}
+
 definePageMeta({
   title: "Рекламный кабинет",
   auth: true,
@@ -77,7 +81,7 @@ async function deleteCabinet(cabinetId: any) {
               single-line
               hide-details
               v-model="search"
-              @input="campaignStore.searchCampaign(search)"
+              @input="searchCampaigns"
               class="max-w-xl"
             ></v-text-field>
           </v-card-text>

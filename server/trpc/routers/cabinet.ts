@@ -43,12 +43,12 @@ export const cabinetRouter = router({
         });
       }
 
-      if (user.apiKeyAdvertisement === apiKeyAdvertisement) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "Одинаковые ключи",
-        });
-      }
+      // if (user.apiKeyAdvertisement === apiKeyAdvertisement) {
+      //   throw new TRPCError({
+      //     code: "BAD_REQUEST",
+      //     message: "Одинаковые ключи",
+      //   });
+      // }
 
       try {
         const campaigns: any[] = await $fetch(`https://advert-api.wb.ru/adv/v0/adverts`, {
@@ -82,9 +82,21 @@ export const cabinetRouter = router({
               id: el.advertId,
             },
           });
-        
-          
-  
+
+          const allItems: any[] = [];
+          campaign.params.forEach((item: any) => {
+            const newItem = {
+              category: item.setName,
+              nms: item.nms,
+            };
+            allItems.push(newItem);
+          });
+
+          const items = allItems.map((item: any) => ({
+            category: item.category,
+            nms: item.nms.map((innerItem: any) => innerItem.nm),
+          }));
+
           const newCampaign = await Campaign.create({
             uuid: uuid(),
             advertId: campaign.advertId,
@@ -92,7 +104,7 @@ export const cabinetRouter = router({
             name: campaign.name,
             status: campaign.status,
             dailyBudget: campaign.dailyBudget,
-            params: campaign.params,
+            nms: items,
             user: user._id,
             createTime: campaign.createTime,
           });

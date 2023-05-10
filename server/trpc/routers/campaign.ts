@@ -4,23 +4,37 @@ import { v4 as uuid } from "uuid";
 import { publicProcedure, router } from "../trpc";
 import { User } from "~/server/lib/models/User";
 import { Campaign } from "~/server/lib/models/Campaign";
+import { AnyArray } from "mongoose";
+import { CampaignOptions } from "~/.nuxt/components";
 
 const config = useRuntimeConfig();
 export const campaignRouter = router({
-  createCampign: publicProcedure
+  createCampaign: publicProcedure
     .input(
       z.object({
         type: z.string(),
-        cabinetId: z.string().min(10, "Id должен быть корректным"),
         title: z.string().min(3, "Название должно содержать не менее 3 символов"),
         category: z.string().min(3, "Название категории должно содержать не менее 3 символов"),
-        article: z.string().array().nonempty({ message: "Минимум 1 артикул" }),
+        items: z.number().array().nonempty({ message: "Минимум 1 артикул" }),
       })
     )
     .mutation(async (opts) => {
       const session = opts.ctx.session as any;
       const { input } = opts;
-      const { type, cabinetId, title, category, article } = input;
+      const { type, title, category, items } = input;
+
+      console.log("ok");
+
+      let conversedType: number;
+
+      if (type === "Карточка товара") {
+        conversedType = 5;
+      } else {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Некорректный тип",
+        });
+      }
 
       if (!session) {
         throw new TRPCError({
@@ -38,16 +52,21 @@ export const campaignRouter = router({
         });
       }
 
+      const date = new Date();
       const campaign = await Campaign.create({
         uuid: uuid(),
-        type: type,
+        advertId: 0,
+        type: conversedType,
         title: title,
         user: session._id,
-        category: category,
-        article: article,
+        nms: {
+          category: category,
+          nms: items,
+        },
+        createTime: date,
       });
 
-      return { campaign };
+      return { status: "ok" };
     }),
 
   deleteteCampaign: publicProcedure
@@ -102,16 +121,11 @@ export const campaignRouter = router({
     }
 
     const campaigns: any[] = await Campaign.find({ user: session._id });
+
     const allItems: any[] = [];
 
     campaigns.forEach((el: any) => {
-      el.params.forEach((item: any) => {
-        const newItem = {
-          category: item.setName,
-          nms: item.nms,
-        };
-        allItems.push(newItem);
-      });
+      allItems.push(...el.nms);
 
       let date = new Date(el.createTime);
       let day = date.getDate();
@@ -134,17 +148,25 @@ export const campaignRouter = router({
       el.createTime = trueDate;
     });
 
-    const items = allItems
-      .reduce((acc, item) => {
-        const existingItem = acc.find((el: any) => el.category === item.category);
-        if (existingItem) {
-          existingItem.nms.push(item.nms[0].nm);
-        } else {
-          acc.push({ category: item.category, nms: [item.nms[0].nm] });
-        }
-        return acc;
-      }, [])
-      .map((item: any) => ({ category: item.category, nms: [...new Set(item.nms)] }));
+    const uniqueCategories = new Set();
+    const trueFormItems: any[] = [];
+
+    allItems.forEach((category) => {
+      category.nms.forEach((nm: any) => {
+        trueFormItems.push({ category: category.category, nms: [nm] });
+      });
+    });
+    const items = trueFormItems.filter((item: any, index: any) => {
+      return (
+        index ===
+        trueFormItems.findIndex((obj) => {
+          return JSON.stringify(obj) === JSON.stringify(item);
+        })
+      );
+    });
+
+    console.log(items);
+    
 
     return { campaigns, items };
   }),
