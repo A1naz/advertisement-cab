@@ -96,10 +96,17 @@ definePageMeta({
           :rules="[ruleRequired, ruleEmail]"
           label="Email"
           type="email"
+          variant="filled"
         />
       </v-col>
       <v-col>
-        <v-text-field v-model="client.firstName" :rules="[ruleRequired]" label="Имя" type="text" />
+        <v-text-field
+          v-model="client.firstName"
+          variant="filled"
+          :rules="[ruleRequired]"
+          label="Имя"
+          type="text"
+        />
       </v-col>
       <v-col>
         <v-text-field
@@ -107,6 +114,7 @@ definePageMeta({
           :rules="[ruleRequired]"
           label="Фамилия"
           type="text"
+          variant="filled"
         />
       </v-col>
     </v-row>
@@ -122,12 +130,18 @@ definePageMeta({
     </v-row>
     <v-row>
       <v-col>
-        <v-text-field v-model="client.xSupplierId" :rules="[ruleRequired]" label="X-Supplier-Id" />
+        <v-text-field
+          v-model="client.xSupplierId"
+          variant="filled"
+          :rules="[ruleRequired]"
+          label="X-Supplier-Id"
+        />
       </v-col>
     </v-row>
     <v-row>
       <v-col>
         <v-text-field
+          variant="filled"
           v-model="client.apiKeyAdvertisement"
           :rules="[ruleRequired]"
           label="Api-ключ Реклама"
@@ -137,6 +151,7 @@ definePageMeta({
     <v-row>
       <v-col>
         <v-text-field
+          variant="filled"
           v-model="client.apiKeyStatistic"
           :rules="[ruleRequired]"
           label="Api-ключ Статистика"
@@ -156,6 +171,7 @@ definePageMeta({
     <v-row>
       <v-col cols="12" lg="6">
         <v-text-field
+          variant="filled"
           v-model="passwordForm.oldPassword"
           :rules="[ruleRequired, rulePassLen]"
           label="Старый пароль"
@@ -164,6 +180,7 @@ definePageMeta({
       </v-col>
       <v-col cols="12" lg="6">
         <v-text-field
+          variant="filled"
           v-model="passwordForm.newPassword"
           :rules="[ruleRequired, rulePassLen]"
           label="Новый пароль"

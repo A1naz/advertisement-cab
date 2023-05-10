@@ -13,7 +13,7 @@ export default defineNuxtConfig({
   css: ['@/assets/main.scss'],
   // enable takeover mode
   typescript: { shim: false },
-  build: { transpile: ['vuetify', 'trpc-nuxt'] },
+  build: { transpile: ['vuetify', 'trpc-nuxt', '@vuepic/vue-datepicker'] },
   modules: [
     '@nuxtjs/tailwindcss',
     '@kevinmarrec/nuxt-pwa',

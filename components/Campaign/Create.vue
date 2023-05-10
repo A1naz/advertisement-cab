@@ -108,7 +108,7 @@ async function addCampaign() {
                   :rules="[ruleRequired, ruleNameLen]"
                   label="Название рекламной кампании"
                   v-model="title"
-                  variant="underlined"
+                  variant="filled"
                 ></v-text-field>
               </v-col>
               <v-col cols="12">

@@ -69,6 +69,97 @@ export const campaignRouter = router({
       return { status: "ok" };
     }),
 
+  adjustCampaign: publicProcedure
+    .input(
+      z.object({
+        _id: z.string(),
+        budget: z.number(),
+        targetPosition: z.number(),
+        dailyBudget: z.number(),
+        ifMaxBetDoesntMatch: z.string().min(10),
+        ifBetEqualsNear: z.string().min(10),
+        showHours: z.string(),
+      })
+    )
+    .mutation(async (opts) => {
+      const session = opts.ctx.session as any;
+      const { input } = opts;
+      const {
+        _id,
+        budget,
+        targetPosition,
+        dailyBudget,
+        ifMaxBetDoesntMatch,
+        ifBetEqualsNear,
+        showHours,
+      } = input;
+
+      if (!session) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "unauthorized",
+        });
+      }
+
+      const user = await User.findById(session._id);
+
+      if (!user) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "unauthorized",
+        });
+      }
+
+      const campaign: any = await Campaign.findById(_id);
+
+      campaign.budget = budget;
+      campaign.dailyBudget = dailyBudget;
+      campaign.targetPosition = targetPosition;
+      campaign.ifMaxBetDoesntMatch = ifMaxBetDoesntMatch;
+      campaign.ifBetEqualsNear = ifBetEqualsNear;
+      campaign.showHours = showHours;
+      campaign.isAdjusted = true;
+      await campaign.save();
+
+      return { status: "ok" };
+    }),
+
+  turnOnOffCampgain: publicProcedure
+    .input(
+      z.object({
+        _id: z.string(),
+        status: z.boolean(),
+      })
+    )
+    .mutation(async (opts) => {
+      const session = opts.ctx.session as any;
+      const { input } = opts;
+      const { _id, status } = input;
+
+      if (!session) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "unauthorized",
+        });
+      }
+
+      const user = await User.findById(session._id);
+
+      if (!user) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "unauthorized",
+        });
+      }
+
+      const campaign: any = await Campaign.findById(_id);
+
+      campaign.isTurnOn = status;
+      await campaign.save();
+
+      return { status: "ok" };
+    }),
+
   deleteteCampaign: publicProcedure
     .input(
       z.object({
@@ -164,9 +255,6 @@ export const campaignRouter = router({
         })
       );
     });
-
-    console.log(items);
-    
 
     return { campaigns, items };
   }),

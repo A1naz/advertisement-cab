@@ -82,11 +82,11 @@ const CampaignSchema = new Schema(
     },
     showHours: {
       type: String,
-      default: "00:00 - 00:00 | 00:00 - 00:00",
+      default: "",
     },
     ifMaxBetDoesntMatch: {
       type: String,
-      default: "Остановить кампанию",
+      default: "",
     },
     MaxBetIncreaseTo: {
       type: Number,
@@ -94,7 +94,7 @@ const CampaignSchema = new Schema(
     },
     ifBetEqualsNear: {
       type: String,
-      default: "Увеличить ставку на 1 руб.",
+      default: "",
     },
     deliveryTime: {
       type: String,
