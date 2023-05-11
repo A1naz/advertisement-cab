@@ -66,19 +66,15 @@ const CampaignSchema = new Schema(
     },
     targetPosition: {
       type: Number,
-      default: 0,
     },
     maxBet: {
       type: Number,
-      default: 0,
     },
     budget: {
       type: Number,
-      default: 0,
     },
     dailyBudget: {
       type: Number,
-      default: 0,
     },
     showHours: {
       type: String,
@@ -88,9 +84,8 @@ const CampaignSchema = new Schema(
       type: String,
       default: "",
     },
-    MaxBetIncreaseTo: {
+    getBet: {
       type: Number,
-      default: 0,
     },
     ifBetEqualsNear: {
       type: String,

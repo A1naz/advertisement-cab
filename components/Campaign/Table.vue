@@ -1,6 +1,9 @@
 <script setup>
+import { boolean } from "zod";
+
 const dialog = ref(false);
 const campaignStore = useCampaignStore();
+const onOff = ref();
 const options = ref([
   "Все",
   "Активные",
@@ -9,6 +12,7 @@ const options = ref([
   "Под управлением",
   "Дневной лимит",
 ]);
+
 </script>
 <template>
   <div class="mb-1">
@@ -116,14 +120,6 @@ const options = ref([
           </td>
           <td>
             <div>
-              <v-switch
-                density="compact"
-                :label="'выключен'"
-                :disabled="campaign.isAdjusted === false ? true : false"
-                color="indigo"
-                value="indigo"
-                hide-details
-              ></v-switch>
             </div>
 
             <div class="mt-2">

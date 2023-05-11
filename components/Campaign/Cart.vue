@@ -73,26 +73,23 @@ const campaignStore = useCampaignStore();
               <v-col>Заказы: {{ campaign.orders }} </v-col>
               <v-col>CR: {{ campaign.CR }} </v-col>
             </v-row>
-            <v-row>
+            <v-row justify="center">
               <v-col>
-                <v-switch
-                  density="compact"
-                  :label="'выключен'"
-                  :disabled="campaign.isAdjusted === false ? true : false"
-                  color="indigo"
-                  value="indigo"
-                  hide-details
-                ></v-switch>
+                <CampaignOptions :campaign="campaign" />
               </v-col>
-              <v-col
-                ><v-btn border class="text-none" prepend-icon="mdi-cog" variant="text">
-                  {{ campaign.isAdjusted ? "Настроена" : "Не настроена" }} ></v-btn
-                >
+            </v-row>
+            <v-row>
+              <v-col class="flex-col">
+                <div class="text-center mb-3">Артикулы</div>
+                <div v-for="nms in campaign.nms" class="flex-col">
+                  <v-row>
+                    <v-col class="text-center" v-for="nm in nms.nms">{{ nm }} &nbsp; &nbsp;</v-col>
+                  </v-row>
+                </div>
               </v-col>
             </v-row>
           </div>
         </v-card-item>
-
         <v-card-actions class="flex justify-between"> </v-card-actions>
       </v-card>
     </v-col>

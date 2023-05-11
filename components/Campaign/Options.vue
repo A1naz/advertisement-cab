@@ -4,31 +4,37 @@ import "@vuepic/vue-datepicker/dist/main.css";
 const { $client } = useNuxtApp();
 const dialog = ref(false);
 const budget = ref("");
+const onOff = ref();
 const targetPosition = ref("");
 const dailyBudget = ref("");
 const firstTime = ref("");
 const secondTime = ref("");
-const ifMaxBet = ref("Остановить кампанию");
+const ifMaxBet = ref("");
 const getBet = ref();
 const ifBetEquals = ref("");
 const { ruleRequired } = useFormRules();
 const campaignStore = useCampaignStore();
 import { useTheme } from "vuetify";
-import { nan } from "zod";
 const theme = useTheme();
-defineProps({
-  campaign: Object,
-});
+
+const props = defineProps({ campaign: Object });
+
+targetPosition.value = props.campaign.targetPosition;
+budget.value = props.campaign.budget;
+dailyBudget.value = props.campaign.dailyBudget;
+ifMaxBet.value = props.campaign.ifMaxBetDoesntMatch;
+getBet.value = props.campaign.getBet;
+ifBetEquals.value = props.campaign.ifBetEqualsNear;
+onOff.value = props.campaign.isTurnOn;
 
 function fixTime(timeArr) {
   const result = timeArr
     .map((time) => {
       const hours = time.hours < 10 ? `0${time.hours}` : time.hours;
       const minutes = time.minutes < 10 ? `0${time.minutes}` : time.minutes;
-      const seconds = time.seconds < 10 ? `0${time.seconds}` : time.seconds;
-      return `${hours}:${minutes}:${seconds}`;
+      return `${hours}:${minutes}`;
     })
-    .join(" - ");
+    .join("-");
   return result;
 }
 
@@ -66,10 +72,12 @@ async function adjustCampgain(id) {
 
   const timeFirst = fixTime(firstTime.value);
   const timeSecond = fixTime(secondTime.value);
-  const finalTimes = `${timeFirst} | ${timeSecond}`;
+  const finalTimes = `${timeFirst}|${timeSecond}`;
+  let increaseTo = 0;
 
   if (ifMaxBet.value === "Выставить ставку") {
-    ifMaxBet.value = `Выставить ставку ${getBet.value}р.`;
+    increaseTo = getBet.value;
+    console.log(increaseTo);
   }
 
   const { data, error } = await useAsyncData(() =>
@@ -81,6 +89,7 @@ async function adjustCampgain(id) {
       ifMaxBetDoesntMatch: ifMaxBet.value,
       ifBetEqualsNear: ifBetEquals.value,
       showHours: finalTimes,
+      maxBetIncreaseTo: Number(increaseTo),
     })
   );
 
@@ -96,13 +105,47 @@ async function adjustCampgain(id) {
     notify({ type: "success", text: "Кампания настроена" });
   }
 }
+
+async function turnOnOff(id) {
+  const { data, error } = await useAsyncData(() =>
+    $client.campaign.turnOnOffCampgain.mutate({
+      _id: id,
+      status: onOff.value,
+    })
+  );
+
+  if (error.value) {
+    notify({
+      type: "error",
+      text: error.value.message,
+    });
+  }
+}
 </script>
 <template>
-  <v-dialog v-model="dialog" width="1200" :scrim="false">
+  <v-dialog v-model="dialog" width="800" :scrim="false">
     <template v-slot:activator="{ props }">
-      <v-btn v-bind="props" border class="text-none" prepend-icon="mdi-cog" variant="text">
-        {{ campaign.isAdjusted ? "Настроена" : "Не настроена" }} ></v-btn
-      >
+      <div class="flex justify-end md:block">
+        <v-btn
+          v-bind="props"
+          border
+          class="text-none my-2 md:my-0"
+          prepend-icon="mdi-cog"
+          variant="text"
+        >
+          {{ campaign.isAdjusted ? "Настроена" : "Не настроена" }} ></v-btn
+        >
+        <v-switch
+          class="mx-3 my-2 md:mx-0 md:my-0"
+          density="compact"
+          v-model="onOff"
+          :update="turnOnOff(campaign._id)"
+          :label="onOff === false ? 'выключен' : 'включен'"
+          :disabled="campaign.isAdjusted === false ? true : false"
+          color="indigo"
+          hide-details
+        ></v-switch>
+      </div>
     </template>
     <v-card>
       <v-card-title class="text-sm">
@@ -120,13 +163,18 @@ async function adjustCampgain(id) {
             ></v-btn>
           </v-col>
         </v-row>
+        <v-row>
+          <v-col class="flex justify-center">
+            <div v-if="campaign.showHours" class="text-base">Часы показов:</div>
+            <div v-if="campaign.showHours" class="text-base">"{{ campaign.showHours }}"</div>
+          </v-col>
+        </v-row>
       </v-card-title>
       <v-card-text>
         <v-container>
           <v-row>
             <v-col>
-              <h2 class="mb-2">Часы показов:</h2>
-
+              <h2>Часы показов:</h2>
               <VueDatePicker
                 v-model="firstTime"
                 cancel-text="Отмена"
@@ -139,16 +187,33 @@ async function adjustCampgain(id) {
               </VueDatePicker>
             </v-col>
             <v-col>
-              <h2 class="mb-2">Часы показов:</h2>
+              <h2>Часы показов:</h2>
               <VueDatePicker
                 v-model="secondTime"
+                cancel-text="Отмена"
+                select-text="Выбрать"
                 :dark="theme.global.name.value == 'dark' ? true : false"
                 time-picker
                 range
             /></v-col>
           </v-row>
+
           <v-row>
             <v-col>
+              <v-text-field
+                :rules="[ruleRequired]"
+                width="200"
+                variant="filled"
+                v-model="targetPosition"
+                label="Целевая позиция"
+              ></v-text-field>
+              <v-text-field
+                :rules="[ruleRequired]"
+                variant="filled"
+                v-model="dailyBudget"
+                label="Дневной бюджет"
+                prefix="₽"
+              ></v-text-field>
               <v-text-field
                 :rules="[ruleRequired]"
                 variant="filled"
@@ -157,64 +222,43 @@ async function adjustCampgain(id) {
                 prefix="₽"
               ></v-text-field>
             </v-col>
+          </v-row>
+
+          <v-row class="mx-1">
             <v-col>
-              <v-text-field
-                :rules="[ruleRequired]"
-                variant="filled"
-                v-model="targetPosition"
-                label="Целевая позиция"
-              ></v-text-field>
-            </v-col>
-            <v-col>
-              <v-text-field
-                :rules="[ruleRequired]"
-                variant="filled"
-                v-model="dailyBudget"
-                label="Дневной бюджет"
-                prefix="₽"
-              ></v-text-field>
+              Если макс. ставка не соответсвует, то:
+              <v-radio-group v-model="ifMaxBet" column>
+                <v-radio label="Остановить кампанию" value="Остановить кампанию"></v-radio>
+                <v-radio
+                  label="Оставить последнюю ставку"
+                  value="Оставить последнюю ставку"
+                ></v-radio>
+                <v-radio label="Поставить макс. ставку" value="Поставить макс. ставку"></v-radio>
+                <v-radio label="Выставить ставку" value="Выставить ставку"> </v-radio>
+                <v-text-field
+                  :rules="[ruleRequired]"
+                  v-model="getBet"
+                  density="compact"
+                  :disabled="ifMaxBet == 'Выставить ставку' ? false : true"
+                  variant="filled"
+                  label="Ставка"
+                  prefix="₽"
+                  size="1"
+                ></v-text-field>
+              </v-radio-group>
             </v-col>
           </v-row>
           <v-row class="mx-1">
             <v-col>
-              Если макс. ставка не соответсвует, то:
-              <v-container fluid>
-                <v-radio-group v-model="ifMaxBet" column>
-                  <v-radio label="Остановить кампанию" value="Остановить кампанию"></v-radio>
-                  <v-radio
-                    label="Оставить последнюю ставку"
-                    value="Оставить последнюю ставку"
-                  ></v-radio>
-                  <div class="flex">
-                    <v-radio label="Выставить ставку" value="Выставить ставку"> </v-radio>
-                    <v-text-field
-                      :rules="[ruleRequired]"
-                      v-model="getBet"
-                      class="mt-3"
-                      density="compact"
-                      :disabled="ifMaxBet == 'Выставить ставку' ? false : true"
-                      variant="filled"
-                      label="Ставка"
-                      prefix="₽"
-                      size="1"
-                    ></v-text-field>
-                  </div>
-                  <v-radio label="Поставить макс. ставку" value="Поставить макс. ставку"></v-radio>
-                </v-radio-group>
-              </v-container>
-            </v-col>
-            <v-col>
               Если ставка равна соседней, то:
-              <v-container fluid>
-                <v-radio-group v-model="ifBetEquals" column>
-                  <v-radio label="Увеличить ставку на 1 руб" value="Увеличить ставку на 1 руб">
-                  </v-radio>
-                  <v-radio
-                    label="Оставить последнюю ставку"
-                    value="Оставить последнюю ставку"
-                  ></v-radio>
-                </v-radio-group>
-              </v-container>
+              <v-radio-group v-model="ifBetEquals" column>
+                <v-radio label="Увеличить ставку на 1 руб" value="Увеличить ставку на 1 руб">
+                </v-radio>
+                <v-radio
+                  label="Оставить последнюю ставку"
+                  value="Оставить последнюю ставку"
+                ></v-radio>
+              </v-radio-group>
             </v-col>
           </v-row>
         </v-container>

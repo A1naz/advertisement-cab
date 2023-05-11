@@ -79,6 +79,7 @@ export const campaignRouter = router({
         ifMaxBetDoesntMatch: z.string().min(10),
         ifBetEqualsNear: z.string().min(10),
         showHours: z.string(),
+        maxBetIncreaseTo: z.number().optional(),
       })
     )
     .mutation(async (opts) => {
@@ -92,6 +93,7 @@ export const campaignRouter = router({
         ifMaxBetDoesntMatch,
         ifBetEqualsNear,
         showHours,
+        maxBetIncreaseTo,
       } = input;
 
       if (!session) {
@@ -112,6 +114,10 @@ export const campaignRouter = router({
 
       const campaign: any = await Campaign.findById(_id);
 
+      if (maxBetIncreaseTo) {
+        campaign.getBet = maxBetIncreaseTo;
+      }
+
       campaign.budget = budget;
       campaign.dailyBudget = dailyBudget;
       campaign.targetPosition = targetPosition;
@@ -119,6 +125,7 @@ export const campaignRouter = router({
       campaign.ifBetEqualsNear = ifBetEqualsNear;
       campaign.showHours = showHours;
       campaign.isAdjusted = true;
+
       await campaign.save();
 
       return { status: "ok" };
@@ -157,7 +164,11 @@ export const campaignRouter = router({
       campaign.isTurnOn = status;
       await campaign.save();
 
-      return { status: "ok" };
+      if (status === true) {
+        return { status: "ok", message: "кампания включена" };
+      }
+
+      return { status: "ok", message: "кампания выключена" };
     }),
 
   deleteteCampaign: publicProcedure
