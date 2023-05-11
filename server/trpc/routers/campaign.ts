@@ -57,7 +57,7 @@ export const campaignRouter = router({
         uuid: uuid(),
         advertId: 0,
         type: conversedType,
-        title: title,
+        name: title,
         user: session._id,
         nms: {
           category: category,
