@@ -1,6 +1,4 @@
-<script setup>
-import { boolean } from "zod";
-
+<script setup lang="ts">
 const dialog = ref(false);
 const campaignStore = useCampaignStore();
 const onOff = ref();
@@ -12,7 +10,6 @@ const options = ref([
   "Под управлением",
   "Дневной лимит",
 ]);
-
 </script>
 <template>
   <div class="mb-1">
@@ -73,9 +70,11 @@ const options = ref([
             <div class="text-xs mt-2">ID: {{ campaign.advertId }}</div>
           </td>
           <td>
-            <div v-for="nms in campaign.nms">
-              <div v-for="nm in nms.nms" class="my-1">
-                {{ nm }}
+            <div v-for="nms in campaign.nms" class="flex">
+              <div v-for="nm in nms.nms" class="m-1">
+                <v-img class="w-9" :src="findImage(nm)"
+                  ><v-tooltip activator="parent" location="top">{{ nm }}</v-tooltip>
+                </v-img>
               </div>
             </div>
           </td>
@@ -119,8 +118,7 @@ const options = ref([
             <div class="my-1">CR: {{ campaign.CR }}</div>
           </td>
           <td>
-            <div>
-            </div>
+            <div></div>
 
             <div class="mt-2">
               <v-row justify="center">

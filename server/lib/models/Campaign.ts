@@ -73,6 +73,9 @@ const CampaignSchema = new Schema(
     budget: {
       type: Number,
     },
+    params: {
+      type: [Object],
+    },
     dailyBudget: {
       type: Number,
     },
@@ -94,6 +97,10 @@ const CampaignSchema = new Schema(
     deliveryTime: {
       type: String,
       default: "",
+    },
+    deleteMark: {
+      type: Boolean,
+      default: false,
     },
     isTurnOn: {
       type: Boolean,

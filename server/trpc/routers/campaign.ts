@@ -15,7 +15,7 @@ export const campaignRouter = router({
         type: z.string(),
         title: z.string().min(3, "Название должно содержать не менее 3 символов"),
         category: z.string().min(3, "Название категории должно содержать не менее 3 символов"),
-        items: z.number().array().nonempty({ message: "Минимум 1 артикул" }),
+        items: z.number().array(),
       })
     )
     .mutation(async (opts) => {
@@ -171,16 +171,17 @@ export const campaignRouter = router({
       return { status: "ok", message: "кампания выключена" };
     }),
 
-  deleteteCampaign: publicProcedure
+  deleteCampaign: publicProcedure
     .input(
       z.object({
         _id: z.string(),
+        status: z.boolean(),
       })
     )
     .mutation(async (opts) => {
       const session = opts.ctx.session as any;
       const { input } = opts;
-      const { _id } = input;
+      const { _id, status } = input;
 
       if (!session) {
         throw new TRPCError({
@@ -198,7 +199,10 @@ export const campaignRouter = router({
         });
       }
 
-      await Campaign.findByIdAndDelete(_id);
+      const campaign: any = await Campaign.findById(_id);
+
+      campaign.deleteMark = status;
+      await campaign.save();
 
       return { status: "ok" };
     }),

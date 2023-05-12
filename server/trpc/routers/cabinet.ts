@@ -97,6 +97,8 @@ export const cabinetRouter = router({
             nms: item.nms.map((innerItem: any) => innerItem.nm),
           }));
 
+   
+
           const newCampaign = await Campaign.create({
             uuid: uuid(),
             advertId: campaign.advertId,
@@ -107,6 +109,7 @@ export const cabinetRouter = router({
             nms: items,
             user: user._id,
             createTime: campaign.createTime,
+            params: campaign.params,
           });
         });
 

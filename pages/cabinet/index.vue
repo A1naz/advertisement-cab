@@ -8,13 +8,15 @@ const search = ref("");
 
 const { status } = useAuth();
 const campaignStore = useCampaignStore();
-if (status.value === "authenticated") await campaignStore.getCampaigns();
+
+if (status.value === "authenticated") campaignStore.getCampaigns();
+
 isLoading.value = false;
 const { $client } = useNuxtApp();
 const { notify } = useNotification();
 
 function searchCampaigns() {
-campaignStore.searchCampaign(search.value)
+  campaignStore.searchCampaign(search.value);
 }
 
 definePageMeta({
@@ -89,11 +91,15 @@ async function deleteCabinet(cabinetId: any) {
       </v-col>
     </v-row>
     <v-row>
-      <v-col v-if="width < 1200">
-        <CampaignCart />
+      <v-col>
+        <div v-if="width < 1200">
+          <CampaignCart />
+        </div>
       </v-col>
-      <v-col v-if="width >= 1200">
-        <div>
+    </v-row>
+    <v-row>
+      <v-col>
+        <div v-if="width >= 1200">
           <CampaignTable />
         </div>
       </v-col>

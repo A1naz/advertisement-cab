@@ -83,7 +83,12 @@ const campaignStore = useCampaignStore();
                 <div class="text-center mb-3">Артикулы</div>
                 <div v-for="nms in campaign.nms" class="flex-col">
                   <v-row>
-                    <v-col class="text-center" v-for="nm in nms.nms">{{ nm }} &nbsp; &nbsp;</v-col>
+                    <v-col class="text-center" v-for="nm in nms.nms">
+                      <v-img class="w-16" :src="findImage(nm)" 
+                        ><v-tooltip activator="parent" location="top">{{ nm }}</v-tooltip>
+                      </v-img>
+                      &nbsp; &nbsp;</v-col
+                    >
                   </v-row>
                 </div>
               </v-col>

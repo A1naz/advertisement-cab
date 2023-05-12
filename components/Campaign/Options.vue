@@ -1,11 +1,12 @@
-<script setup>
+<script setup lang="ts">
 import VueDatePicker from "@vuepic/vue-datepicker";
 import "@vuepic/vue-datepicker/dist/main.css";
+import { useTheme } from "vuetify";
 const { $client } = useNuxtApp();
 const dialog = ref(false);
 const budget = ref("");
 const onOff = ref();
-const targetPosition = ref("");
+const targetPosition = ref();
 const dailyBudget = ref("");
 const firstTime = ref("");
 const secondTime = ref("");
@@ -14,22 +15,25 @@ const getBet = ref();
 const ifBetEquals = ref("");
 const { ruleRequired } = useFormRules();
 const campaignStore = useCampaignStore();
-import { useTheme } from "vuetify";
 const theme = useTheme();
+const deleteStatus = ref()
 
-const props = defineProps({ campaign: Object });
+const props: any = defineProps({ campaign: Object });
 
-targetPosition.value = props.campaign.targetPosition;
-budget.value = props.campaign.budget;
-dailyBudget.value = props.campaign.dailyBudget;
-ifMaxBet.value = props.campaign.ifMaxBetDoesntMatch;
-getBet.value = props.campaign.getBet;
-ifBetEquals.value = props.campaign.ifBetEqualsNear;
-onOff.value = props.campaign.isTurnOn;
+if (props) {
+  targetPosition.value = props.campaign.targetPosition;
+  budget.value = props.campaign.budget;
+  dailyBudget.value = props.campaign.dailyBudget;
+  ifMaxBet.value = props.campaign.ifMaxBetDoesntMatch;
+  getBet.value = props.campaign.getBet;
+  ifBetEquals.value = props.campaign.ifBetEqualsNear;
+  onOff.value = props.campaign.isTurnOn;
+  deleteStatus.value = props.campaign.deleteMark
+}
 
-function fixTime(timeArr) {
+function fixTime(timeArr: any) {
   const result = timeArr
-    .map((time) => {
+    .map((time: any) => {
       const hours = time.hours < 10 ? `0${time.hours}` : time.hours;
       const minutes = time.minutes < 10 ? `0${time.minutes}` : time.minutes;
       return `${hours}:${minutes}`;
@@ -38,7 +42,34 @@ function fixTime(timeArr) {
   return result;
 }
 
-async function adjustCampgain(id) {
+async function deleteCampaign(id: string, status: boolean) {
+  const { data, error } = await useAsyncData(() =>
+    $client.campaign.deleteCampaign.mutate({
+      _id: id,
+      status: status,
+    })
+  );
+
+  if (error.value) {
+    notify({
+      type: "error",
+      text: error.value.message,
+    });
+  }
+
+  if (data.value && status == false) {
+    await campaignStore.getCampaigns();
+    deleteStatus.value = false;
+    notify({ type: "success", text: "Удаление отменено" });
+  } else if (data.value && status == true) {
+    await campaignStore.getCampaigns();
+    deleteStatus.value = true;
+    notify({ type: "success", text: "Кампания посталвена на удаление" });
+  }
+
+}
+
+async function adjustCampgain(id: string) {
   if (
     ruleRequired(budget.value) !== true ||
     ruleRequired(targetPosition.value) !== true ||
@@ -51,8 +82,7 @@ async function adjustCampgain(id) {
       type: "error",
       text: "Заполните все поля",
     });
-    isLoading.value = false;
-    isBtnDisabled.value = false;
+
     return;
   }
 
@@ -65,8 +95,7 @@ async function adjustCampgain(id) {
       type: "error",
       text: "Некорректные поля",
     });
-    isLoading.value = false;
-    isBtnDisabled.value = false;
+
     return;
   }
 
@@ -106,7 +135,7 @@ async function adjustCampgain(id) {
   }
 }
 
-async function turnOnOff(id) {
+async function turnOnOff(id: string) {
   const { data, error } = await useAsyncData(() =>
     $client.campaign.turnOnOffCampgain.mutate({
       _id: id,
@@ -123,7 +152,7 @@ async function turnOnOff(id) {
 }
 </script>
 <template>
-  <v-dialog v-model="dialog" width="800" :scrim="false">
+  <v-dialog v-model="dialog" width="800">
     <template v-slot:activator="{ props }">
       <div class="flex justify-end md:block">
         <v-btn
@@ -133,15 +162,15 @@ async function turnOnOff(id) {
           prepend-icon="mdi-cog"
           variant="text"
         >
-          {{ campaign.isAdjusted ? "Настроена" : "Не настроена" }} ></v-btn
+          {{ campaign?.isAdjusted ? "Настроена" : "Не настроена" }} ></v-btn
         >
         <v-switch
           class="mx-3 my-2 md:mx-0 md:my-0"
           density="compact"
           v-model="onOff"
-          :update="turnOnOff(campaign._id)"
+          :update="turnOnOff(campaign?._id)"
           :label="onOff === false ? 'выключен' : 'включен'"
-          :disabled="campaign.isAdjusted === false ? true : false"
+          :disabled="campaign?.isAdjusted === false ? true : false"
           color="indigo"
           hide-details
         ></v-switch>
@@ -151,11 +180,10 @@ async function turnOnOff(id) {
       <v-card-title class="text-sm">
         <v-row class="flex justify-center">
           <v-col>
-            <span class="text-h10">Опции "{{ campaign.name }}" </span>
+            <span class="text-h10">Опции "{{ campaign?.name }}" </span>
           </v-col>
           <v-col class="text-end">
             <v-btn
-              color="blue-lighten-2"
               size="large"
               variant="text"
               icon="mdi-close-thick"
@@ -165,8 +193,8 @@ async function turnOnOff(id) {
         </v-row>
         <v-row>
           <v-col class="flex justify-center">
-            <div v-if="campaign.showHours" class="text-base">Часы показов:</div>
-            <div v-if="campaign.showHours" class="text-base">"{{ campaign.showHours }}"</div>
+            <div v-if="campaign?.showHours" class="text-base">Часы показов:</div>
+            <div v-if="campaign?.showHours" class="text-base">"{{ campaign?.showHours }}"</div>
           </v-col>
         </v-row>
       </v-card-title>
@@ -201,6 +229,7 @@ async function turnOnOff(id) {
           <v-row>
             <v-col>
               <v-text-field
+                type="number"
                 :rules="[ruleRequired]"
                 width="200"
                 variant="filled"
@@ -208,6 +237,7 @@ async function turnOnOff(id) {
                 label="Целевая позиция"
               ></v-text-field>
               <v-text-field
+                type="number"
                 :rules="[ruleRequired]"
                 variant="filled"
                 v-model="dailyBudget"
@@ -215,6 +245,7 @@ async function turnOnOff(id) {
                 prefix="₽"
               ></v-text-field>
               <v-text-field
+                type="number"
                 :rules="[ruleRequired]"
                 variant="filled"
                 v-model="budget"
@@ -236,6 +267,7 @@ async function turnOnOff(id) {
                 <v-radio label="Поставить макс. ставку" value="Поставить макс. ставку"></v-radio>
                 <v-radio label="Выставить ставку" value="Выставить ставку"> </v-radio>
                 <v-text-field
+                  type="number"
                   :rules="[ruleRequired]"
                   v-model="getBet"
                   density="compact"
@@ -264,8 +296,27 @@ async function turnOnOff(id) {
         </v-container>
       </v-card-text>
       <v-card-actions>
+        <v-btn
+          variant="tonal"
+          color="red"
+          class="ml-7"
+          size="default"
+          @click="deleteCampaign(props.campaign._id, true)"
+          v-if="!deleteStatus"
+          >Удалить</v-btn
+        >
+        <v-btn
+          variant="tonal"
+          class="ml-7"
+          size="default"
+          @click="deleteCampaign(props.campaign._id, false)"
+          v-if="deleteStatus"
+          >Отмена</v-btn
+        >
         <v-spacer></v-spacer>
-        <v-btn variant="text" @click="adjustCampgain(campaign._id)"> Сохранить </v-btn>
+        <v-btn variant="tonal" class="mr-7" size="default" @click="adjustCampgain(campaign?._id)">
+          Сохранить</v-btn
+        >
       </v-card-actions>
     </v-card>
   </v-dialog>

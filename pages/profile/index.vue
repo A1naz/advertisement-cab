@@ -24,6 +24,8 @@ async function connectApiKeyAdvertisement() {
   if (data.value) {
     notify({ type: "success", text: "Личный кабинет подключен" });
   }
+
+  await userStore.client;
 }
 
 async function saveChanges() {

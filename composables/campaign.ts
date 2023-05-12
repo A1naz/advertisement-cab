@@ -34,11 +34,12 @@ export const useCampaignStore = defineStore("campaign", () => {
         });
       }
     });
+    console.log(itemsByCategory.value);
   }
 
   function searchCampaign(searchValue: string) {
-     sortedAndSeachedCampaigns.value = sortedCampaigns.value;
-     
+    sortedAndSeachedCampaigns.value = sortedCampaigns.value;
+
     sortedAndSeachedCampaigns.value = sortedAndSeachedCampaigns.value.filter((el: any) =>
       el.name.toLowerCase().includes(searchValue.toLowerCase()) ||
       el.advertId.toString().includes(searchValue.toString()) ||
@@ -49,50 +50,29 @@ export const useCampaignStore = defineStore("campaign", () => {
   }
 
   function sortCampaigns(label: string) {
-    if (label === "Все") {
-      sortedCampaigns.value = campaigns.value;
-      sortedAndSeachedCampaigns.value = sortedCampaigns.value;
+    sortedCampaigns.value = campaigns.value;
+
+    switch (label) {
+      case "Активные":
+        sortedCampaigns.value = sortedCampaigns.value.filter((el: any) => el.status === 9);
+        break;
+      case "Приостановленные":
+        sortedCampaigns.value = sortedCampaigns.value.filter((el: any) => el.status === 11);
+        break;
+      case "Архив":
+        sortedCampaigns.value = sortedCampaigns.value.filter((el: any) => el.status === 7);
+        break;
+      case "Дневной лимит":
+        sortedCampaigns.value = sortedCampaigns.value.filter(
+          (el: any) => el.isTurnOn && el.dailyBudget === 0
+        );
+        break;
+      case "Под управлением":
+        sortedCampaigns.value = sortedCampaigns.value.filter((el: any) => el.isTurnOn);
+        break;
     }
 
-    if (label === "Активные") {
-      sortedCampaigns.value = campaigns.value;
-      sortedCampaigns.value = sortedCampaigns.value.filter((el: any) =>
-        el.status === 9 ? el : null
-      );
-      sortedAndSeachedCampaigns.value = sortedCampaigns.value;
-    }
-
-    if (label === "Приостановленные") {
-      sortedCampaigns.value = campaigns.value;
-      sortedCampaigns.value = sortedCampaigns.value.filter((el: any) =>
-        el.status === 11 ? el : null
-      );
-      sortedAndSeachedCampaigns.value = sortedCampaigns.value;
-    }
-
-    if (label === "Архив") {
-      sortedCampaigns.value = campaigns.value;
-      sortedCampaigns.value = sortedCampaigns.value.filter((el: any) =>
-        el.status === 7 ? el : null
-      );
-      sortedAndSeachedCampaigns.value = sortedCampaigns.value;
-    }
-
-    if (label === "Дневной лимит") {
-      sortedCampaigns.value = campaigns.value;
-      sortedCampaigns.value = sortedCampaigns.value.filter((el: any) =>
-        el.isTurnOn === true && el.dailyBudget == 0 ? el : null
-      );
-      sortedAndSeachedCampaigns.value = sortedCampaigns.value;
-    }
-
-    if (label === "Под управлением") {
-      sortedCampaigns.value = campaigns.value;
-      sortedCampaigns.value = sortedCampaigns.value.filter((el: any) =>
-        el.isTurnOn === true ? el : null
-      );
-      sortedAndSeachedCampaigns.value = sortedCampaigns.value;
-    }
+    sortedAndSeachedCampaigns.value = sortedCampaigns.value;
   }
 
   return {

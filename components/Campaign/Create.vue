@@ -1,4 +1,4 @@
-<script setup>
+<script setup lang="ts">
 import { useNotification } from "@kyvg/vue3-notification";
 
 const campaignStore = useCampaignStore();
@@ -121,15 +121,30 @@ async function addCampaign() {
                 ></v-select>
               </v-col>
               <v-col cols="12">
-                <v-select
+                <v-autocomplete
+                  multiple
                   v-model="selectedArticles"
                   :items="campaignStore.itemsByCategory"
                   label="Предметы"
-                  multiple
+                  closable-chips
                   no-data-text="Нет предметов"
                   hint="Выберите один или несколько предметов"
                   persistent-hint
-                ></v-select>
+                >
+                  <template v-slot:chip="{ props, item }">
+                    <v-img class="w-8 mr-1" :src="findImage(item.title)"> </v-img>
+                    <v-chip
+                      class="mr-2 mt-1"
+                      v-bind="props"
+                      :repend-icon="findImage(item.title)"
+                      :text="item.title"
+                    ></v-chip>
+                  </template>
+
+                  <template v-slot:item="{ props, item }" class="">
+                    <v-list-item :title="item.title" v-bind="props"> </v-list-item>
+                  </template>
+                </v-autocomplete>
               </v-col>
             </v-row>
           </v-container>
