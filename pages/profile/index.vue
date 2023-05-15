@@ -2,7 +2,8 @@
 import { useNotification } from "@kyvg/vue3-notification";
 
 const userStore = useUserStore();
-const client = userStore.client;
+const campaignStore = useCampaignStore();
+let client = userStore.client;
 const { $client } = useNuxtApp();
 const { ruleEmail, rulePassLen, ruleRequired } = useFormRules();
 const { notify } = useNotification();
@@ -23,9 +24,11 @@ async function connectApiKeyAdvertisement() {
 
   if (data.value) {
     notify({ type: "success", text: "Личный кабинет подключен" });
-  }
 
-  await userStore.client;
+    await userStore.getClient();
+    await campaignStore.getCampaigns();
+    wbForm.apiKeyAdvertisement = client.apiKeyAdvertisement;
+  }
 }
 
 async function saveChanges() {

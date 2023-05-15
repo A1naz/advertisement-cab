@@ -8,8 +8,8 @@ const budget = ref("");
 const onOff = ref(false);
 const targetPosition = ref();
 const dailyBudget = ref("");
-const firstTime = ref("");
-const secondTime = ref("");
+const firstTime = ref();
+const secondTime = ref();
 const ifMaxBet = ref("");
 const getBet = ref();
 const ifBetEquals = ref("");
@@ -19,6 +19,23 @@ const theme = useTheme();
 const deleteStatus = ref();
 
 const props: any = defineProps({ campaign: Object });
+
+interface TimeObject {
+  hours: number;
+  minutes: number;
+  seconds: number;
+}
+
+function parseTime(input: string) {
+  const groups = input.split("|");
+  const timeArrays: TimeObject[][] = groups.map((group) =>
+    group.split("-").map((time) => {
+      const [hours, minutes] = time.split(":").map(Number);
+      return { hours, minutes, seconds: 0 };
+    })
+  );
+  return [timeArrays[0], timeArrays[1]];
+}
 
 if (props) {
   targetPosition.value = props.campaign.targetPosition;
@@ -31,6 +48,11 @@ if (props) {
     onOff.value = props.campaign.isTurnOn;
   }
   deleteStatus.value = props.campaign.deleteMark;
+  if (props.campaign.showHours) {
+    const times = parseTime(props.campaign.showHours);
+    firstTime.value = times[0];
+    secondTime.value = times[1];
+  }
 }
 
 function fixTime(timeArr: any) {
@@ -151,11 +173,18 @@ async function turnOnOff(id: string) {
   }
 
   if (data.value) {
-    notify({
-      type: "success",
-      text: data.value.message,
-    });
-    campaignStore.getCampaigns()
+    if (data.value.message === "кампания включена") {
+      notify({
+        type: "success",
+        text: data.value.message,
+      });
+    } else {
+      notify({
+        type: "info",
+        text: data.value.message,
+      });
+    }
+    campaignStore.getCampaigns();
   }
 }
 </script>
@@ -188,7 +217,7 @@ async function turnOnOff(id: string) {
       <v-card-title class="text-sm">
         <v-row class="flex justify-center">
           <v-col>
-            <span class="text-h10">Опции "{{ campaign?.name }}" </span>
+            <h1 class="md:mx-3">Опции "{{ campaign?.name }}"</h1>
           </v-col>
           <v-col class="text-end">
             <v-btn
@@ -199,17 +228,12 @@ async function turnOnOff(id: string) {
             ></v-btn>
           </v-col>
         </v-row>
-        <v-row>
-          <v-col class="flex justify-center">
-            <div v-if="campaign?.showHours" class="text-base">Часы показов:</div>
-            <div v-if="campaign?.showHours" class="text-base">"{{ campaign?.showHours }}"</div>
-          </v-col>
-        </v-row>
       </v-card-title>
       <v-card-text>
         <v-container>
           <v-row>
             <v-col>
+              <div></div>
               <h2>Часы показов:</h2>
               <VueDatePicker
                 v-model="firstTime"
@@ -266,14 +290,24 @@ async function turnOnOff(id: string) {
           <v-row class="mx-1">
             <v-col>
               Если макс. ставка не соответсвует, то:
-              <v-radio-group v-model="ifMaxBet" column>
-                <v-radio label="Остановить кампанию" value="Остановить кампанию"></v-radio>
+              <v-radio-group density="compact" v-model="ifMaxBet" column>
                 <v-radio
+                  label="Остановить кампанию"
+                  density="comfortable"
+                  value="Остановить кампанию"
+                ></v-radio>
+                <v-radio
+                  density="comfortable"
                   label="Оставить последнюю ставку"
                   value="Оставить последнюю ставку"
                 ></v-radio>
-                <v-radio label="Поставить макс. ставку" value="Поставить макс. ставку"></v-radio>
-                <v-radio label="Выставить ставку" value="Выставить ставку"> </v-radio>
+                <v-radio
+                  label="Поставить макс. ставку"
+                  density="comfortable"
+                  value="Поставить макс. ставку"
+                ></v-radio>
+                <v-radio label="Выставить ставку" density="comfortable" value="Выставить ставку">
+                </v-radio>
                 <v-text-field
                   type="number"
                   :rules="[ruleRequired]"
@@ -291,10 +325,15 @@ async function turnOnOff(id: string) {
           <v-row class="mx-1">
             <v-col>
               Если ставка равна соседней, то:
-              <v-radio-group v-model="ifBetEquals" column>
-                <v-radio label="Увеличить ставку на 1 руб" value="Увеличить ставку на 1 руб">
+              <v-radio-group v-model="ifBetEquals" density="compact" column>
+                <v-radio
+                  density="comfortable"
+                  label="Увеличить ставку на 1 руб"
+                  value="Увеличить ставку на 1 руб"
+                >
                 </v-radio>
                 <v-radio
+                  density="comfortable"
                   label="Оставить последнюю ставку"
                   value="Оставить последнюю ставку"
                 ></v-radio>

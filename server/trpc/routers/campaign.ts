@@ -23,8 +23,6 @@ export const campaignRouter = router({
       const { input } = opts;
       const { type, title, category, items } = input;
 
-      console.log("ok");
-
       let conversedType: number;
 
       if (type === "Карточка товара") {
@@ -160,7 +158,6 @@ export const campaignRouter = router({
       }
 
       const campaign: any = await Campaign.findById(_id);
-      console.log(status);
 
       campaign.isTurnOn = status;
       await campaign.save();
