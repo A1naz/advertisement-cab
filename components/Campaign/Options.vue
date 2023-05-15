@@ -152,7 +152,7 @@ async function turnOnOff(id: string) {
 }
 </script>
 <template>
-  <v-dialog v-model="dialog" width="800">
+  <v-dialog v-model="dialog" width="800" transition="fade-transition">
     <template v-slot:activator="{ props }">
       <div class="flex justify-end md:block">
         <v-btn

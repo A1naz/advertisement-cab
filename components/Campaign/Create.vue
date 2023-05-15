@@ -76,7 +76,7 @@ async function addCampaign() {
 
 <template>
   <v-row justify="end">
-    <v-dialog v-model="dialog" width="1024">
+    <v-dialog v-model="dialog" width="1024" transition="fade-transition">
       <v-progress-linear
         :active="isLoading"
         :indeterminate="isLoading"
