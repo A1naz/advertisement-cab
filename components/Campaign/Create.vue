@@ -53,7 +53,6 @@ async function addCampaign() {
   );
 
   if (error.value) {
-    console.log(error);
     notify({
       type: "error",
       text: error.value.message,

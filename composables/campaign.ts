@@ -1,4 +1,5 @@
 import { acceptHMRUpdate, defineStore } from "pinia";
+import { any } from "zod";
 
 export const useCampaignStore = defineStore("campaign", () => {
   const campaigns = ref<any>([]);
@@ -7,6 +8,7 @@ export const useCampaignStore = defineStore("campaign", () => {
   const items = ref<any>([]);
   const categories = ref<any>([]);
   const itemsByCategory = ref<any>([]);
+  const sortValue = ref("turnOnOff");
 
   async function getCampaigns() {
     const { $client } = useNuxtApp();
@@ -23,6 +25,7 @@ export const useCampaignStore = defineStore("campaign", () => {
         }
       }
     });
+    sortByCreateTime();
   }
 
   function sortItemsByCategory(value: string) {
@@ -34,12 +37,34 @@ export const useCampaignStore = defineStore("campaign", () => {
         });
       }
     });
-    console.log(itemsByCategory.value);
+  }
+
+  function sortByCreateTime() {
+    if (sortValue.value == "ascending") {
+      sortedAndSeachedCampaigns.value = sortedAndSeachedCampaigns.value.sort((a: any, b: any) => {
+        const aDate = new Date(a.createTime.replace(/^(\d{2})\.(\d{2})\.(\d{4})$/, "$2.$1.$3"));
+        const bDate = new Date(b.createTime.replace(/^(\d{2})\.(\d{2})\.(\d{4})$/, "$2.$1.$3"));
+        return aDate.getTime() - bDate.getTime();
+      });
+      console.log("ok");
+    }
+    if (sortValue.value == "descending") {
+      sortedAndSeachedCampaigns.value = sortedAndSeachedCampaigns.value.sort((a: any, b: any) => {
+        const aDate = new Date(a.createTime.replace(/^(\d{2})\.(\d{2})\.(\d{4})$/, "$2.$1.$3"));
+        const bDate = new Date(b.createTime.replace(/^(\d{2})\.(\d{2})\.(\d{4})$/, "$2.$1.$3"));
+        return bDate.getTime() - aDate.getTime();
+      });
+    }
+
+    if (sortValue.value == "turnOnOff") {
+      const on = sortedAndSeachedCampaigns.value.filter((item: any) => item.isTurnOn);
+      const off = sortedAndSeachedCampaigns.value.filter((item: any) => !item.isTurnOn);
+      sortedAndSeachedCampaigns.value = [...on, ...off];
+    }
   }
 
   function searchCampaign(searchValue: string) {
     sortedAndSeachedCampaigns.value = sortedCampaigns.value;
-
     sortedAndSeachedCampaigns.value = sortedAndSeachedCampaigns.value.filter((el: any) =>
       el.name.toLowerCase().includes(searchValue.toLowerCase()) ||
       el.advertId.toString().includes(searchValue.toString()) ||
@@ -47,6 +72,8 @@ export const useCampaignStore = defineStore("campaign", () => {
         ? el
         : null
     );
+
+    sortByCreateTime();
   }
 
   function sortCampaigns(label: string) {
@@ -77,6 +104,7 @@ export const useCampaignStore = defineStore("campaign", () => {
 
   return {
     items,
+    sortValue,
     campaigns,
     sortedCampaigns,
     categories,
@@ -84,6 +112,7 @@ export const useCampaignStore = defineStore("campaign", () => {
     getCampaigns,
     sortCampaigns,
     searchCampaign,
+    sortByCreateTime,
     sortedAndSeachedCampaigns,
     sortItemsByCategory,
   };

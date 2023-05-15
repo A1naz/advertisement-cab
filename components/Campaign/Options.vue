@@ -106,7 +106,6 @@ async function adjustCampgain(id: string) {
 
   if (ifMaxBet.value === "Выставить ставку") {
     increaseTo = getBet.value;
-    console.log(increaseTo);
   }
 
   const { data, error } = await useAsyncData(() =>

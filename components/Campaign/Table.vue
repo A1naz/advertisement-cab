@@ -10,6 +10,24 @@ const options = ref([
   "Под управлением",
   "Дневной лимит",
 ]);
+
+const iconArrow = ref("");
+
+function sortByCreateTime() {
+  if (iconArrow.value === "") {
+    iconArrow.value = "mdi-menu-down";
+    campaignStore.sortValue = "descending";
+    campaignStore.sortByCreateTime();
+  } else if (iconArrow.value === "mdi-menu-down") {
+    iconArrow.value = "mdi-menu-up";
+    campaignStore.sortValue = "ascending";
+    campaignStore.sortByCreateTime();
+  } else if (iconArrow.value === "mdi-menu-up") {
+    campaignStore.sortValue = "turnOnOff";
+    iconArrow.value = "";
+    campaignStore.sortByCreateTime();
+  }
+}
 </script>
 <template>
   <div class="mb-1">
@@ -34,7 +52,10 @@ const options = ref([
     <v-table class="rounded-lg pt-2" density="comfortable">
       <thead>
         <tr>
-          <th class="text-left">Дата создания</th>
+          <th class="text-left cursor-pointer" @click="sortByCreateTime">
+            Дата создания
+            <v-icon size="large" class="mb-1" :icon="iconArrow"></v-icon>
+          </th>
           <th class="text-left">Кампания</th>
           <th class="text-left">Артикулы</th>
           <th class="text-left">Статус</th>

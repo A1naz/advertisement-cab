@@ -23,32 +23,42 @@ onMounted(() => {
   <div>
     <VApp>
       <v-navigation-drawer
+      primary
+        :absolute="true"
         v-model="drawer"
         location="left"
         :rail="false"
-        rail-width="250"
         width="250"
-      >
+        >
         <template #prepend />
 
-        <v-list density="compact" class="h-auto d-flex flex-column" nav>
-          <v-list-item
-            prepend-icon="mdi-account"
-            title="Профиль"
-            value="profile"
-            :active="$route.path === '/profile'"
-            active-color="primary"
-            to="/profile"
-          />
-          <v-list-item
-            prepend-icon="mdi-briefcase "
-            title="Рекламные кампании"
-            value="advertisement"
-            :active="$route.path === '/cabinet'"
-            active-color="primary"
-            to="/cabinet"
-          />
-        </v-list>
+          <v-list density="compact" class="h-auto d-flex flex-column" absolute nav>
+            <v-list-item
+              prepend-icon="mdi-account"
+              title="Профиль"
+              value="profile"
+              :active="$route.path === '/profile'"
+              active-color="primary"
+              to="/profile"
+            />
+            <v-list-item
+              prepend-icon="mdi-briefcase "
+              title="Рекламные кампании"
+              value="advertisement"
+              :active="$route.path === '/cabinet'"
+              active-color="primary"
+              to="/cabinet"
+            />
+            <!-- <v-list-item
+              prepend-icon="mdi-briefcase "
+              title="Статистика"
+              value="advertisement"
+              :active="$route.path === '/cabinet'"
+              active-color="primary"
+              to="/cabinet"
+            /> -->
+          </v-list>
+
       </v-navigation-drawer>
       <v-app-bar density="compact" primary>
         <template #prepend>
