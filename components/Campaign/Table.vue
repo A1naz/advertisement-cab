@@ -94,7 +94,9 @@ function sortByCreateTime() {
             <div v-for="nms in campaign.nms" class="flex">
               <div v-for="nm in nms.nms" class="m-1">
                 <v-img class="w-9" :src="findImage(nm)"
-                  ><v-tooltip activator="parent" location="top">{{ nm }}</v-tooltip>
+                  ><v-tooltip activator="parent" transition="fade-transition" location="top">{{
+                    nm
+                  }}</v-tooltip>
                 </v-img>
               </div>
             </div>

@@ -16,7 +16,7 @@ const ifBetEquals = ref("");
 const { ruleRequired } = useFormRules();
 const campaignStore = useCampaignStore();
 const theme = useTheme();
-const deleteStatus = ref()
+const deleteStatus = ref();
 
 const props: any = defineProps({ campaign: Object });
 
@@ -27,8 +27,8 @@ if (props) {
   ifMaxBet.value = props.campaign.ifMaxBetDoesntMatch;
   getBet.value = props.campaign.getBet;
   ifBetEquals.value = props.campaign.ifBetEqualsNear;
-  onOff.value = props.campaign.isTurnOn;
-  deleteStatus.value = props.campaign.deleteMark
+  onOff.value = props.campaign.isTurnOn === null ? false : props.campaign.isTurnOn ;
+  deleteStatus.value = props.campaign.deleteMark;
 }
 
 function fixTime(timeArr: any) {
@@ -66,7 +66,6 @@ async function deleteCampaign(id: string, status: boolean) {
     deleteStatus.value = true;
     notify({ type: "success", text: "Кампания посталвена на удаление" });
   }
-
 }
 
 async function adjustCampgain(id: string) {
@@ -151,7 +150,7 @@ async function turnOnOff(id: string) {
 }
 </script>
 <template>
-  <v-dialog v-model="dialog" width="800" transition="fade-transition">
+  <v-dialog v-model="dialog" width="1000" transition="fade-transition">
     <template v-slot:activator="{ props }">
       <div class="flex justify-end md:block">
         <v-btn
@@ -179,6 +178,7 @@ async function turnOnOff(id: string) {
       <v-card-title class="text-sm">
         <v-row class="flex justify-center">
           <v-col>
+            {{firstTime}}
             <span class="text-h10">Опции "{{ campaign?.name }}" </span>
           </v-col>
           <v-col class="text-end">

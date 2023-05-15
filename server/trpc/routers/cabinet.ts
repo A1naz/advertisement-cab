@@ -61,11 +61,12 @@ export const cabinetRouter = router({
           },
         });
 
-        const isCabinetExist = await Campaign.find({
+
+        const isCampaignExist = await Campaign.find({
           user: user._id,
         });
 
-        if (isCabinetExist) {
+        if (isCampaignExist) {
           await Campaign.deleteMany({ user: user._id });
         }
 
