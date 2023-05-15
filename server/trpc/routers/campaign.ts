@@ -160,6 +160,7 @@ export const campaignRouter = router({
       }
 
       const campaign: any = await Campaign.findById(_id);
+      console.log(status);
 
       campaign.isTurnOn = status;
       await campaign.save();

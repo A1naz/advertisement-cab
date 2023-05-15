@@ -5,7 +5,7 @@ import { useTheme } from "vuetify";
 const { $client } = useNuxtApp();
 const dialog = ref(false);
 const budget = ref("");
-const onOff = ref();
+const onOff = ref(false);
 const targetPosition = ref();
 const dailyBudget = ref("");
 const firstTime = ref("");
@@ -27,7 +27,9 @@ if (props) {
   ifMaxBet.value = props.campaign.ifMaxBetDoesntMatch;
   getBet.value = props.campaign.getBet;
   ifBetEquals.value = props.campaign.ifBetEqualsNear;
-  onOff.value = props.campaign.isTurnOn === null ? false : props.campaign.isTurnOn ;
+  if (props.campaign.isTurnOn) {
+    onOff.value = props.campaign.isTurnOn;
+  }
   deleteStatus.value = props.campaign.deleteMark;
 }
 
@@ -147,10 +149,18 @@ async function turnOnOff(id: string) {
       text: error.value.message,
     });
   }
+
+  if (data.value) {
+    notify({
+      type: "success",
+      text: data.value.message,
+    });
+    campaignStore.getCampaigns()
+  }
 }
 </script>
 <template>
-  <v-dialog v-model="dialog" width="1000" transition="fade-transition">
+  <v-dialog v-model="dialog" width="800" transition="fade-transition">
     <template v-slot:activator="{ props }">
       <div class="flex justify-end md:block">
         <v-btn
@@ -166,7 +176,7 @@ async function turnOnOff(id: string) {
           class="mx-3 my-2 md:mx-0 md:my-0"
           density="compact"
           v-model="onOff"
-          :update="turnOnOff(campaign?._id)"
+          @update:modelValue="turnOnOff(campaign?._id)"
           :label="onOff === false ? 'выключен' : 'включен'"
           :disabled="campaign?.isAdjusted === false ? true : false"
           color="indigo"
@@ -178,7 +188,6 @@ async function turnOnOff(id: string) {
       <v-card-title class="text-sm">
         <v-row class="flex justify-center">
           <v-col>
-            {{firstTime}}
             <span class="text-h10">Опции "{{ campaign?.name }}" </span>
           </v-col>
           <v-col class="text-end">

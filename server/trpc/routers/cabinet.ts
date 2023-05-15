@@ -61,7 +61,6 @@ export const cabinetRouter = router({
           },
         });
 
-
         const isCampaignExist = await Campaign.find({
           user: user._id,
         });
@@ -97,8 +96,6 @@ export const cabinetRouter = router({
             category: item.category,
             nms: item.nms.map((innerItem: any) => innerItem.nm),
           }));
-
-   
 
           const newCampaign = await Campaign.create({
             uuid: uuid(),
