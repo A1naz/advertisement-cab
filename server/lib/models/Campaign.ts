@@ -24,10 +24,6 @@ const CampaignSchema = new Schema(
       type: Number,
       default: 11,
     },
-    campaignManagement: {
-      type: Boolean,
-      default: false,
-    },
     expences: {
       type: Number,
       default: 0,

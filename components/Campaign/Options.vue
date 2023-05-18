@@ -208,7 +208,7 @@ async function turnOnOff(id: string) {
           @update:modelValue="turnOnOff(campaign?._id)"
           :label="onOff === false ? 'выключен' : 'включен'"
           :disabled="campaign?.isAdjusted === false ? true : false"
-          color="indigo"
+          color="primary"
           hide-details
         ></v-switch>
       </div>
@@ -240,7 +240,7 @@ async function turnOnOff(id: string) {
                 cancel-text="Отмена"
                 select-text="Выбрать"
                 mode-height="200"
-                :dark="theme.global.name.value == 'dark' ? true : false"
+                :dark="theme.global.name.value == 'myCustomDarkTheme' ? true : false"
                 time-picker
                 range
               >
@@ -252,7 +252,7 @@ async function turnOnOff(id: string) {
                 v-model="secondTime"
                 cancel-text="Отмена"
                 select-text="Выбрать"
-                :dark="theme.global.name.value == 'dark' ? true : false"
+                :dark="theme.global.name.value == 'myCustomDarkTheme' ? true : false"
                 time-picker
                 range
             /></v-col>
@@ -368,3 +368,26 @@ async function turnOnOff(id: string) {
     </v-card>
   </v-dialog>
 </template>
+<style>
+.dp__theme_dark {
+  --dp-background-color: #312d4b;
+  --dp-text-color: #ffffff;
+  --dp-hover-color: #484848;
+  --dp-hover-text-color: #ffffff;
+  --dp-hover-icon-color: #959595;
+  --dp-primary-color: #ae81fd;
+  --dp-primary-text-color: #ffffff;
+  --dp-secondary-color: #a9a9a9;
+  --dp-border-color: #2d2d2d;
+  --dp-menu-border-color: #2d2d2d;
+  --dp-border-color-hover: #aaaeb7;
+  --dp-disabled-color: #737373;
+  --dp-scroll-bar-background: #212121;
+  --dp-scroll-bar-color: #484848;
+  --dp-success-color: #00701a;
+  --dp-success-color-disabled: #428f59;
+  --dp-icon-color: #959595;
+  --dp-danger-color: #e53935;
+  --dp-highlight-color: rgba(0, 92, 178, 0.2);
+}
+</style>
