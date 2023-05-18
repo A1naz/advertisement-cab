@@ -88,7 +88,7 @@ async function deleteCampaign(id: string, status: boolean) {
   } else if (data.value && status == true) {
     await campaignStore.getCampaigns();
     deleteStatus.value = true;
-    notify({ type: "success", text: "Кампания посталвена на удаление" });
+    notify({ type: "success", text: "Кампания поставлена на удаление" });
   }
 }
 

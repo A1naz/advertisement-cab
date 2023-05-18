@@ -65,7 +65,7 @@ const CampaignSchema = new Schema(
       default: false,
     },
     targetPosition: {
-      type: Number,
+      type: String,
     },
     maxBet: {
       type: Number,
@@ -113,6 +113,10 @@ const CampaignSchema = new Schema(
     user: {
       type: Schema.Types.ObjectId,
       ref: "User",
+    },
+    activeBot: {
+      type: Boolean,
+      default: false,
     },
   },
   { timestamps: true }
