@@ -135,7 +135,7 @@ async function adjustCampgain(id: string) {
     $client.campaign.adjustCampaign.mutate({
       _id: id,
       budget: Number(budget.value),
-      targetPosition: Number(targetPosition.value),
+      targetPosition: targetPosition.value,
       dailyBudget: Number(dailyBudget.value),
       ifMaxBetDoesntMatch: ifMaxBet.value,
       ifBetEqualsNear: ifBetEquals.value,
@@ -261,7 +261,7 @@ async function turnOnOff(id: string) {
           <v-row>
             <v-col>
               <v-text-field
-                type="number"
+                type="text"
                 :rules="[ruleRequired]"
                 width="200"
                 variant="filled"

@@ -1,7 +1,7 @@
 <script setup></script>
 <template>
-    <div>
-      <v-table class="rounded-lg pt-2" density="compact">
+  <div>
+    <v-table class="rounded-lg pt-2" density="compact">
       <thead>
         <tr>
           <th class="text-left">Место</th>

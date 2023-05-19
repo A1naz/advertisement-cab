@@ -72,7 +72,7 @@ export const campaignRouter = router({
       z.object({
         _id: z.string(),
         budget: z.number(),
-        targetPosition: z.number(),
+        targetPosition: z.string(),
         dailyBudget: z.number(),
         ifMaxBetDoesntMatch: z.string().min(10),
         ifBetEqualsNear: z.string().min(10),
@@ -201,6 +201,43 @@ export const campaignRouter = router({
 
       campaign.deleteMark = status;
       await campaign.save();
+
+      return { status: "ok" };
+    }),
+
+  campgaignStats: publicProcedure
+    .input(
+      z.object({
+        nm: z.string(),
+      })
+    )
+    .mutation(async (opts) => {
+      const session = opts.ctx.session as any;
+      const { input } = opts;
+      const { nm } = input;
+
+      if (!session) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "unauthorized",
+        });
+      }
+
+      const user = await User.findById(session._id);
+
+      if (!user) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "unauthorized",
+        });
+      }
+
+      const actualStats: any = await $fetch(`https://advert-api.wb.ru/adv/v0/advert?id=${nm}`, {
+        method: "GET",
+        headers: {
+          Authorization: user.apiKeyAdvertisement,
+        },
+      });
 
       return { status: "ok" };
     }),

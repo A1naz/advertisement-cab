@@ -130,20 +130,16 @@ export const userRouter = router({
       xSupplierId:
         user.xSupplierId == ""
           ? user.xSupplierId
-          : user.xSupplierId.slice(0, 5) +
-            "***********************************************************************************************************************************************************" +
-            user.xSupplierId.slice(-5),
+          : user.xSupplierId.slice(0, 5) + "*".repeat(129) + user.xSupplierId.slice(-5),
       apiKeyStatistics:
         user.apiKeyStatistics == ""
           ? user.apiKeyStatistics
-          : user.apiKeyStatistics.slice(0, 5) +
-            "***********************************************************************************************************************************************************" +
-            user.apiKeyStatistics.slice(-5),
+          : user.apiKeyStatistics.slice(0, 5) + "*".repeat(129) + user.apiKeyStatistics.slice(-5),
       apiKeyAdvertisement:
         user.apiKeyAdvertisement == ""
           ? user.apiKeyAdvertisement
           : user.apiKeyAdvertisement.slice(0, 5) +
-            "***********************************************************************************************************************************************************" +
+            "*".repeat(129) +
             user.apiKeyAdvertisement.slice(-5),
     };
 

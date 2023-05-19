@@ -73,21 +73,17 @@ async function deleteCabinet(cabinetId: any) {
     </v-row>
     <v-row>
       <v-col>
-        <v-card class="mx-6" max-width="600">
-          <v-card-text>
-            <v-text-field
-              density="compact"
-              variant="solo"
-              label="Введите название кампании или ID"
-              append-inner-icon="mdi-magnify"
-              single-line
-              hide-details
-              v-model="search"
-              @input="searchCampaigns"
-              class="max-w-xl"
-            ></v-text-field>
-          </v-card-text>
-        </v-card>
+        <v-text-field
+          density="compact"
+          variant="solo"
+          label="Введите название кампании или ID"
+          append-inner-icon="mdi-magnify"
+          single-line
+          hide-details
+          v-model="search"
+          @input="searchCampaigns"
+          class="max-w-xl"
+        ></v-text-field>
       </v-col>
     </v-row>
     <v-row>
