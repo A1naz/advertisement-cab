@@ -3,7 +3,7 @@ import { useNotification } from '@kyvg/vue3-notification'
 
 definePageMeta({
   auth: {
-    unauthenticatedOnly: true,
+    unAuthenticatedOnly: true,
     navigateAuthenticatedTo: '/profile',
   },
   title: 'Регистрация',

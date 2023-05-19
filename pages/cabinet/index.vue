@@ -8,7 +8,6 @@ const isLoading = ref(true);
 const { width, height } = useWindowSize();
 const search = ref("");
 
-
 if (status.value === "authenticated") campaignStore.getCampaigns();
 
 isLoading.value = false;
