@@ -205,42 +205,65 @@ export const campaignRouter = router({
       return { status: "ok" };
     }),
 
-  campgaignStats: publicProcedure
-    .input(
-      z.object({
-        nm: z.string(),
-      })
-    )
-    .mutation(async (opts) => {
-      const session = opts.ctx.session as any;
-      const { input } = opts;
-      const { nm } = input;
+  campgaignStats: publicProcedure.input(z.string()).query(async (opts) => {
+    const session = opts.ctx.session as any;
+    const { input } = opts;
+    if (!session) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "unauthorized",
+      });
+    }
 
-      if (!session) {
-        throw new TRPCError({
-          code: "FORBIDDEN",
-          message: "unauthorized",
-        });
-      }
+    const user = await User.findById(session._id);
 
-      const user = await User.findById(session._id);
+    if (!user) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "unauthorized",
+      });
+    }
 
-      if (!user) {
-        throw new TRPCError({
-          code: "FORBIDDEN",
-          message: "unauthorized",
-        });
-      }
-
-      const actualStats: any = await $fetch(`https://advert-api.wb.ru/adv/v0/advert?id=${nm}`, {
+    const actualStats: any = await $fetch(
+      `https://carousel-ads.wildberries.ru/api/v4/carousel?nm=${input}`,
+      {
         method: "GET",
-        headers: {
-          Authorization: user.apiKeyAdvertisement,
-        },
+      }
+    );
+
+    const userWithSetId = await Campaign.findOne({ "params.nms.nm": Number(input) });
+
+    if (userWithSetId) {
+      const actualWbStats: any = await $fetch(
+        `https://advert-api.wb.ru/adv/v0/cpm?type=5&param=${userWithSetId.params[0].setId}`,
+        {
+          method: "GET",
+
+          headers: {
+            Authorization: user.apiKeyAdvertisement,
+          },
+        }
+      );
+      let wbStats: any = [];
+      actualWbStats.forEach((el: any) => {
+        for (let i = 0; i < el.Count; i++) {
+          wbStats.push(el.Cpm);
+        }
       });
 
-      return { status: "ok" };
-    }),
+      actualStats.forEach((el: any, index: any) => {
+        actualStats[index]['wbCpm'] = wbStats[index];
+      });
+      
+    } else {
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: "артикул не найден",
+      });
+    }
+
+    return actualStats;
+  }),
 
   campaigns: publicProcedure.query(async (opts) => {
     const session = opts.ctx.session as any;

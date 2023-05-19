@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { useNotification } from "@kyvg/vue3-notification";
 import { useWindowSize } from "@vueuse/core";
+const { status } = useAuth();
+const campaignStore = useCampaignStore();
 
 const isLoading = ref(true);
 const { width, height } = useWindowSize();
 const search = ref("");
 
-const { status } = useAuth();
-const campaignStore = useCampaignStore();
 
 if (status.value === "authenticated") campaignStore.getCampaigns();
 
@@ -75,7 +75,7 @@ async function deleteCabinet(cabinetId: any) {
       <v-col>
         <v-text-field
           density="compact"
-          variant="solo"
+          variant="filled"
           label="Введите название кампании или ID"
           append-inner-icon="mdi-magnify"
           single-line

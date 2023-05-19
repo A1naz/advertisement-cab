@@ -135,7 +135,6 @@ async function addCampaign() {
                     <v-chip
                       class="mr-2 mt-1"
                       v-bind="props"
-                      :repend-icon="findImage(item.title)"
                       :text="item.title"
                     ></v-chip>
                   </template>

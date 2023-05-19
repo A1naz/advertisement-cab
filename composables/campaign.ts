@@ -46,7 +46,7 @@ export const useCampaignStore = defineStore("campaign", () => {
         const bDate = new Date(b.createTime.replace(/^(\d{2})\.(\d{2})\.(\d{4})$/, "$2.$1.$3"));
         return aDate.getTime() - bDate.getTime();
       });
-      console.log("ok");
+  
     }
     if (sortValue.value == "descending") {
       sortedAndSeachedCampaigns.value = sortedAndSeachedCampaigns.value.sort((a: any, b: any) => {
@@ -101,6 +101,7 @@ export const useCampaignStore = defineStore("campaign", () => {
 
     sortedAndSeachedCampaigns.value = sortedCampaigns.value;
   }
+
 
   return {
     items,

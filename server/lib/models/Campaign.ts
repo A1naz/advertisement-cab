@@ -62,6 +62,7 @@ const CampaignSchema = new Schema(
     },
     targetPosition: {
       type: String,
+      default: "",
     },
     maxBet: {
       type: Number,

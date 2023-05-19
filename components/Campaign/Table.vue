@@ -37,7 +37,7 @@ function sortByCreateTime() {
           density="compact"
           class="mx-1"
           variant="text"
-          :color="isSelected ? 'secondary' : 'gray'"
+          :color="isSelected ? 'primary' : 'gray'"
           @click="
             campaignStore.sortCampaigns(option);
             toggle();
