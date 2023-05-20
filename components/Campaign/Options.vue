@@ -14,7 +14,7 @@ const secondTime = ref();
 const ifMaxBet = ref("");
 const getBet = ref();
 const ifBetEquals = ref("");
-const { ruleRequired } = useFormRules();
+const { ruleRequired, rangeRules } = useFormRules();
 const campaignStore = useCampaignStore();
 const theme = useTheme();
 const deleteStatus = ref();
@@ -126,6 +126,14 @@ async function adjustCampgain(id: string) {
     return;
   }
 
+  if (rangeRules(targetPosition.value) !== true) {
+    notify({
+      type: "error",
+      text: "Некорректная целевая позиция",
+    });
+    return;
+  }
+
   const timeFirst = fixTime(firstTime.value);
   const timeSecond = fixTime(secondTime.value);
   const finalTimes = `${timeFirst}|${timeSecond}`;
@@ -193,6 +201,10 @@ async function turnOnOff(id: string) {
     campaignStore.getCampaigns();
   }
 }
+
+function handleInput() {
+  targetPosition.value = targetPosition.value.replace(/[^\d-]/g, "");
+}
 </script>
 <template>
   <div>
@@ -246,12 +258,10 @@ async function turnOnOff(id: string) {
                 v-model="firstTime"
                 cancel-text="Отмена"
                 select-text="Выбрать"
-                mode-height="200"
                 :dark="theme.global.name.value == 'myCustomDarkTheme' ? true : false"
                 time-picker
                 range
-              >
-              </VueDatePicker>
+              />
             </v-col>
             <v-col>
               <h2>Часы показов:</h2>
@@ -269,7 +279,8 @@ async function turnOnOff(id: string) {
             <v-col>
               <v-text-field
                 type="text"
-                :rules="[ruleRequired]"
+                :rules="[rangeRules]"
+                @input="handleInput"
                 width="200"
                 variant="filled"
                 v-model="targetPosition"
@@ -330,8 +341,8 @@ async function turnOnOff(id: string) {
               label="Ставка"
               prefix="₽"
               size="1"
-              style="margin-bottom: 0;"
-              ></v-text-field>
+              style="margin-bottom: 0"
+            ></v-text-field>
           </v-radio-group>
           <div class="mx-1">Если ставка равна соседней, то:</div>
           <v-radio-group class="mx-1" v-model="ifBetEquals">
