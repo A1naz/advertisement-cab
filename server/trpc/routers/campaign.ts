@@ -72,8 +72,9 @@ export const campaignRouter = router({
       z.object({
         _id: z.string(),
         budget: z.number(),
+        maxBet: z.number(),
         targetPosition: z.string(),
-        dailyBudget: z.number(),
+        dailyBudget: z.number().optional(),
         ifMaxBetDoesntMatch: z.string().min(10),
         ifBetEqualsNear: z.string().min(10),
         showHours: z.string(),
@@ -92,6 +93,7 @@ export const campaignRouter = router({
         ifBetEqualsNear,
         showHours,
         maxBetIncreaseTo,
+        maxBet,
       } = input;
 
       if (!session) {
@@ -116,8 +118,14 @@ export const campaignRouter = router({
         campaign.getBet = maxBetIncreaseTo;
       }
 
+      if (dailyBudget || dailyBudget === 0) {
+        campaign.dailyBudget = dailyBudget;
+      } else if (!dailyBudget) {
+        campaign.dailyBudget = 0;
+      }
+
+      campaign.maxBet = maxBet;
       campaign.budget = budget;
-      campaign.dailyBudget = dailyBudget;
       campaign.targetPosition = targetPosition;
       campaign.ifMaxBetDoesntMatch = ifMaxBetDoesntMatch;
       campaign.ifBetEqualsNear = ifBetEqualsNear;
@@ -252,9 +260,8 @@ export const campaignRouter = router({
       });
 
       actualStats.forEach((el: any, index: any) => {
-        actualStats[index]['wbCpm'] = wbStats[index];
+        actualStats[index]["wbCpm"] = wbStats[index];
       });
-      
     } else {
       throw new TRPCError({
         code: "BAD_REQUEST",
