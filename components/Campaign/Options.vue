@@ -218,6 +218,14 @@ async function turnOnOff(id: string) {
 function handleInput() {
   targetPosition.value = targetPosition.value.replace(/[^\d-]/g, "");
 }
+
+const isSecondTimePickerDisabled = computed(() => {
+  if (firstTime.value) {
+    return false;
+  }
+  secondTime.value = "";
+  return true;
+});
 </script>
 <template>
   <div>
@@ -279,6 +287,7 @@ function handleInput() {
             <v-col>
               <h2>Часы показов:</h2>
               <VueDatePicker
+                :disabled="isSecondTimePickerDisabled"
                 v-model="secondTime"
                 cancel-text="Отмена"
                 select-text="Выбрать"
