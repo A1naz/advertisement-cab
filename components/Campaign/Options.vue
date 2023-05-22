@@ -29,9 +29,11 @@ interface TimeObject {
 
 function parseTime(input: string) {
   const groups = input.split("|");
-  const timeArrays: TimeObject[][] = groups.map((group) =>
+
+  const timeArrays: any = groups.map((group) =>
     group.split("-").map((time) => {
       const [hours, minutes] = time.split(":").map(Number);
+
       return { hours, minutes, seconds: 0 };
     })
   );
@@ -52,8 +54,14 @@ if (props) {
   deleteStatus.value = props.campaign.deleteMark;
   if (props.campaign.showHours) {
     const times = parseTime(props.campaign.showHours);
-    firstTime.value = times[0];
-    secondTime.value = times[1];
+
+    if (times[0][0].minutes != undefined) {
+      firstTime.value = times[0];
+    }
+
+    if (times[1][0].minutes != undefined) {
+      secondTime.value = times[1];
+    }
   }
 }
 
@@ -99,8 +107,6 @@ async function adjustCampgain(id: string) {
     ruleRequired(budget.value) !== true ||
     ruleRequired(targetPosition.value) !== true ||
     ruleRequired(maxBet.value) !== true ||
-    ruleRequired(firstTime.value) !== true ||
-    ruleRequired(secondTime.value) !== true ||
     (ruleRequired(getBet.value) !== true && ifMaxBet.value === "Выставить ставку") ||
     ruleRequired(ifMaxBet.value) !== true ||
     ruleRequired(ifBetEquals.value) !== true
@@ -134,9 +140,16 @@ async function adjustCampgain(id: string) {
     return;
   }
 
-  const timeFirst = fixTime(firstTime.value);
-  const timeSecond = fixTime(secondTime.value);
-  const finalTimes = `${timeFirst}|${timeSecond}`;
+  let timeFirst = "";
+  let timeSecond = "";
+  if (firstTime.value) {
+    timeFirst = fixTime(firstTime.value);
+  }
+  if (secondTime.value) {
+    timeSecond = fixTime(secondTime.value);
+  }
+
+  const finalTimes = timeFirst || timeSecond ? `${timeFirst}|${timeSecond}` : "";
   let increaseTo = 0;
 
   if (ifMaxBet.value === "Выставить ставку") {

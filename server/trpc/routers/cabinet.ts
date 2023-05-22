@@ -96,6 +96,15 @@ export const cabinetRouter = router({
             category: item.category,
             nms: item.nms.map((innerItem: any) => innerItem.nm),
           }));
+          let showTimes = "";
+
+          campaign.params[0].intervals.forEach((el: any) => {
+            if (showTimes.includes("|")) {
+              showTimes = showTimes + `${el.begin}:00-${el.end}:00`;
+            } else {
+              showTimes = showTimes + `${el.begin}:00-${el.end}:00|`;
+            }
+          });
 
           const newCampaign = await Campaign.create({
             uuid: uuid(),
@@ -108,6 +117,7 @@ export const cabinetRouter = router({
             user: user._id,
             createTime: campaign.createTime,
             params: campaign.params,
+            showHours: showTimes,
           });
         });
 
