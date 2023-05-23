@@ -44,9 +44,6 @@ onMounted(() => {
             active-color="primary"
             to="/profile"
           >
-            <div @click.stop>
-              <v-btn @click.stop density="compact" class="text-xs">Текущий тариф</v-btn>
-            </div>
           </v-list-item>
           <v-list-item
             prepend-icon="mdi-briefcase "

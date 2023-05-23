@@ -252,10 +252,14 @@ export const campaignRouter = router({
           },
         }
       );
+
       let wbStats: any = [];
       actualWbStats.forEach((el: any) => {
         for (let i = 0; i < el.Count; i++) {
           wbStats.push(el.Cpm);
+          if (wbStats.length >= 28) {
+            break;
+          }
         }
       });
 
