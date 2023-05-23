@@ -10,7 +10,9 @@ const theme = useTheme();
 drawer.value = width.value > 1680;
 const dialog = ref(true);
 const toggleTheme = () => {
-  theme.global.name.value = theme.global.current.value.dark ? "myCustomLightTheme" : "myCustomDarkTheme";
+  theme.global.name.value = theme.global.current.value.dark
+    ? "myCustomLightTheme"
+    : "myCustomDarkTheme";
   localStorage.setItem("theme", theme.global.name.value);
 };
 
@@ -36,13 +38,16 @@ onMounted(() => {
           <v-divider></v-divider>
           <v-list-item
             prepend-icon="mdi-account"
-            title="Профиль"
+            title="Личный кабинет"
             value="profile"
             :active="$route.path === '/profile'"
             active-color="primary"
             to="/profile"
-          />
-
+          >
+            <div @click.stop>
+              <v-btn @click.stop density="compact" class="text-xs">Текущий тариф</v-btn>
+            </div>
+          </v-list-item>
           <v-list-item
             prepend-icon="mdi-briefcase "
             title="Рекламные кампании"

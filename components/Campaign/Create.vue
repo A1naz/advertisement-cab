@@ -94,7 +94,7 @@ async function addCampaign() {
         </v-col>
         <v-card-title class="mt-2 ml-2"> </v-card-title>
         <v-card-text>
-          <v-container>
+          <v-form fast-fail>
             <v-row>
               <v-col cols="12">
                 <h2 class="ml-2 mb-2">Тип рекламной кампании</h2>
@@ -132,11 +132,7 @@ async function addCampaign() {
                 >
                   <template v-slot:chip="{ props, item }">
                     <v-img class="w-8 mr-1" :src="findImage(item.title)"> </v-img>
-                    <v-chip
-                      class="mr-2 mt-1"
-                      v-bind="props"
-                      :text="item.title"
-                    ></v-chip>
+                    <v-chip class="mr-2 mt-1" v-bind="props" :text="item.title"></v-chip>
                   </template>
 
                   <template v-slot:item="{ props, item }" class="">
@@ -145,11 +141,13 @@ async function addCampaign() {
                 </v-autocomplete>
               </v-col>
             </v-row>
-          </v-container>
+          </v-form>
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="blue-darken-1" @click="addCampaign"> Добавить кампанию </v-btn>
+          <v-btn color="blue-darken-1" type="submit" @click="addCampaign">
+            Добавить кампанию
+          </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>

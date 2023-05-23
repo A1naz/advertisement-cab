@@ -226,6 +226,12 @@ const isSecondTimePickerDisabled = computed(() => {
   secondTime.value = "";
   return true;
 });
+
+const isMaxBetTextValueRuleEnabled = computed(() => {
+  if (ifMaxBet.value === "Выставить ставку") {
+    return [ruleRequired];
+  }
+});
 </script>
 <template>
   <div>
@@ -254,156 +260,170 @@ const isSecondTimePickerDisabled = computed(() => {
         </div>
       </template>
       <v-card>
-        <v-card-title class="text-sm">
-          <v-row class="flex justify-center">
-            <v-col>
-              <h1 class="md:mx-3">Опции "{{ campaign?.name }}"</h1>
-            </v-col>
-            <v-col class="text-end">
-              <v-btn
-                size="large"
-                variant="text"
-                icon="mdi-close-thick"
-                @click="dialog = false"
-              ></v-btn>
-            </v-col>
-          </v-row>
-        </v-card-title>
+        <v-form>
+          <v-card-title class="text-sm">
+            <v-row class="flex justify-center">
+              <v-col>
+                <h1 class="md:mx-3">Опции "{{ campaign?.name }}"</h1>
+              </v-col>
+              <v-col class="text-end">
+                <v-btn
+                  size="large"
+                  variant="text"
+                  icon="mdi-close-thick"
+                  @click="dialog = false"
+                ></v-btn>
+              </v-col>
+            </v-row>
+          </v-card-title>
 
-        <div class="mx-5">
-          <v-row>
-            <v-col>
-              <div></div>
-              <h2>Часы показов:</h2>
-              <VueDatePicker
-                v-model="firstTime"
-                cancel-text="Отмена"
-                select-text="Выбрать"
-                :dark="theme.global.name.value == 'myCustomDarkTheme' ? true : false"
-                time-picker
-                range
-              />
-            </v-col>
-            <v-col>
-              <h2>Часы показов:</h2>
-              <VueDatePicker
-                :disabled="isSecondTimePickerDisabled"
-                v-model="secondTime"
-                cancel-text="Отмена"
-                select-text="Выбрать"
-                :dark="theme.global.name.value == 'myCustomDarkTheme' ? true : false"
-                time-picker
-                range
-            /></v-col>
-          </v-row>
+          <div class="mx-5">
+            <v-row>
+              <v-col>
+                <div></div>
+                <h2>Часы показов:</h2>
+                <VueDatePicker
+                  v-model="firstTime"
+                  cancel-text="Отмена"
+                  select-text="Выбрать"
+                  :dark="theme.global.name.value == 'myCustomDarkTheme' ? true : false"
+                  time-picker
+                  range
+                />
+              </v-col>
+              <v-col>
+                <h2>Часы показов:</h2>
+                <VueDatePicker
+                  :disabled="isSecondTimePickerDisabled"
+                  v-model="secondTime"
+                  cancel-text="Отмена"
+                  select-text="Выбрать"
+                  :dark="theme.global.name.value == 'myCustomDarkTheme' ? true : false"
+                  time-picker
+                  range
+              /></v-col>
+            </v-row>
 
-          <v-row>
-            <v-col>
-              <v-text-field
-                type="text"
-                :rules="[rangeRules]"
-                @input="handleInput"
-                width="200"
-                variant="filled"
-                v-model="targetPosition"
-                label="Целевая позиция"
-              ></v-text-field>
-              <v-text-field
-                type="number"
-                :rules="[ruleRequired]"
-                variant="filled"
-                v-model="budget"
-                label="Бюджет"
-                prefix="₽"
-              ></v-text-field>
-              <v-text-field
-                type="number"
-                :rules="[ruleRequired]"
-                variant="filled"
-                v-model="maxBet"
-                label="Макс ставка"
-                prefix="₽"
-              ></v-text-field>
-              <v-text-field
-                type="number"
-                variant="filled"
-                v-model="dailyBudget"
-                label="Дневной бюджет"
-                prefix="₽"
-              ></v-text-field>
-            </v-col>
-          </v-row>
+            <v-row>
+              <v-col>
+                <v-text-field
+                  type="text"
+                  :rules="[rangeRules]"
+                  @input="handleInput"
+                  width="200"
+                  variant="filled"
+                  v-model="targetPosition"
+                  label="Целевая позиция"
+                ></v-text-field>
+                <v-text-field
+                  type="number"
+                  :rules="[ruleRequired]"
+                  variant="filled"
+                  v-model="budget"
+                  label="Бюджет"
+                  prefix="₽"
+                ></v-text-field>
+                <v-text-field
+                  type="number"
+                  :rules="[ruleRequired]"
+                  variant="filled"
+                  v-model="maxBet"
+                  label="Макс ставка"
+                  prefix="₽"
+                ></v-text-field>
+                <v-text-field
+                  type="number"
+                  variant="filled"
+                  v-model="dailyBudget"
+                  label="Дневной бюджет"
+                  prefix="₽"
+                ></v-text-field>
+              </v-col>
+            </v-row>
 
-          <div class="mx-1">Если макс. ставка не соответсвует, то:</div>
-          <v-radio-group density="compact" class="mx-1 my-0" v-model="ifMaxBet" column>
-            <v-radio
-              label="Остановить кампанию"
-              density="comfortable"
-              value="Остановить кампанию"
-            ></v-radio>
-            <v-radio
-              density="comfortable"
-              label="Оставить последнюю ставку"
-              value="Оставить последнюю ставку"
-            ></v-radio>
-            <v-radio
-              label="Поставить макс. ставку"
-              density="comfortable"
-              value="Поставить макс. ставку"
-            ></v-radio>
-            <v-radio label="Выставить ставку" density="comfortable" value="Выставить ставку">
-            </v-radio>
-            <v-text-field
-              type="number"
-              :rules="[ruleRequired]"
-              v-model="getBet"
+            <div class="mx-1">Если макс. ставка не соответствует, то:</div>
+            <v-radio-group
               density="compact"
-              :disabled="ifMaxBet == 'Выставить ставку' ? false : true"
-              variant="filled"
-              label="Ставка"
-              prefix="₽"
-              size="1"
-              style="margin-bottom: 0"
-            ></v-text-field>
-          </v-radio-group>
-          <div class="mx-1">Если ставка равна соседней, то:</div>
-          <v-radio-group class="mx-1" v-model="ifBetEquals">
-            <v-radio
-              density="comfortable"
-              label="Увеличить ставку на 1 руб"
-              value="Увеличить ставку на 1 руб"
+              class="mx-1 my-0"
+              :rules="[ruleRequired]"
+              v-model="ifMaxBet"
+              column
             >
-            </v-radio>
-            <v-radio
-              density="comfortable"
-              label="Оставить последнюю ставку"
-              value="Оставить последнюю ставку"
-            ></v-radio>
-          </v-radio-group>
-        </div>
-        <v-card-actions>
-          <v-btn
-            variant="tonal"
-            color="red"
-            class="ml-7"
-            size="default"
-            @click="deleteCampaign(props.campaign._id, true)"
-            v-if="!deleteStatus"
-            >Удалить</v-btn
-          >
-          <v-btn
-            variant="tonal"
-            class="ml-7"
-            size="default"
-            @click="deleteCampaign(props.campaign._id, false)"
-            v-if="deleteStatus"
-            >Отмена</v-btn
-          >
-          <v-spacer></v-spacer>
-          <v-btn variant="tonal" class="mr-7" size="default" @click="adjustCampgain(campaign?._id)">
-            Сохранить</v-btn
-          >
-        </v-card-actions>
+              <v-radio
+                label="Остановить кампанию"
+                density="comfortable"
+                value="Остановить кампанию"
+              ></v-radio>
+              <v-radio
+                density="comfortable"
+                label="Оставить последнюю ставку"
+                value="Оставить последнюю ставку"
+              ></v-radio>
+              <v-radio
+                label="Поставить макс. ставку"
+                density="comfortable"
+                value="Поставить макс. ставку"
+              ></v-radio>
+              <v-radio label="Выставить ставку" density="comfortable" value="Выставить ставку">
+              </v-radio>
+              <v-text-field
+                type="number"
+                :rules="isMaxBetTextValueRuleEnabled"
+                v-model="getBet"
+                density="compact"
+                :disabled="ifMaxBet == 'Выставить ставку' ? false : true"
+                variant="filled"
+                label="Ставка"
+                prefix="₽"
+                size="1"
+                style="margin-bottom: 0"
+              ></v-text-field>
+            </v-radio-group>
+            <div class="mx-1">Если ставка равна соседней, то:</div>
+            <v-radio-group class="mx-1" :rules="[ruleRequired]" v-model="ifBetEquals">
+              <v-radio
+                density="comfortable"
+                label="Увеличить ставку на 1 руб"
+                value="Увеличить ставку на 1 руб"
+              >
+              </v-radio>
+              <v-radio
+                density="comfortable"
+                label="Оставить последнюю ставку"
+                value="Оставить последнюю ставку"
+              ></v-radio>
+            </v-radio-group>
+          </div>
+          <v-card-actions>
+            <v-btn
+              variant="tonal"
+              color="red"
+              class="ml-7"
+              size="default"
+              @click="deleteCampaign(props.campaign._id, true)"
+              v-if="!deleteStatus"
+              >Удалить</v-btn
+            >
+            <v-btn
+              variant="tonal"
+              class="ml-7"
+              size="default"
+              @click="deleteCampaign(props.campaign._id, false)"
+              v-if="deleteStatus"
+              >Отмена</v-btn
+            >
+            <v-spacer></v-spacer>
+            <v-btn
+              variant="tonal"
+              type="submit"
+              class="mr-7"
+              size="default"
+              @click="adjustCampgain(campaign?._id)"
+            >
+              Сохранить</v-btn
+            >
+          </v-card-actions>
+        </v-form>
       </v-card>
     </v-dialog>
   </div>

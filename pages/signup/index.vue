@@ -1,42 +1,48 @@
 <script setup>
-import { useNotification } from '@kyvg/vue3-notification'
+import { useNotification } from "@kyvg/vue3-notification";
 
 definePageMeta({
   auth: {
-    unAuthenticatedOnly: true,
-    navigateAuthenticatedTo: '/profile',
+    unauthenticatedOnly: true,
+    navigateAuthenticatedTo: "/profile",
   },
-  title: 'Регистрация',
-})
-const { $client } = useNuxtApp()
+  title: "Регистрация",
+});
+const { $client } = useNuxtApp();
 
-const name = ref('')
-const email = ref('')
-const password = ref('')
-const { ruleEmail, rulePassLen, ruleRequired } = useFormRules()
-const { notify } = useNotification()
+const name = ref("");
+const email = ref("");
+const password = ref("");
+const { ruleEmail, rulePassLen, ruleRequired } = useFormRules();
+const { notify } = useNotification();
 async function submit() {
-  if (ruleEmail(email.value) !== true || rulePassLen(password.value) !== true || ruleRequired(name.value) !== true)
-    return
+  if (
+    ruleEmail(email.value) !== true ||
+    rulePassLen(password.value) !== true ||
+    ruleRequired(name.value) !== true
+  )
+    return;
 
-  const { data, error } = await useAsyncData(() => $client.auth.register.mutate({
-    username: name.value,
-    email: email.value,
-    password: password.value,
-  }))
+  const { data, error } = await useAsyncData(() =>
+    $client.auth.register.mutate({
+      username: name.value,
+      email: email.value,
+      password: password.value,
+    })
+  );
   if (error.value) {
     notify({
-      type: 'error',
-      title: 'Ошибка',
+      type: "error",
+      title: "Ошибка",
       text: error.value.message,
-    })
+    });
   }
   if (data.value) {
     notify({
-      type: 'success',
-      title: 'Пользователь успешно зарегистрирован',
-      text: 'Для активации аккаунта перейдите по ссылке в письме.',
-    })
+      type: "success",
+      title: "Пользователь успешно зарегистрирован",
+      text: "Для активации аккаунта перейдите по ссылке в письме.",
+    });
   }
 }
 </script>
@@ -89,8 +95,10 @@ async function submit() {
               </div>
             </VForm>
             <p class="text-body-2 mt-10">
-              <span>Уже зарегистрированы?
-                <NuxtLink to="/" class="font-weight-bold text-primary">Войти</NuxtLink></span>
+              <span
+                >Уже зарегистрированы?
+                <NuxtLink to="/" class="font-weight-bold text-primary">Войти</NuxtLink></span
+              >
             </p>
           </VCol>
         </VRow>
@@ -102,9 +110,7 @@ async function submit() {
           class="h-100 rounded-xl d-flex align-center justify-center"
         >
           <div class="text-center w-50 text-white mx-auto">
-            <h2 class="mb-4">
-              Start your journey today
-            </h2>
+            <h2 class="mb-4">Start your journey today</h2>
             <p>
               Lorem, ipsum dolor sit amet consectetur adipisicing elit. Asperiores, inventore quia.
               Dolorum dolores ad ipsum voluptatum rem, hic placeat, odio, odit numquam quod

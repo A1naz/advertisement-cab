@@ -1,53 +1,49 @@
 <script setup>
-import { email, helpers, minLength, required } from '@vuelidate/validators'
+import { email, helpers, minLength, required } from "@vuelidate/validators";
 
 definePageMeta({
-  title: 'Вход',
+  title: "Вход",
   auth: {
     unauthenticatedOnly: true,
-    navigateAuthenticatedTo: '/profile',
+    navigateAuthenticatedTo: "/profile",
   },
-})
+});
 
-const { status, data, signIn, signOut } = useAuth()
+const { status, data, signIn, signOut } = useAuth();
 const form = reactive({
-  email: '',
-  password: '',
-})
+  email: "",
+  password: "",
+});
 
 const rules = {
   email: {
-    required: helpers.withMessage('Введите email', required),
-    email: helpers.withMessage('Введите корректный email', email),
+    required: helpers.withMessage("Введите email", required),
+    email: helpers.withMessage("Введите корректный email", email),
   },
   password: {
-    required: helpers.withMessage('Введите пароль', required),
-    minLength: helpers.withMessage(
-      'Пароль должен быть длиннее 6 символов',
-      minLength(6),
-    ),
+    required: helpers.withMessage("Введите пароль", required),
+    minLength: helpers.withMessage("Пароль должен быть длиннее 6 символов", minLength(6)),
   },
-}
+};
 
-const v$ = useVuelidate(rules, form)
+const v$ = useVuelidate(rules, form);
 async function submit() {
-  const result = await v$.value.$validate()
-  if (!result)
-    return
-  const { error, url } = await signIn('credentials', {
+  const result = await v$.value.$validate();
+  if (!result) return;
+  const { error, url } = await signIn("credentials", {
     redirect: false,
-    callbackUrl: '/profile',
+    callbackUrl: "/profile",
     email: form.email,
     password: form.password,
-  })
+  });
   if (error) {
     notify({
-      title: 'Ошибка входа',
+      title: "Ошибка входа",
       text: error,
-    })
+    });
+  } else {
+    return navigateTo(url, { external: true });
   }
-
-  else { return navigateTo(url, { external: true }) }
 }
 </script>
 
@@ -65,7 +61,7 @@ async function submit() {
                 <VTextField
                   id="email"
                   v-model="form.email"
-                  :error-messages="v$.email.$errors.map(e => e.$message)"
+                  :error-messages="v$.email.$errors.map((e) => e.$message)"
                   prepend-inner-icon="fluent:mail-24-regular"
                   name="email"
                   type="email"
@@ -78,7 +74,7 @@ async function submit() {
                 <VTextField
                   id="password"
                   v-model="form.password"
-                  :error-messages="v$.password.$errors.map(e => e.$message)"
+                  :error-messages="v$.password.$errors.map((e) => e.$message)"
                   prepend-inner-icon="fluent:password-20-regular"
                   name="password"
                   type="password"
@@ -87,9 +83,7 @@ async function submit() {
                 />
               </div>
               <div class="mt-5">
-                <VBtn type="submit" block min-height="44" class="gradient bg-primary">
-                  Войти
-                </VBtn>
+                <VBtn type="submit" block min-height="44" class="gradient bg-primary"> Войти </VBtn>
               </div>
             </VForm>
             <p class="text-body-2 mt-10">
@@ -98,8 +92,12 @@ async function submit() {
               </NuxtLink>
             </p>
             <p class="text-body-2 mt-4">
-              <span>Еще не зарегистрированы?
-                <NuxtLink to="/signup" class="font-weight-bold text-primary">Регистрация</NuxtLink></span>
+              <span
+                >Еще не зарегистрированы?
+                <NuxtLink to="/signup" class="font-weight-bold text-primary"
+                  >Регистрация</NuxtLink
+                ></span
+              >
             </p>
           </VCol>
         </VRow>
@@ -111,9 +109,7 @@ async function submit() {
           class="h-100 rounded-xl d-flex align-center justify-center"
         >
           <div class="text-center w-50 text-white mx-auto">
-            <h2 class="mb-4">
-              Start your journey today
-            </h2>
+            <h2 class="mb-4">Start your journey today</h2>
             <p>
               Lorem, ipsum dolor sit amet consectetur adipisicing elit. Asperiores, inventore quia.
               Dolorum dolores ad ipsum voluptatum rem, hic placeat, odio, odit numquam quod
