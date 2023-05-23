@@ -244,6 +244,7 @@ const isMaxBetTextValueRuleEnabled = computed(() => {
             class="text-none my-2 md:my-0"
             prepend-icon="mdi-cog"
             variant="text"
+            rounded
           >
             {{ campaign?.isAdjusted ? "Настроена" : "Не настроена" }} ></v-btn
           >
@@ -264,15 +265,17 @@ const isMaxBetTextValueRuleEnabled = computed(() => {
           <v-card-title class="text-sm">
             <v-row class="flex justify-center">
               <v-col>
-                <h1 class="md:mx-3">Опции "{{ campaign?.name }}"</h1>
+                <h1 class="md:mx-1 mt-1">Опции "{{ campaign?.name }}"</h1>
               </v-col>
               <v-col class="text-end">
                 <v-btn
+                class="absolute left-3"
                   size="large"
                   variant="text"
                   icon="mdi-close-thick"
                   @click="dialog = false"
-                ></v-btn>
+                  rounded="xl"
+                />
               </v-col>
             </v-row>
           </v-card-title>

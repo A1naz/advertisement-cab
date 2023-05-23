@@ -35,16 +35,27 @@ onMounted(() => {
     >
       <div class="flex flex-col">
         <v-list density="compact" nav>
-          <v-divider></v-divider>
-          <v-list-item
-            prepend-icon="mdi-account"
-            title="Личный кабинет"
-            value="profile"
-            :active="$route.path === '/profile'"
-            active-color="primary"
-            to="/profile"
-          >
-          </v-list-item>
+          <v-card @click="$router.push('/profile')">
+            <v-card-item>
+              <div class="text-center flex justify-between">
+                <div class="mt-3 mx-2 text-sm">Личный кабинет</div>
+                <v-btn
+                  variant="text"
+                  :active="$route.path === '/profile'"
+                  icon="mdi-account"
+                  rounded="xl"
+                />
+              </div>
+            </v-card-item>
+
+            <v-card-actions class="flex justify-center">
+              <v-btn @click.stop @click="console.log('sdsd')" size="x-small" block variant="outlined">
+                Текущий тариф
+              </v-btn>
+            </v-card-actions>
+          </v-card>
+
+          <v-divider class="mb-2"></v-divider>
           <v-list-item
             prepend-icon="mdi-briefcase "
             title="Рекламные кампании"
