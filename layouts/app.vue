@@ -19,7 +19,14 @@ const toggleTheme = () => {
 onMounted(() => {
   theme.global.name.value = localStorage.getItem("theme") || "myCustomLightTheme";
 });
-``;
+
+const LKColor = computed(() => {
+  if (theme.global.name.value == "myCustomLightTheme") {
+    return "gray";
+  } else {
+    return "white";
+  }
+});
 </script>
 
 <template>
@@ -40,16 +47,24 @@ onMounted(() => {
               <div class="text-center flex justify-between">
                 <div class="mt-3 mx-2 text-sm">Личный кабинет</div>
                 <v-btn
-                  variant="text"
+                  variant="tonal"
                   :active="$route.path === '/profile'"
                   icon="mdi-account"
                   rounded="xl"
+                  :color="LKColor"
                 />
               </div>
             </v-card-item>
 
             <v-card-actions class="flex justify-center">
-              <v-btn @click.stop @click="console.log('sdsd')" size="x-small" block variant="outlined">
+              <v-btn
+                @click.stop
+                @click="console.log('sdsd')"
+                size="x-small"
+                block
+                :color="LKColor"
+                variant="tonal"
+              >
                 Текущий тариф
               </v-btn>
             </v-card-actions>
