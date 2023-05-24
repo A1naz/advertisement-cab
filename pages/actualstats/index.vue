@@ -57,7 +57,6 @@ definePageMeta({
           v-model="article"
           :items="items"
           no-data-text="Нет предметов"
-          hint="Выберите один предмет"
           class="max-w-xs max-h-10 mb-4"
           :loading="loading"
           @update:modelValue="findCampaignStats"

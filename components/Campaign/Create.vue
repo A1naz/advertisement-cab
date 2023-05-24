@@ -145,9 +145,7 @@ async function addCampaign() {
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="blue-darken-1" type="submit" @click="addCampaign">
-            Добавить кампанию
-          </v-btn>
+          <v-btn color="primary" type="submit" @click="addCampaign"> Добавить кампанию </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>

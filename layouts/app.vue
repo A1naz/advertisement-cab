@@ -8,23 +8,23 @@ const drawer = ref(false);
 const appbar = ref(width.value < 1280);
 const theme = useTheme();
 drawer.value = width.value > 1680;
-const dialog = ref(true);
+const dialog = ref(false);
 const toggleTheme = () => {
   theme.global.name.value = theme.global.current.value.dark
     ? "myCustomLightTheme"
     : "myCustomDarkTheme";
   localStorage.setItem("theme", theme.global.name.value);
 };
-
+const PaymentTariffDialog = ref(false);
 onMounted(() => {
   theme.global.name.value = localStorage.getItem("theme") || "myCustomLightTheme";
 });
 
 const LKColor = computed(() => {
   if (theme.global.name.value == "myCustomLightTheme") {
-    return "gray";
+    return "blue-grey-darken-5";
   } else {
-    return "white";
+    return "blue-grey-lighten-5";
   }
 });
 </script>
@@ -42,7 +42,7 @@ const LKColor = computed(() => {
     >
       <div class="flex flex-col">
         <v-list density="compact" nav>
-          <v-card @click="$router.push('/profile')">
+          <v-card variant="tonal" class="mb-3" @click="$router.push('/profile')">
             <v-card-item>
               <div class="text-center flex justify-between">
                 <div class="mt-3 mx-2 text-sm">Личный кабинет</div>
@@ -57,20 +57,11 @@ const LKColor = computed(() => {
             </v-card-item>
 
             <v-card-actions class="flex justify-center">
-              <v-btn
-                @click.stop
-                @click="console.log('sdsd')"
-                size="x-small"
-                block
-                :color="LKColor"
-                variant="tonal"
-              >
-                Текущий тариф
-              </v-btn>
+              <PaymentTariff />
             </v-card-actions>
           </v-card>
 
-          <v-divider class="mb-2"></v-divider>
+          <v-divider :color="LKColor" class="mb-2"></v-divider>
           <v-list-item
             prepend-icon="mdi-briefcase "
             title="Рекламные кампании"

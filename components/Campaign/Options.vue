@@ -21,11 +21,6 @@ const deleteStatus = ref();
 
 const props: any = defineProps({ campaign: Object });
 
-interface TimeObject {
-  hours: number;
-  minutes: number;
-  seconds: number;
-}
 
 function parseTime(input: string) {
   const groups = input.split("|");
