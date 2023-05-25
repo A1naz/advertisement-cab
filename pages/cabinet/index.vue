@@ -3,6 +3,15 @@ import { useNotification } from "@kyvg/vue3-notification";
 import { useWindowSize } from "@vueuse/core";
 const { status } = useAuth();
 const campaignStore = useCampaignStore();
+campaignStore.updateCabinet();
+
+function updateCabinet() {
+  setInterval(() => {
+    campaignStore.updateCabinet();
+  }, 60000);
+}
+
+updateCabinet()
 
 const isLoading = ref(true);
 const { width, height } = useWindowSize();
@@ -26,31 +35,6 @@ definePageMeta({
 
 function routeTo(id: string) {
   return navigateTo(`/cabinet/${id}`);
-}
-
-async function deleteCabinet(cabinetId: any) {
-  isLoading.value = true;
-  const { data, error } = await useAsyncData(() =>
-    $client.cabinet.deleteteCabinet.mutate({
-      _id: cabinetId,
-    })
-  );
-
-  if (error.value) {
-    notify({
-      type: "error",
-      text: "Произошла ошибка",
-    });
-  }
-
-  if (data.value) {
-    await campaignStore.getCampaigns();
-    notify({
-      type: "success",
-      text: "Кабинет удален",
-    });
-  }
-  isLoading.value = false;
 }
 </script>
 

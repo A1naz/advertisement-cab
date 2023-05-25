@@ -1,5 +1,4 @@
 import { acceptHMRUpdate, defineStore } from "pinia";
-import { any } from "zod";
 
 export const useCampaignStore = defineStore("campaign", () => {
   const campaigns = ref<any>([]);
@@ -9,9 +8,9 @@ export const useCampaignStore = defineStore("campaign", () => {
   const categories = ref<any>([]);
   const itemsByCategory = ref<any>([]);
   const sortValue = ref("turnOnOff");
+  const { $client } = useNuxtApp();
 
   async function getCampaigns() {
-    const { $client } = useNuxtApp();
     const camps: any = await $client.campaign.campaigns.query();
 
     items.value = camps.items;
@@ -102,6 +101,12 @@ export const useCampaignStore = defineStore("campaign", () => {
     sortedAndSeachedCampaigns.value = sortedCampaigns.value;
   }
 
+  async function updateCabinet() {
+
+   await $client.cabinet.updateCabinet.query();
+  
+ 
+  }
 
   return {
     items,
@@ -116,6 +121,7 @@ export const useCampaignStore = defineStore("campaign", () => {
     sortByCreateTime,
     sortedAndSeachedCampaigns,
     sortItemsByCategory,
+    updateCabinet
   };
 });
 if (import.meta.hot) import.meta.hot.accept(acceptHMRUpdate(useCampaignStore, import.meta.hot));

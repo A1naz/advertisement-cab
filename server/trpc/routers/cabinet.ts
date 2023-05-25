@@ -61,11 +61,11 @@ export const cabinetRouter = router({
           },
         });
 
-        const isCampaignExist = await Campaign.find({
+        const isCabinetExist = await Campaign.find({
           user: user._id,
         });
 
-        if (isCampaignExist) {
+        if (isCabinetExist) {
           await Campaign.deleteMany({ user: user._id });
         }
 
@@ -98,13 +98,15 @@ export const cabinetRouter = router({
           }));
           let showTimes = "";
 
-          campaign.params[0].intervals.forEach((el: any) => {
-            if (showTimes.includes("|")) {
-              showTimes = showTimes + `${el.begin}:00-${el.end}:00`;
-            } else {
-              showTimes = showTimes + `${el.begin}:00-${el.end}:00|`;
-            }
-          });
+          if (campaign.params[0].intervals) {
+            campaign.params[0].intervals.forEach((el: any) => {
+              if (showTimes.includes("|")) {
+                showTimes = showTimes + `${el.begin}:00-${el.end}:00`;
+              } else {
+                showTimes = showTimes + `${el.begin}:00-${el.end}:00|`;
+              }
+            });
+          }
 
           const newCampaign = await Campaign.create({
             uuid: uuid(),
@@ -130,39 +132,12 @@ export const cabinetRouter = router({
       }
     }),
 
-  deleteteCabinet: publicProcedure
-    .input(
-      z.object({
-        _id: z.string(),
-      })
-    )
-    .mutation(async (opts) => {
-      const session = opts.ctx.session as any;
-      const { input } = opts;
-      const { _id } = input;
-
-      if (!session) {
-        throw new TRPCError({
-          code: "FORBIDDEN",
-          message: "unauthorized",
-        });
-      }
-
-      const user = await User.findById(session._id);
-
-      if (!user) {
-        throw new TRPCError({
-          code: "FORBIDDEN",
-          message: "unauthorized",
-        });
-      }
-
-      await Cabinet.findByIdAndDelete(_id);
-
-      return { status: "ok" };
-    }),
-
-  cabinets: publicProcedure.query(async (opts) => {
+  //==================================================================================================================
+  //==================================================================================================================
+  //==================================================================================================================
+  //==================================================================================================================
+  //==================================================================================================================
+  updateCabinet: publicProcedure.query(async (opts) => {
     const session = opts.ctx.session as any;
 
     if (!session) {
@@ -171,7 +146,9 @@ export const cabinetRouter = router({
         message: "unauthorized",
       });
     }
+
     const user = await User.findById(session._id);
+
     if (!user) {
       throw new TRPCError({
         code: "FORBIDDEN",
@@ -179,9 +156,133 @@ export const cabinetRouter = router({
       });
     }
 
-    const cabinets: any[] = await Cabinet.find({ user: session._id });
+    if (!user.apiKeyAdvertisement) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "unauthorized",
+      });
+    }
 
-    return cabinets;
+    const apiKeyAdvertisement = user.apiKeyAdvertisement;
+
+    try {
+      const campaignsFromWB: any[] = await $fetch(`https://advert-api.wb.ru/adv/v0/adverts`, {
+        method: "GET",
+        headers: {
+          Authorization: apiKeyAdvertisement,
+        },
+        params: {
+          type: 5, //Тип только карточки - надо потом поменять
+        },
+      });
+
+      const campaignsFromDB = await Campaign.find({
+        user: user._id,
+      });
+
+      if (!campaignsFromDB) {
+        return { status: "Кампаний нет" };
+      }
+
+      const finalCampaigns = campaignsFromDB.filter((campaign) => {
+        return (
+          campaignsFromWB.some((wbCampaign: any) => {
+            if (wbCampaign.advertId === campaign.advertId) return wbCampaign;
+          }) || campaign.advertId === 0
+        );
+      });
+
+      campaignsFromWB.forEach((wbCampaign) => {
+        if (!finalCampaigns.some((campaign) => campaign.advertId === wbCampaign.advertId)) {
+          finalCampaigns.push(wbCampaign);
+        }
+      });
+
+      const campaignsForDelete = <any>[];
+
+      campaignsFromDB.forEach((wbCampaign) => {
+        if (!finalCampaigns.some((campaign) => campaign.advertId === wbCampaign.advertId)) {
+          campaignsForDelete.push(wbCampaign);
+        }
+      });
+
+      campaignsForDelete.forEach(async (el: any) => {
+        await Campaign.deleteOne({
+          _id: el._id,
+        });
+      });
+
+      finalCampaigns.forEach(async (el) => {
+        if (el.advertId !== 0) {
+          const campaign: any = await $fetch(`https://advert-api.wb.ru/adv/v0/advert`, {
+            method: "GET",
+            headers: {
+              Authorization: apiKeyAdvertisement,
+            },
+            params: {
+              id: el.advertId,
+            },
+          });
+
+          const allItems: any[] = [];
+          campaign.params.forEach((item: any) => {
+            const newItem = {
+              category: item.setName,
+              nms: item.nms,
+            };
+            allItems.push(newItem);
+          });
+
+          const items = allItems.map((item: any) => ({
+            category: item.category,
+            nms: item.nms.map((innerItem: any) => innerItem.nm),
+          }));
+          let showTimes = "";
+
+          if (campaign.params[0].intervals) {
+            campaign.params[0].intervals.forEach((el: any) => {
+              if (showTimes.includes("|")) {
+                showTimes = showTimes + `${el.begin}:00-${el.end}:00`;
+              } else {
+                showTimes = showTimes + `${el.begin}:00-${el.end}:00|`;
+              }
+            });
+          }
+
+          if (el.nms) {
+            el.type = campaign.type;
+            el.name = campaign.name;
+            el.status = campaign.status;
+            el.dailyBudget = campaign.dailyBudget;
+            el.nms = items;
+            el.params = campaign.params;
+            el.showHours = showTimes;
+            await el.save();
+          } else {
+            const newCampaign = await Campaign.create({
+              uuid: uuid(),
+              advertId: campaign.advertId,
+              type: campaign.type,
+              name: campaign.name,
+              status: campaign.status,
+              dailyBudget: campaign.dailyBudget,
+              nms: items,
+              user: user._id,
+              createTime: campaign.createTime,
+              params: campaign.params,
+              showHours: showTimes,
+            });
+          }
+        }
+      });
+
+      return { status: "ok" };
+    } catch (error) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "Неверный Api-ключ Реклама",
+      });
+    }
   }),
 });
 // export type definition of API
