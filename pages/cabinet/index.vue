@@ -8,6 +8,7 @@ campaignStore.updateCabinet();
 function updateCabinet() {
   setInterval(() => {
     campaignStore.updateCabinet();
+    campaignStore.getCampaigns();
   }, 60000);
 }
 
