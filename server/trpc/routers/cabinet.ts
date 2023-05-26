@@ -132,11 +132,6 @@ export const cabinetRouter = router({
       }
     }),
 
-  //==================================================================================================================
-  //==================================================================================================================
-  //==================================================================================================================
-  //==================================================================================================================
-  //==================================================================================================================
   updateCabinet: publicProcedure.query(async (opts) => {
     const session = opts.ctx.session as any;
 
@@ -248,15 +243,17 @@ export const cabinetRouter = router({
               }
             });
           }
-
+        
           if (el.nms) {
+            if (!el.showHours) {
+              el.showHours = showTimes;
+            }
             el.type = campaign.type;
             el.name = campaign.name;
             el.status = campaign.status;
             el.dailyBudget = campaign.dailyBudget;
             el.nms = items;
             el.params = campaign.params;
-            el.showHours = showTimes;
             await el.save();
           } else {
             const newCampaign = await Campaign.create({
