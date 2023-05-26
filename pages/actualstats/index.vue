@@ -40,6 +40,10 @@ definePageMeta({
   auth: true,
   layout: "app",
 });
+
+const isUpdateBtnActive = computed(() => {
+  return article.value ? false : true;
+});
 </script>
 <template>
   <v-container>
@@ -52,12 +56,12 @@ definePageMeta({
       </v-col>
     </v-row>
     <v-row>
-      <v-col>
+      <v-col class="flex flex-row">
         <v-autocomplete
           v-model="article"
           :items="items"
           no-data-text="Нет предметов"
-          class="max-w-xs max-h-10 mb-4"
+          class="max-w-xs max-h-10 mb-6 mx-2"
           :loading="loading"
           @update:modelValue="findCampaignStats"
         >
@@ -68,10 +72,13 @@ definePageMeta({
             <v-img class="w-8 ml-3" :src="findImage(item.title)" />
           </template>
 
-          <template v-slot:item="{ props, item }" class="">
+          <template v-slot:item="{ props, item }">
             <v-list-item :title="item.title" v-bind="props"> </v-list-item>
           </template>
         </v-autocomplete>
+        <v-btn class="mt-4" variant="tonal" @click="findCampaignStats" :disabled="isUpdateBtnActive"
+          >обновить</v-btn
+        >
       </v-col>
     </v-row>
     <v-row>
@@ -105,7 +112,9 @@ definePageMeta({
                     }}</v-tooltip>
                   </v-img>
                 </td>
-                <td class="text-center cursor-pointer" @click="openArticlePage(stat.nmId)">{{ stat.nmId }}</td>
+                <td class="text-center cursor-pointer" @click="openArticlePage(stat.nmId)">
+                  {{ stat.nmId }}
+                </td>
                 <td class="text-center">{{ stat.cpm }}</td>
                 <td class="text-center">{{ stat.wbCpm }}</td>
               </tr>
