@@ -52,12 +52,8 @@ export const cabinetRouter = router({
           code: "BAD_REQUEST",
           message: "Апи ключ уже занят",
         });
-        console.log(isApiKeyAvailable);
       }
 
-      if (!isApiKeyAvailable) {
-        return;
-      }
       // if (user.apiKeyAdvertisement === apiKeyAdvertisement) {
       //   throw new TRPCError({
       //     code: "BAD_REQUEST",
