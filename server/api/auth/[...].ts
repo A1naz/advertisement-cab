@@ -56,7 +56,7 @@ export default NuxtAuthHandler({
         if (!email || !password)
           return null
 
-        const user = await User.findOne({ email })
+        const user = await User.findOne({ email: email.toLowerCase() })
 
         if (!user)
           throw new Error('Неверный email или пароль')

@@ -103,7 +103,7 @@ export const authRouter = router({
       const { input } = opts;
       const { email, password, username } = input;
 
-      const isUserExist = await User.findOne({ email });
+      const isUserExist = await User.findOne({ email: email.toLowerCase() });
       if (isUserExist) {
         throw new TRPCError({
           code: "BAD_REQUEST",
@@ -113,7 +113,7 @@ export const authRouter = router({
 
       const url = config.public.PUBLIC_SITE_URL;
       const user = await User.create({
-        email,
+        email: email.toLowerCase(),
         password: bcrypt.hashSync(password, 7),
         username,
         uuid: uuid(),
