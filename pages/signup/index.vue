@@ -9,17 +9,19 @@ definePageMeta({
   title: "Регистрация",
 });
 const { $client } = useNuxtApp();
-
+const show1 = ref(false);
 const name = ref("");
 const email = ref("");
 const password = ref("");
-const { ruleEmail, rulePassLen, ruleRequired } = useFormRules();
+const phone = ref("");
+const { ruleEmail, rulePassLen, ruleRequired, rulePhone } = useFormRules();
 const { notify } = useNotification();
 async function submit() {
   if (
     ruleEmail(email.value) !== true ||
     rulePassLen(password.value) !== true ||
-    ruleRequired(name.value) !== true
+    ruleRequired(name.value) !== true ||
+    rulePhone(phone.value) !== true
   )
     return;
 
@@ -28,6 +30,7 @@ async function submit() {
       username: name.value,
       email: email.value,
       password: password.value,
+      phone: phone.value,
     })
   );
   if (error.value) {
@@ -67,6 +70,16 @@ async function submit() {
                 />
               </div>
               <div class="mt-1">
+                <label class="label text-grey-darken-2" for="phone">Телефон</label>
+                <VTextField
+                  id="phone"
+                  v-model="phone"
+                  :rules="[ruleRequired, rulePhone]"
+                  prepend-inner-icon="mdi-phone-outline"
+                  name="phone"
+                />
+              </div>
+              <div class="mt-1">
                 <label class="label text-grey-darken-2" for="email">Email</label>
                 <VTextField
                   id="email"
@@ -83,7 +96,9 @@ async function submit() {
                   id="password"
                   v-model="password"
                   :rules="[ruleRequired, rulePassLen]"
-                  type="password"
+                  :append-inner-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
+                  @click:append-inner="show1 = !show1"
+                  :type="show1 ? 'text' : 'password'"
                   prepend-inner-icon="fluent:password-20-regular"
                   name="password"
                 />

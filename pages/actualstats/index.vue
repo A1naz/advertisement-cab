@@ -4,7 +4,10 @@ const router = useRouter();
 const { $client } = useNuxtApp();
 const campaignStore = useCampaignStore();
 const { status } = useAuth();
-await campaignStore.getCampaigns();
+const userStore = useUserStore();
+let client = userStore.client;
+
+if (status.value === "authenticated" && client.apiKeyAdvertisement) campaignStore.getCampaigns();
 const stats = ref<any>([]);
 const article = ref("");
 const loading = ref(false);
@@ -69,7 +72,11 @@ const isUpdateBtnActive = computed(() => {
             <div>
               {{ item.title }}
             </div>
-            <v-img class="w-8 ml-3" :src="findImage(item.title)" />
+            <v-img
+              v-if="client.apiKeyAdvertisement"
+              class="w-8 ml-3"
+              :src="findImage(item.title)"
+            />
           </template>
 
           <template v-slot:item="{ props, item }">

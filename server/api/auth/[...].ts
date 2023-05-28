@@ -1,9 +1,9 @@
-import CredentialsProvider from 'next-auth/providers/credentials'
-import bcrypt from 'bcrypt'
-import { User } from '~/server/lib/models/User'
-import { NuxtAuthHandler } from '#auth'
+import CredentialsProvider from "next-auth/providers/credentials";
+import bcrypt from "bcrypt";
+import { User } from "~/server/lib/models/User";
+import { NuxtAuthHandler } from "#auth";
 
-const runtimeConfig = useRuntimeConfig()
+const runtimeConfig = useRuntimeConfig();
 export default NuxtAuthHandler({
   // adapter: MongoDBAdapter(clientPromise),
   secret: runtimeConfig.SECRET,
@@ -11,66 +11,63 @@ export default NuxtAuthHandler({
     maxAge: 30 * 24 * 60 * 60, // 30 days
   },
   pages: {
-    signOut: '/',
-    signIn: '/',
-    error: '/',
+    signOut: "/",
+    signIn: "/",
+    error: "/",
   },
   callbacks: {
     jwt: async ({ token, user }) => {
-      const isSignIn = !!user
+      const isSignIn = !!user;
       if (isSignIn) {
-        token.email = user ? (user as any)?.email : ''
-        token._id = user ? (user as any)?._id : ''
+        token.email = user ? (user as any)?.email : "";
+        token._id = user ? (user as any)?._id : "";
       }
-      return Promise.resolve(token)
+      return Promise.resolve(token);
     },
     // Callback whenever session is checked, see https://next-auth.js.org/configuration/callbacks#session-callback
     session: async ({ session, token }) => {
       (session as any).email = token.email;
-      (session as any)._id = token._id
-      const found = await User.findOne({ _id: token._id })
-      if (!found)
-        return Promise.reject(new Error('User not found'))
+      (session as any)._id = token._id;
+      const found = await User.findOne({ _id: token._id });
+      if (!found) return Promise.reject(new Error("User not found"));
 
-      return Promise.resolve(session)
+      return Promise.resolve(session);
     },
   },
   providers: [
     // @ts-expect-error You need to use .default here for it to work during SSR. May be fixed via Vite at some point
     CredentialsProvider.default({
-      name: 'Credentials',
+      name: "Credentials",
       credentials: {
         email: {
-          label: 'email',
-          type: 'text',
+          label: "email",
+          type: "text",
         },
         password: {
-          label: 'password',
-          type: 'password',
+          label: "password",
+          type: "password",
         },
       },
 
       async authorize(credentials: any) {
-        const { email, password } = credentials
+        const { email, password } = credentials;
 
-        if (!email || !password)
-          return null
+        if (!email || !password) return null;
 
-        const user = await User.findOne({ email: email.toLowerCase() })
+        const user = await User.findOne({ email: email.toLowerCase() });
 
-        if (!user)
-          throw new Error('Неверный email или пароль')
+        if (!user) throw new Error("Неверный email или пароль");
 
-        if (!user.password)
-          throw new Error('Неверный email или пароль')
+        if (!user.password) throw new Error("Неверный email или пароль");
 
-        const isValid = await bcrypt.compare(password, user.password)
+        const isValid = await bcrypt.compare(password, user.password);
 
-        if (!isValid)
-          throw new Error('Неверный email или пароль')
+        if (!isValid) throw new Error("Неверный email или пароль");
 
-        return user
+        if (!user.isEmailConfirmed) throw new Error("Подтверждите почту");
+
+        return user;
       },
     }),
   ],
-})
+});

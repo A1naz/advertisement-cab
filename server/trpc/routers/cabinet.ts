@@ -43,9 +43,10 @@ export const cabinetRouter = router({
         });
       }
 
-      const isApiKeyAvailable = await User.find({
+      const isApiKeyAvailable = await User.findOne({
         apiKeyAdvertisement: apiKeyAdvertisement,
       });
+      
 
       if (isApiKeyAvailable) {
         throw new TRPCError({

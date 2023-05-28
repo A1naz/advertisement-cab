@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { useNotification } from "@kyvg/vue3-notification";
+const { status } = useAuth();
 
 const userStore = useUserStore();
 const campaignStore = useCampaignStore();
+if (status.value === "authenticated") userStore.getClient();
 let client = userStore.client;
 const { $client } = useNuxtApp();
-const { ruleEmail, rulePassLen, ruleRequired } = useFormRules();
+const { ruleEmail, rulePassLen, ruleRequired, rulePhone } = useFormRules();
 const { notify } = useNotification();
 
 async function connectApiKeyAdvertisement() {
@@ -37,6 +39,7 @@ async function saveChanges() {
       email: client.email,
       firstName: client.firstName,
       lastName: client.lastName,
+      phone: client.phone,
     })
   );
 
@@ -85,6 +88,9 @@ definePageMeta({
   auth: true,
   layout: "app",
 });
+
+const show1 = ref(false);
+const show2 = ref(true);
 </script>
 
 <template>
@@ -101,6 +107,15 @@ definePageMeta({
           :rules="[ruleRequired, ruleEmail]"
           label="Email"
           type="email"
+          variant="filled"
+        />
+      </v-col>
+      <v-col cols="12">
+        <v-text-field
+          v-model="client.phone"
+          :rules="[rulePhone]"
+          label="Номер телефона"
+          type="text"
           variant="filled"
         />
       </v-col>
@@ -180,7 +195,9 @@ definePageMeta({
           v-model="passwordForm.oldPassword"
           :rules="[ruleRequired, rulePassLen]"
           label="Старый пароль"
-          type="password"
+          :append-inner-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
+          @click:append-inner="show1 = !show1"
+          :type="show1 ? 'text' : 'password'"
         />
       </v-col>
       <v-col cols="12" lg="6">
@@ -189,7 +206,9 @@ definePageMeta({
           v-model="passwordForm.newPassword"
           :rules="[ruleRequired, rulePassLen]"
           label="Новый пароль"
-          type="password"
+          :append-inner-icon="show2 ? 'mdi-eye' : 'mdi-eye-off'"
+          @click:append-inner="show2 = !show2"
+          :type="show2 ? 'text' : 'password'"
         />
       </v-col>
     </v-row>

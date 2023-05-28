@@ -3,7 +3,9 @@ import { useNotification } from "@kyvg/vue3-notification";
 import { useWindowSize } from "@vueuse/core";
 const { status } = useAuth();
 const campaignStore = useCampaignStore();
-campaignStore.updateCabinet();
+const userStore = useUserStore();
+let client = userStore.client;
+if (status.value === "authenticated") userStore.getClient()
 
 function updateCabinet() {
   setInterval(() => {
@@ -12,13 +14,15 @@ function updateCabinet() {
   }, 60000);
 }
 
-updateCabinet()
+if (status.value === "authenticated" && client.apiKeyAdvertisement) {
+  campaignStore.getCampaigns();
+  campaignStore.updateCabinet();
+  updateCabinet();
+}
 
 const isLoading = ref(true);
 const { width, height } = useWindowSize();
 const search = ref("");
-
-if (status.value === "authenticated") campaignStore.getCampaigns();
 
 isLoading.value = false;
 const { $client } = useNuxtApp();

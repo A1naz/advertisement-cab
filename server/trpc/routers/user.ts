@@ -12,12 +12,13 @@ export const userRouter = router({
         email: z.string().email("Введите корректный email"),
         firstName: z.string(),
         lastName: z.string(),
+        phone: z.string().min(9, "Некорректный номер"),
       })
     )
     .mutation(async (opts) => {
       const session = opts.ctx.session as any;
       const { input } = opts;
-      const { email, firstName, lastName } = input;
+      const { email, firstName, lastName, phone } = input;
 
       if (!session) {
         throw new TRPCError({
@@ -46,11 +47,12 @@ export const userRouter = router({
         user.firstName = firstName;
         user.lastName = lastName;
         user.email = email;
-
+        user.phone = phone.replace("+", "");
         await user.save();
         return { status: "ok" };
       }
 
+      user.phone = phone.replace("+", "");
       user.firstName = firstName;
       user.lastName = lastName;
 
@@ -141,6 +143,7 @@ export const userRouter = router({
           : user.apiKeyAdvertisement.slice(0, 5) +
             "*".repeat(129) +
             user.apiKeyAdvertisement.slice(-5),
+      phone: user.phone,
     };
 
     return { user: format };

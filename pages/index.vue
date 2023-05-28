@@ -1,15 +1,24 @@
 <script setup>
 import { email, helpers, minLength, required } from "@vuelidate/validators";
+const { status, data, signIn, signOut } = useAuth();
+const $router = useRouter();
+
+onMounted(() => {
+  if (status.value === "authenticated") {
+    $router.push("/profile");
+  }
+});
 
 definePageMeta({
-  title: "Вход",
   auth: {
     unauthenticatedOnly: true,
     navigateAuthenticatedTo: "/profile",
   },
+  title: "Вход",
 });
 
-const { status, data, signIn, signOut } = useAuth();
+console.log(status);
+
 const form = reactive({
   email: "",
   password: "",
@@ -45,6 +54,7 @@ async function submit() {
     return navigateTo(url, { external: true });
   }
 }
+const show1 = ref(false);
 </script>
 
 <template>
@@ -75,9 +85,11 @@ async function submit() {
                   id="password"
                   v-model="form.password"
                   :error-messages="v$.password.$errors.map((e) => e.$message)"
-                  prepend-inner-icon="fluent:password-20-regular"
                   name="password"
-                  type="password"
+                  :append-inner-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
+                  prepend-inner-icon="fluent:password-20-regular"
+                  @click:append-inner="show1 = !show1"
+                  :type="show1 ? 'text' : 'password'"
                   @update:model-value="v$.password.$touch"
                   @blur="v$.password.$touch"
                 />

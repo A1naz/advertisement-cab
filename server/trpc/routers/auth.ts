@@ -95,13 +95,15 @@ export const authRouter = router({
     .input(
       z.object({
         username: z.string(),
+        lastName: z.string().optional(),
         email: z.string().email("Введите корректный email"),
         password: z.string().min(6, "Не менее 6 символов"),
+        phone: z.string().min(9, "Некорректный номер"),
       })
     )
     .mutation(async (opts) => {
       const { input } = opts;
-      const { email, password, username } = input;
+      const { email, password, username, phone, lastName } = input;
 
       const isUserExist = await User.findOne({ email: email.toLowerCase() });
       if (isUserExist) {
@@ -110,12 +112,19 @@ export const authRouter = router({
           message: "Пользователь уже существует",
         });
       }
+      let truePhone;
+
+      if (phone.includes("+")) {
+        truePhone = phone.replace("+", "");
+      }
 
       const url = config.public.PUBLIC_SITE_URL;
       const user = await User.create({
         email: email.toLowerCase(),
         password: bcrypt.hashSync(password, 7),
         username,
+        lastName,
+        phone: truePhone,
         uuid: uuid(),
       });
       const link = `${url}/activate?uuid=${user.uuid}`;
