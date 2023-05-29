@@ -30,7 +30,7 @@ export const useCampaignStore = defineStore("campaign", () => {
   function sortItemsByCategory(value: string) {
     itemsByCategory.value = [];
     items.value.forEach((el: any) => {
-      if (el.category === value) {
+      if (el.category === value && el.category) {
         el.nms.forEach((elem: any) => {
           itemsByCategory.value.push(elem);
         });
@@ -45,7 +45,6 @@ export const useCampaignStore = defineStore("campaign", () => {
         const bDate = new Date(b.createTime.replace(/^(\d{2})\.(\d{2})\.(\d{4})$/, "$2.$1.$3"));
         return aDate.getTime() - bDate.getTime();
       });
-  
     }
     if (sortValue.value == "descending") {
       sortedAndSeachedCampaigns.value = sortedAndSeachedCampaigns.value.sort((a: any, b: any) => {
@@ -102,10 +101,7 @@ export const useCampaignStore = defineStore("campaign", () => {
   }
 
   async function updateCabinet() {
-
-   await $client.cabinet.updateCabinet.query();
-  
- 
+    await $client.cabinet.updateCabinet.query();
   }
 
   return {
@@ -121,7 +117,7 @@ export const useCampaignStore = defineStore("campaign", () => {
     sortByCreateTime,
     sortedAndSeachedCampaigns,
     sortItemsByCategory,
-    updateCabinet
+    updateCabinet,
   };
 });
 if (import.meta.hot) import.meta.hot.accept(acceptHMRUpdate(useCampaignStore, import.meta.hot));

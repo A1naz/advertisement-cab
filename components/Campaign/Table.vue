@@ -53,8 +53,10 @@ function sortByCreateTime() {
       <thead>
         <tr>
           <th class="text-left cursor-pointer" @click="sortByCreateTime">
-            Дата создания
-            <v-icon size="large" class="mb-1" :icon="iconArrow"></v-icon>
+            <div class="min-w-34 flex">
+              Дата создания
+              <v-icon size="large" :icon="iconArrow"></v-icon>
+            </div>
           </th>
           <th class="text-left">Кампания</th>
           <th class="text-left">Артикулы</th>
@@ -73,7 +75,7 @@ function sortByCreateTime() {
             {{ campaign.createTime }}
           </td>
           <td>
-            <div>
+            <div class="flex max-w-xs">
               {{ campaign.name }}
             </div>
             <div class="text-sm mt-3">
@@ -92,7 +94,7 @@ function sortByCreateTime() {
           </td>
           <td>
             <div v-for="nms in campaign.nms" class="flex">
-              <div v-for="nm in nms.nms" class="m-1">
+              <div v-for="nm in nms.nms" class="mr-1">
                 <v-img class="w-9" :src="findImage(nm)"
                   ><v-tooltip activator="parent" transition="fade-transition" location="top">{{
                     nm

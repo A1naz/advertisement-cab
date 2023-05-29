@@ -13,7 +13,7 @@ const article = ref("");
 const loading = ref(false);
 const items = ref<any>([]);
 campaignStore.items.forEach((el: any) => {
-  if (!items.value.includes(el.nms)) {
+  if (!items.value.includes(...el.nms)) {
     items.value.push(...el.nms);
   }
 });
@@ -119,8 +119,10 @@ const isUpdateBtnActive = computed(() => {
                     }}</v-tooltip>
                   </v-img>
                 </td>
-                <td class="text-center cursor-pointer" @click="openArticlePage(stat.nmId)">
-                  {{ stat.nmId }}
+                <td class="text-center">
+                  <div @click="openArticlePage(stat.nmId)" class="cursor-pointer text-primary">
+                    {{ stat.nmId }}
+                  </div>
                 </td>
                 <td class="text-center">{{ stat.cpm }}</td>
                 <td class="text-center">{{ stat.wbCpm }}</td>

@@ -27,6 +27,8 @@ export const campaignRouter = router({
 
       if (type === "Карточка товара") {
         conversedType = 5;
+      } else if (type === "Поиск") {
+        conversedType = 6;
       } else {
         throw new TRPCError({
           code: "BAD_REQUEST",
@@ -242,30 +244,56 @@ export const campaignRouter = router({
     const userWithSetId = await Campaign.findOne({ "params.nms.nm": Number(input) });
 
     if (userWithSetId) {
-      const actualWbStats: any = await $fetch(
-        `https://advert-api.wb.ru/adv/v0/cpm?type=5&param=${userWithSetId.params[0].setId}`,
-        {
-          method: "GET",
+      if (userWithSetId.params[0].setId) {
+        const actualWbStats: any = await $fetch(
+          `https://advert-api.wb.ru/adv/v0/cpm?type=5&param=${userWithSetId.params[0].setId}`,
+          {
+            method: "GET",
 
-          headers: {
-            Authorization: user.apiKeyAdvertisement,
-          },
-        }
-      );
-
-      let wbStats: any = [];
-      actualWbStats.forEach((el: any) => {
-        for (let i = 0; i < el.Count; i++) {
-          wbStats.push(el.Cpm);
-          if (wbStats.length >= 28) {
-            break;
+            headers: {
+              Authorization: user.apiKeyAdvertisement,
+            },
           }
-        }
-      });
+        );
+        let wbStats: any = [];
+        actualWbStats.forEach((el: any) => {
+          for (let i = 0; i < el.Count; i++) {
+            wbStats.push(el.Cpm);
+            if (wbStats.length >= 28) {
+              break;
+            }
+          }
+        });
 
-      actualStats.forEach((el: any, index: any) => {
-        actualStats[index]["wbCpm"] = wbStats[index];
-      });
+        actualStats.forEach((el: any, index: any) => {
+          actualStats[index]["wbCpm"] = wbStats[index];
+        });
+      } else {
+        console.log("subject");
+
+        const actualWbStats: any = await $fetch(
+          `https://advert-api.wb.ru/adv/v0/cpm?type=6&param=${userWithSetId.params[0].subjectId}`,
+          {
+            method: "GET",
+            headers: {
+              Authorization: user.apiKeyAdvertisement,
+            },
+          }
+        );
+        let wbStats: any = [];
+        actualWbStats.forEach((el: any) => {
+          for (let i = 0; i < el.Count; i++) {
+            wbStats.push(el.Cpm);
+            if (wbStats.length >= 28) {
+              break;
+            }
+          }
+        });
+
+        actualStats.forEach((el: any, index: any) => {
+          actualStats[index]["wbCpm"] = wbStats[index];
+        });
+      }
     } else {
       throw new TRPCError({
         code: "BAD_REQUEST",

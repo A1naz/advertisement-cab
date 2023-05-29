@@ -15,8 +15,8 @@ function updateCabinet() {
 }
 
 if (status.value === "authenticated" && client.apiKeyAdvertisement) {
-  campaignStore.getCampaigns();
   campaignStore.updateCabinet();
+  campaignStore.getCampaigns();
   updateCabinet();
 }
 

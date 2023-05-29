@@ -89,9 +89,21 @@ async function addCampaign() {
         </div>
       </template>
       <v-card>
-        <v-col>
-          <span class="text-h6">Подключение рекламного кабинета</span>
-        </v-col>
+        <v-row>
+          <v-col class="text-h6 ml-6 mt-3">
+            <span>Создание рекламного кабинета</span>
+          </v-col>
+          <v-col class="text-end mr-4 mt-1">
+            <v-btn
+              class="absolute left-3"
+              size="large"
+              variant="text"
+              icon="mdi-close-thick"
+              @click="dialog = false"
+              rounded="xl"
+            />
+          </v-col>
+        </v-row>
         <v-card-title class="mt-2 ml-2"> </v-card-title>
         <v-card-text>
           <v-form fast-fail>
@@ -100,6 +112,7 @@ async function addCampaign() {
                 <h2 class="ml-2 mb-2">Тип рекламной кампании</h2>
                 <v-radio-group inline v-model="radios">
                   <v-radio label="Карточка товара" value="Карточка товара"></v-radio>
+                  <v-radio label="Поиск" value="Поиск"></v-radio>
                 </v-radio-group>
               </v-col>
               <v-col cols="12">

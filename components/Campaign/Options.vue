@@ -21,7 +21,6 @@ const deleteStatus = ref();
 
 const props: any = defineProps({ campaign: Object });
 
-
 function parseTime(input: string) {
   const groups = input.split("|");
 
@@ -264,7 +263,7 @@ const isMaxBetTextValueRuleEnabled = computed(() => {
               </v-col>
               <v-col class="text-end">
                 <v-btn
-                class="absolute left-3"
+                  class="absolute left-3"
                   size="large"
                   variant="text"
                   icon="mdi-close-thick"
