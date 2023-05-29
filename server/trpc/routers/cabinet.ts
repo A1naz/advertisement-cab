@@ -212,8 +212,6 @@ export const cabinetRouter = router({
           campaignsForDelete.push(wbCampaign);
         }
       });
-
-      console.log(campaignsForDelete)
       
       campaignsForDelete.forEach(async (el: any) => {
         await Campaign.deleteOne({
