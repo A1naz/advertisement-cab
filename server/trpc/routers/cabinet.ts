@@ -213,6 +213,8 @@ export const cabinetRouter = router({
         }
       });
 
+      console.log(campaignsForDelete)
+      
       campaignsForDelete.forEach(async (el: any) => {
         await Campaign.deleteOne({
           _id: el._id,
