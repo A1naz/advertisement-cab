@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { useNotification } from "@kyvg/vue3-notification";
 const { status } = useAuth();
-
 const userStore = useUserStore();
 const campaignStore = useCampaignStore();
 if (status.value === "authenticated") userStore.getClient();

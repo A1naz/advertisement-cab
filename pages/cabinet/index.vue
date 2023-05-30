@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useNotification } from "@kyvg/vue3-notification";
 import { useWindowSize } from "@vueuse/core";
+const isLoading = ref(true);
 const { status } = useAuth();
 const campaignStore = useCampaignStore();
 const userStore = useUserStore();
@@ -18,13 +19,14 @@ if (status.value === "authenticated" && client.apiKeyAdvertisement) {
   campaignStore.updateCabinet();
   campaignStore.getCampaigns();
   updateCabinet();
+  isLoading.value = false;
+} else {
+  isLoading.value = false;
 }
 
-const isLoading = ref(true);
 const { width, height } = useWindowSize();
 const search = ref("");
 
-isLoading.value = false;
 const { $client } = useNuxtApp();
 const { notify } = useNotification();
 
@@ -41,15 +43,15 @@ definePageMeta({
 function routeTo(id: string) {
   return navigateTo(`/cabinet/${id}`);
 }
+
 </script>
 
 <template>
-  <v-progress-linear
-    :active="isLoading"
-    :indeterminate="isLoading"
-    color="deep-purple-accent-4"
-  ></v-progress-linear>
   <v-container>
+    <v-progress-linear
+      :active="isLoading"
+      color="deep-purple-accent-4"
+    ></v-progress-linear>
     <div class="pb-5 text-sm text-zinc-400">Здесь отображаются ваши рекламные кабинеты</div>
     <v-row class="">
       <v-col>

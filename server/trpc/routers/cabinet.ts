@@ -195,6 +195,10 @@ export const cabinetRouter = router({
     const apiKeyAdvertisement = user.apiKeyAdvertisement;
 
     try {
+      const campaignsFromDB = await Campaign.find({
+        user: user._id,
+      });      
+
       const campaignsSearch: any[] = await $fetch(`https://advert-api.wb.ru/adv/v0/adverts`, {
         method: "GET",
         headers: {
@@ -218,13 +222,6 @@ export const cabinetRouter = router({
       const campaignsFromWB: any[] = [];
       campaignsFromWB.push(...campaignsCart, ...campaignsSearch);
 
-      const campaignsFromDB = await Campaign.find({
-        user: user._id,
-      });
-
-      if (!campaignsFromDB || campaignsFromDB.length === 0) {
-        return { status: "Кампаний нет" };
-      }
 
       const finalCampaigns = campaignsFromDB.filter((campaign) => {
         return (
@@ -247,7 +244,7 @@ export const cabinetRouter = router({
           campaignsForDelete.push(wbCampaign);
         }
       });
-      
+
       campaignsForDelete.forEach(async (el: any) => {
         await Campaign.deleteOne({
           _id: el._id,
@@ -267,6 +264,7 @@ export const cabinetRouter = router({
           });
 
           const allItems: any[] = [];
+
           campaign.params.forEach((item: any) => {
             if (item.setName) {
               const newItem = {
