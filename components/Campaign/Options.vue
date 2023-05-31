@@ -111,7 +111,8 @@ async function adjustCampgain(id: string) {
     ruleRequired(maxBet.value) !== true ||
     (ruleRequired(getBet.value) !== true && ifMaxBet.value === "Выставить ставку") ||
     ruleRequired(ifMaxBet.value) !== true ||
-    ruleRequired(ifBetEquals.value) !== true ||
+    ruleRequired(ifBetEquals.value) !== true 
+    ||
     // ruleRequired(masterPhrase.value) !== true &&
     (props.campaign.type === 6 && ruleRequired(managementType.value) !== true)
   ) {

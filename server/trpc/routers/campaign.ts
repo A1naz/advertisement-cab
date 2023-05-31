@@ -76,7 +76,7 @@ export const campaignRouter = router({
         budget: z.number(),
         maxBet: z.number(),
         targetPosition: z.string(),
-        dailyBudget: z.number().optional(),
+        dailyBudget: z.number().optional() || z.null().optional(),
         ifMaxBetDoesntMatch: z.string().min(10),
         ifBetEqualsNear: z.string().min(10),
         showHours: z.string(),
@@ -133,7 +133,8 @@ export const campaignRouter = router({
 
       if (dailyBudget || dailyBudget === 0) {
         campaign.dailyBudget = dailyBudget;
-      } else if (!dailyBudget) {
+      }
+      if (!dailyBudget || dailyBudget === null) {
         campaign.dailyBudget = 0;
       }
 
