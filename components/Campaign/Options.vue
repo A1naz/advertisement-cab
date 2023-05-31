@@ -13,7 +13,9 @@ const firstTime = ref();
 const secondTime = ref();
 const ifMaxBet = ref("");
 const getBet = ref();
+const masterPhrase = ref("");
 const ifBetEquals = ref("");
+const managementType = ref("Мастер-фраза");
 const { ruleRequired, rangeRules } = useFormRules();
 const campaignStore = useCampaignStore();
 const theme = useTheme();
@@ -46,6 +48,12 @@ if (props) {
     onOff.value = props.campaign.isTurnOn;
   }
   deleteStatus.value = props.campaign.deleteMark;
+  if (props.campaign.masterPhrase) {
+    masterPhrase.value = props.campaign.masterPhrase;
+  }
+  if (props.campaign.managementType) {
+    managementType.value = props.campaign.managementType;
+  }
   if (props.campaign.showHours) {
     const times = parseTime(props.campaign.showHours);
 
@@ -103,7 +111,9 @@ async function adjustCampgain(id: string) {
     ruleRequired(maxBet.value) !== true ||
     (ruleRequired(getBet.value) !== true && ifMaxBet.value === "Выставить ставку") ||
     ruleRequired(ifMaxBet.value) !== true ||
-    ruleRequired(ifBetEquals.value) !== true
+    ruleRequired(ifBetEquals.value) !== true ||
+    // ruleRequired(masterPhrase.value) !== true &&
+    (props.campaign.type === 6 && ruleRequired(managementType.value) !== true)
   ) {
     notify({
       type: "error",
@@ -161,6 +171,8 @@ async function adjustCampgain(id: string) {
       showHours: finalTimes,
       maxBetIncreaseTo: Number(increaseTo),
       maxBet: Number(maxBet.value),
+      managementType: managementType.value,
+      masterPhrase: masterPhrase.value,
     })
   );
 
@@ -226,16 +238,20 @@ const isMaxBetTextValueRuleEnabled = computed(() => {
     return [ruleRequired];
   }
 });
+
+function submitForm() {
+  return;
+}
 </script>
 <template>
   <div>
-    <v-dialog tabindex="0" v-model="dialog" width="800" transition="fade-transition">
+    <v-dialog v-model="dialog" width="800" transition="fade-transition">
       <template v-slot:activator="{ props }">
         <div class="flex justify-end md:block">
           <v-btn
             v-bind="props"
             border
-            class="text-none my-2 md:my-0"
+            class="text-none mt-3"
             prepend-icon="mdi-cog"
             variant="text"
             rounded
@@ -243,7 +259,7 @@ const isMaxBetTextValueRuleEnabled = computed(() => {
             {{ campaign?.isAdjusted ? "Настроена" : "Не настроена" }} ></v-btn
           >
           <v-switch
-            class="mx-3 my-2 md:mx-0 md:my-0"
+            class="mx-3 md:mx-0 md:mb-1"
             density="compact"
             v-model="onOff"
             @update:modelValue="turnOnOff(campaign?._id)"
@@ -255,24 +271,22 @@ const isMaxBetTextValueRuleEnabled = computed(() => {
         </div>
       </template>
       <v-card>
-        <v-form>
-          <v-card-title class="text-sm">
-            <v-row class="flex justify-center">
-              <v-col>
-                <h1 class="md:mx-1 mt-1">Опции "{{ campaign?.name }}"</h1>
-              </v-col>
-              <v-col class="text-end">
-                <v-btn
-                  class="absolute left-3"
-                  size="large"
-                  variant="text"
-                  icon="mdi-close-thick"
-                  @click="dialog = false"
-                  rounded="xl"
-                />
-              </v-col>
-            </v-row>
-          </v-card-title>
+        <v-form @submit.prevent="submitForm">
+          <v-row class="flex justify-center">
+            <v-col class="mx-5 mt-3 mb-2">
+              <h1>Опции "{{ campaign?.name }}"</h1>
+            </v-col>
+            <v-col class="text-end mx-5 mt-3 mb-2">
+              <v-btn
+                class="absolute left-3"
+                size="large"
+                variant="text"
+                icon="mdi-close-thick"
+                @click="dialog = false"
+                rounded="xl"
+              />
+            </v-col>
+          </v-row>
 
           <div class="mx-5">
             <v-row>
@@ -376,6 +390,7 @@ const isMaxBetTextValueRuleEnabled = computed(() => {
                 style="margin-bottom: 0"
               ></v-text-field>
             </v-radio-group>
+
             <div class="mx-1">Если ставка равна соседней, то:</div>
             <v-radio-group class="mx-1" :rules="[ruleRequired]" v-model="ifBetEquals">
               <v-radio
@@ -390,8 +405,37 @@ const isMaxBetTextValueRuleEnabled = computed(() => {
                 value="Оставить последнюю ставку"
               ></v-radio>
             </v-radio-group>
+
+            <div v-if="props.campaign.type == 6">
+              <div class="mx-1">Тип управления:</div>
+              <v-radio-group class="mx-1" :rules="[ruleRequired]" v-model="managementType">
+                <v-radio density="comfortable" label="Мастер-фраза" value="Мастер-фраза"> </v-radio>
+                <v-radio
+                  disabled
+                  density="comfortable"
+                  label="Мастер-фраза и плюс-фразы"
+                  value="Мастер-фраза и плюс-фразы"
+                ></v-radio>
+                <v-radio
+                  disabled
+                  density="comfortable"
+                  label="Мастер-фраза и все фразы"
+                  value="Мастер-фраза и все фразы"
+                ></v-radio>
+                <v-text-field
+                  type="text"
+                  v-model="masterPhrase"
+                  density="default"
+                  variant="filled"
+                  label="Фраза"
+                  style="margin-bottom: 0"
+                  class="py-2"
+                  :maxLength="100"
+                ></v-text-field>
+              </v-radio-group>
+            </div>
           </div>
-          <v-card-actions>
+          <div class="flex mb-2">
             <v-btn
               variant="tonal"
               color="red"
@@ -419,7 +463,7 @@ const isMaxBetTextValueRuleEnabled = computed(() => {
             >
               Сохранить</v-btn
             >
-          </v-card-actions>
+          </div>
         </v-form>
       </v-card>
     </v-dialog>

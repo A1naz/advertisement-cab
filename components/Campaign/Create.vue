@@ -71,6 +71,10 @@ async function addCampaign() {
   isBtnDisabled.value = false;
   isLoading.value = false;
 }
+
+function submitForm() {
+  return;
+}
 </script>
 
 <template>
@@ -88,25 +92,25 @@ async function addCampaign() {
           </v-btn>
         </div>
       </template>
-      <v-card>
-        <v-row>
-          <v-col class="text-h6 ml-6 mt-3">
-            <span>Создание рекламного кабинета</span>
-          </v-col>
-          <v-col class="text-end mr-4 mt-1">
-            <v-btn
-              class="absolute left-3"
-              size="large"
-              variant="text"
-              icon="mdi-close-thick"
-              @click="dialog = false"
-              rounded="xl"
-            />
-          </v-col>
-        </v-row>
-        <v-card-title class="mt-2 ml-2"> </v-card-title>
-        <v-card-text>
-          <v-form fast-fail>
+      <v-form>
+        <v-card>
+          <v-row>
+            <v-col class="text-h6 ml-6 mt-3">
+              <span>Создание рекламного кабинета</span>
+            </v-col>
+            <v-col class="text-end mr-4 mt-1">
+              <v-btn
+                class="absolute left-3"
+                size="large"
+                variant="text"
+                icon="mdi-close-thick"
+                @click="dialog = false"
+                rounded="xl"
+              />
+            </v-col>
+          </v-row>
+          <v-card-title class="mt-2 ml-2"> </v-card-title>
+          <v-card-text>
             <v-row>
               <v-col cols="12">
                 <h2 class="ml-2 mb-2">Тип рекламной кампании</h2>
@@ -128,12 +132,14 @@ async function addCampaign() {
                   @change=""
                   @update:menu="sortItemsByCategory"
                   label="Группа предметов"
+                  :rules="[ruleRequired]"
                   :items="campaignStore.categories"
                   v-model="selectedCategory"
                 ></v-select>
               </v-col>
               <v-col cols="12">
                 <v-autocomplete
+                  :rules="[ruleRequired]"
                   multiple
                   v-model="selectedArticles"
                   :items="campaignStore.itemsByCategory"
@@ -154,13 +160,13 @@ async function addCampaign() {
                 </v-autocomplete>
               </v-col>
             </v-row>
-          </v-form>
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="primary" type="submit" @click="addCampaign"> Добавить кампанию </v-btn>
-        </v-card-actions>
-      </v-card>
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="primary" type="submit" @click="addCampaign"> Добавить кампанию </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-form>
     </v-dialog>
   </v-row>
 </template>

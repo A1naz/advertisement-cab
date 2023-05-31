@@ -1,14 +1,13 @@
 <script setup lang="ts">
 import { useNotification } from "@kyvg/vue3-notification";
 import { useWindowSize } from "@vueuse/core";
-const isLoading = ref(true);
 const { status } = useAuth();
 const campaignStore = useCampaignStore();
 const userStore = useUserStore();
 let client = userStore.client;
-if (status.value === "authenticated") userStore.getClient()
+if (status.value === "authenticated") userStore.getClient();
 
-function updateCabinet() {
+async function updateCabinetPerInterval() {
   setInterval(() => {
     campaignStore.updateCabinet();
     campaignStore.getCampaigns();
@@ -16,15 +15,10 @@ function updateCabinet() {
 }
 
 if (status.value === "authenticated" && client.apiKeyAdvertisement) {
-  campaignStore.updateCabinet();
-  campaignStore.getCampaigns();
-  updateCabinet();
-  isLoading.value = false;
-} else {
-  isLoading.value = false;
+  updateCabinetPerInterval();
 }
 
-const { width, height } = useWindowSize();
+const { width } = useWindowSize();
 const search = ref("");
 
 const { $client } = useNuxtApp();
@@ -39,19 +33,10 @@ definePageMeta({
   auth: true,
   layout: "app",
 });
-
-function routeTo(id: string) {
-  return navigateTo(`/cabinet/${id}`);
-}
-
 </script>
 
 <template>
   <v-container>
-    <v-progress-linear
-      :active="isLoading"
-      color="deep-purple-accent-4"
-    ></v-progress-linear>
     <div class="pb-5 text-sm text-zinc-400">Здесь отображаются ваши рекламные кабинеты</div>
     <v-row class="">
       <v-col>
@@ -67,13 +52,19 @@ function routeTo(id: string) {
           density="compact"
           variant="filled"
           label="Введите название кампании или ID"
-          append-inner-icon="mdi-magnify"
+          clearable
+          clear-icon="mdi-close-circle"
+          @click:clear="searchCampaigns"
           single-line
           hide-details
           v-model="search"
-          @input="searchCampaigns"
+          @keyup.enter="searchCampaigns"
           class="max-w-xl"
-        ></v-text-field>
+        >
+          <template v-slot:append>
+            <v-icon style="font-size: 30px;" class="mb-1" @click="searchCampaigns">mdi-magnify</v-icon>
+          </template>
+        </v-text-field>
       </v-col>
     </v-row>
     <v-row>

@@ -99,6 +99,12 @@ const CampaignSchema = new Schema(
       type: Boolean,
       default: false,
     },
+    masterPhrase: {
+      type: String,
+    },
+    managementType: {
+      type: String,
+    },
     isTurnOn: {
       type: Boolean,
       default: false,
@@ -114,6 +120,10 @@ const CampaignSchema = new Schema(
     activeBot: {
       type: Boolean,
       default: false,
+    },
+    deleteCount: {
+      type: Number,
+      default: 0,
     },
   },
   { timestamps: true }

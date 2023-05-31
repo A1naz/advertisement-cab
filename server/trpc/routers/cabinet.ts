@@ -197,7 +197,7 @@ export const cabinetRouter = router({
     try {
       const campaignsFromDB = await Campaign.find({
         user: user._id,
-      });      
+      });
 
       const campaignsSearch: any[] = await $fetch(`https://advert-api.wb.ru/adv/v0/adverts`, {
         method: "GET",
@@ -222,7 +222,6 @@ export const cabinetRouter = router({
       const campaignsFromWB: any[] = [];
       campaignsFromWB.push(...campaignsCart, ...campaignsSearch);
 
-
       const finalCampaigns = campaignsFromDB.filter((campaign) => {
         return (
           campaignsFromWB.some((wbCampaign: any) => {
@@ -246,9 +245,17 @@ export const cabinetRouter = router({
       });
 
       campaignsForDelete.forEach(async (el: any) => {
-        await Campaign.deleteOne({
-          _id: el._id,
-        });
+        if (!el.deleteCount) {
+          el.deleteCount = 0;
+          await el.save();
+        } else if (el.deleteCount >= 10) {
+          await Campaign.deleteOne({
+            _id: el._id,
+          });
+        } else if (el.deleteCount < 10000) {
+          el.deleteCount += 1;
+          await el.save();
+        }
       });
 
       finalCampaigns.forEach(async (el) => {
@@ -309,6 +316,7 @@ export const cabinetRouter = router({
             el.dailyBudget = campaign.dailyBudget;
             el.nms = items;
             el.params = campaign.params;
+            el.deleteCount = 0;
             await el.save();
           } else {
             const newCampaign = await Campaign.create({

@@ -9,8 +9,10 @@ export const useCampaignStore = defineStore("campaign", () => {
   const itemsByCategory = ref<any>([]);
   const sortValue = ref("turnOnOff");
   const { $client } = useNuxtApp();
+  const isLoading = ref(false);
 
   async function getCampaigns() {
+    isLoading.value = true;
     const camps: any = await $client.campaign.campaigns.query();
 
     items.value = camps.items;
@@ -25,6 +27,7 @@ export const useCampaignStore = defineStore("campaign", () => {
       }
     });
     sortByCreateTime();
+    isLoading.value = false;
   }
 
   function sortItemsByCategory(value: string) {
@@ -55,8 +58,8 @@ export const useCampaignStore = defineStore("campaign", () => {
     }
 
     if (sortValue.value == "turnOnOff") {
-      const on = sortedAndSeachedCampaigns.value.filter((item: any) => item.isTurnOn);
-      const off = sortedAndSeachedCampaigns.value.filter((item: any) => !item.isTurnOn);
+      const on = sortedAndSeachedCampaigns.value.filter((item: any) => item.isAdjusted);
+      const off = sortedAndSeachedCampaigns.value.filter((item: any) => !item.isAdjusted);
       sortedAndSeachedCampaigns.value = [...on, ...off];
     }
   }
@@ -101,10 +104,13 @@ export const useCampaignStore = defineStore("campaign", () => {
   }
 
   async function updateCabinet() {
+    isLoading.value = true;
     await $client.cabinet.updateCabinet.query();
+    isLoading.value = false;
   }
 
   return {
+    isLoading,
     items,
     sortValue,
     campaigns,

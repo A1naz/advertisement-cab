@@ -81,6 +81,8 @@ export const campaignRouter = router({
         ifBetEqualsNear: z.string().min(10),
         showHours: z.string(),
         maxBetIncreaseTo: z.number().optional(),
+        managementType: z.string().optional(),
+        masterPhrase: z.string().optional(),
       })
     )
     .mutation(async (opts) => {
@@ -96,6 +98,8 @@ export const campaignRouter = router({
         showHours,
         maxBetIncreaseTo,
         maxBet,
+        managementType,
+        masterPhrase,
       } = input;
 
       if (!session) {
@@ -114,6 +118,13 @@ export const campaignRouter = router({
         });
       }
 
+      if (masterPhrase && masterPhrase.length > 100) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "Слишком длинная мастер-фраза",
+        });
+      }
+
       const campaign: any = await Campaign.findById(_id);
 
       if (maxBetIncreaseTo) {
@@ -124,6 +135,11 @@ export const campaignRouter = router({
         campaign.dailyBudget = dailyBudget;
       } else if (!dailyBudget) {
         campaign.dailyBudget = 0;
+      }
+
+      if (campaign.type === 6) {
+        campaign.managementType = managementType;
+        campaign.masterPhrase = masterPhrase;
       }
 
       campaign.maxBet = maxBet;

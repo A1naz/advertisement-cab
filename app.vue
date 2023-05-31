@@ -4,9 +4,14 @@ import { useTheme } from "vuetify";
 const theme = useTheme();
 const userStore = useUserStore();
 const { status } = useAuth();
+let client = userStore.client;
+const campaignStore = useCampaignStore();
 
 if (status.value === "authenticated") await userStore.getClient();
-
+if (status.value === "authenticated" && client.apiKeyAdvertisement) {
+  campaignStore.updateCabinet();
+  campaignStore.getCampaigns();
+}
 const { notify } = useNotification();
 </script>
 
@@ -27,7 +32,7 @@ const { notify } = useNotification();
       </template>
     </notifications>
     <NuxtLayout>
-      <NuxtLoadingIndicator :color =  "theme.global.name.value === 'light' ? '#570df8' : '#5d55e7'"/>
+      <NuxtLoadingIndicator />
       <NuxtPage />
     </NuxtLayout>
   </div>

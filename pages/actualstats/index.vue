@@ -6,6 +6,7 @@ const campaignStore = useCampaignStore();
 const { status } = useAuth();
 const userStore = useUserStore();
 let client = userStore.client;
+const { height } = useWindowSize();
 
 if (status.value === "authenticated" && client.apiKeyAdvertisement) campaignStore.getCampaigns();
 const stats = ref<any>([]);
@@ -91,7 +92,7 @@ const isUpdateBtnActive = computed(() => {
     <v-row>
       <v-col>
         <div>
-          <v-table class="rounded-lg pt-2 elevation-1" density="default">
+          <v-table class="rounded-lg pt-2 elevation-1" density="default" :height="height - 265">
             <thead>
               <tr>
                 <th class="text-left">Место</th>

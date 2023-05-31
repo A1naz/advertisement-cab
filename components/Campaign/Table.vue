@@ -1,6 +1,7 @@
 <script setup lang="ts">
 const dialog = ref(false);
 const campaignStore = useCampaignStore();
+const { height } = useWindowSize();
 const onOff = ref();
 const options = ref([
   "Все",
@@ -49,7 +50,7 @@ function sortByCreateTime() {
     </v-slide-group>
   </div>
   <div>
-    <v-table class="rounded-lg pt-2" density="comfortable">
+    <v-table class="rounded-lg pt-2" density="compact" v-if="campaignStore.campaigns"  :height="height - 310">
       <thead>
         <tr>
           <th class="text-left cursor-pointer" @click="sortByCreateTime">
@@ -75,10 +76,10 @@ function sortByCreateTime() {
             {{ campaign.createTime }}
           </td>
           <td>
-            <div class="flex max-w-xs">
+            <div class="flex max-w-xs my-2">
               {{ campaign.name }}
             </div>
-            <div class="text-sm mt-3">
+            <div class="text-sm mt-1">
               Тип:
               {{
                 campaign.type === 4
@@ -95,7 +96,7 @@ function sortByCreateTime() {
           <td>
             <div v-for="nms in campaign.nms" class="flex">
               <div v-for="nm in nms.nms" class="mr-1">
-                <v-img class="w-9" :src="findImage(nm)"
+                <v-img class="w-9" style="max-width: 36px; max-height: 48px" :src="findImage(nm)"
                   ><v-tooltip activator="parent" transition="fade-transition" location="top">{{
                     nm
                   }}</v-tooltip>
@@ -119,33 +120,29 @@ function sortByCreateTime() {
             </v-chip>
           </td>
           <td>
-            <div class="my-1">Цел. позиция: {{ campaign.targetPosition }}</div>
-            <div class="my-1">Макс. ставка: {{ campaign.maxBet }}</div>
+            <div class="mb-1 text-sm">Цел. позиция: {{ campaign.targetPosition }}</div>
+            <div class="mt-1 text-sm">Макс. ставка: {{ campaign.maxBet }}</div>
           </td>
           <td>
-            <div class="my-1">Общий: {{ campaign.budget }}</div>
-            <div class="my-1">Дневной: {{ campaign.dailyBudget }}</div>
+            <div class="mb-1 text-sm">Общий: {{ campaign.budget }}</div>
+            <div class="mt-1 text-sm">Дневной: {{ campaign.dailyBudget }}</div>
           </td>
           <td>
-            <div class="my-1">Затраты: {{ campaign.expences }}</div>
-            <div class="my-1">CPC: {{ campaign.CPC }}</div>
+            <div class="mb-1 text-sm">Затраты: {{ campaign.expences }}</div>
+            <div class="mt-1 text-sm">CPC: {{ campaign.CPC }}</div>
+          </td>
+          <td class="text-sm">
+            <div>Показы: {{ campaign.shows }}</div>
+            <div>Клики: {{ campaign.clicks }}</div>
+            <div>CTR: {{ campaign.CTR }}</div>
+          </td>
+          <td class="text-sm">
+            <div>Корзина: {{ campaign.cart }}</div>
+            <div>Заказы: {{ campaign.orders }}</div>
+            <div>CR: {{ campaign.CR }}</div>
           </td>
           <td>
-            &nbsp;
-            <div class="my-1">Показы: {{ campaign.shows }}</div>
-            <div class="my-1">Клики: {{ campaign.clicks }}</div>
-            <div class="my-1">CTR: {{ campaign.CTR }}</div>
-            &nbsp;
-          </td>
-          <td>
-            <div class="my-1">Корзина: {{ campaign.cart }}</div>
-            <div class="my-1">Заказы: {{ campaign.orders }}</div>
-            <div class="my-1">CR: {{ campaign.CR }}</div>
-          </td>
-          <td>
-            <div></div>
-
-            <div class="mt-2">
+            <div class="">
               <v-row justify="center">
                 <CampaignOptions :campaign="campaign" />
               </v-row>
