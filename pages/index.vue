@@ -3,12 +3,6 @@ import { email, helpers, minLength, required } from "@vuelidate/validators";
 const { status, data, signIn, signOut } = useAuth();
 const $router = useRouter();
 
-onMounted(() => {
-  if (status.value === "authenticated") {
-    $router.push("/profile");
-  }
-});
-
 definePageMeta({
   auth: {
     unauthenticatedOnly: true,

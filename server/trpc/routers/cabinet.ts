@@ -248,12 +248,14 @@ export const cabinetRouter = router({
         if (!el.deleteCount) {
           el.deleteCount = 0;
           await el.save();
-        } else if (el.deleteCount >= 10) {
+        }
+
+        if (el.deleteCount >= 10) {
           await Campaign.deleteOne({
             _id: el._id,
           });
-        } else if (el.deleteCount < 10000) {
-          el.deleteCount += 1;
+        } else {
+          el.deleteCount = el.deleteCount + 1;
           await el.save();
         }
       });
@@ -319,19 +321,24 @@ export const cabinetRouter = router({
             el.deleteCount = 0;
             await el.save();
           } else {
-            const newCampaign = await Campaign.create({
-              uuid: uuid(),
-              advertId: campaign.advertId,
-              type: campaign.type,
-              name: campaign.name,
-              status: campaign.status,
-              dailyBudget: campaign.dailyBudget,
-              nms: items,
-              user: user._id,
-              createTime: campaign.createTime,
-              params: campaign.params,
-              showHours: showTimes,
-            });
+            const isCampaignExist = await Campaign.findOne({ advertId: el.advertId });
+
+            if (!isCampaignExist) {
+              const newCampaign = await Campaign.create({
+                uuid: uuid(),
+                advertId: campaign.advertId,
+                type: campaign.type,
+                name: campaign.name,
+                status: campaign.status,
+                dailyBudget: campaign.dailyBudget,
+                nms: items,
+                user: user._id,
+                createTime: campaign.createTime,
+                params: campaign.params,
+                showHours: showTimes,
+                deleteCount: 0,
+              });
+            }
           }
         }
       });
