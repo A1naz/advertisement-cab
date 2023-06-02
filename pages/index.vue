@@ -11,8 +11,6 @@ definePageMeta({
   title: "Вход",
 });
 
-console.log(status);
-
 const form = reactive({
   email: "",
   password: "",

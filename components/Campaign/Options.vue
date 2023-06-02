@@ -6,7 +6,7 @@ const { $client } = useNuxtApp();
 const dialog = ref(false);
 const budget = ref("");
 const onOff = ref(false);
-const targetPosition = ref();
+const targetPosition = ref("");
 const dailyBudget = ref("");
 const maxBet = ref("");
 const firstTime = ref();
@@ -20,6 +20,7 @@ const { ruleRequired, rangeRules } = useFormRules();
 const campaignStore = useCampaignStore();
 const theme = useTheme();
 const deleteStatus = ref();
+const stats = ref<any>([]);
 
 const props: any = defineProps({ campaign: Object });
 
@@ -111,8 +112,7 @@ async function adjustCampgain(id: string) {
     ruleRequired(maxBet.value) !== true ||
     (ruleRequired(getBet.value) !== true && ifMaxBet.value === "Выставить ставку") ||
     ruleRequired(ifMaxBet.value) !== true ||
-    ruleRequired(ifBetEquals.value) !== true 
-    ||
+    ruleRequired(ifBetEquals.value) !== true ||
     // ruleRequired(masterPhrase.value) !== true &&
     (props.campaign.type === 6 && ruleRequired(managementType.value) !== true)
   ) {
@@ -243,10 +243,16 @@ const isMaxBetTextValueRuleEnabled = computed(() => {
 function submitForm() {
   return;
 }
+
+const width = ref(props.campaign.type === 6 ? 950 : 630);
+
+function openArticlePage(nm: any) {
+  window.open(`https://www.wildberries.ru/catalog/${nm}/detail.aspx`);
+}
 </script>
 <template>
   <div>
-    <v-dialog v-model="dialog" width="800" transition="fade-transition">
+    <v-dialog v-model="dialog" :width="width" transition="fade-transition">
       <template v-slot:activator="{ props }">
         <div class="flex justify-end md:block">
           <v-btn
@@ -318,147 +324,247 @@ function submitForm() {
 
             <v-row>
               <v-col>
-                <v-text-field
-                  type="text"
-                  :rules="[rangeRules]"
-                  @input="handleInput"
-                  width="200"
-                  variant="filled"
-                  v-model="targetPosition"
-                  label="Целевая позиция"
-                ></v-text-field>
-                <v-text-field
-                  type="number"
-                  :rules="[ruleRequired]"
-                  variant="filled"
-                  v-model="budget"
-                  label="Бюджет"
-                  prefix="₽"
-                ></v-text-field>
-                <v-text-field
-                  type="number"
-                  :rules="[ruleRequired]"
-                  variant="filled"
-                  v-model="maxBet"
-                  label="Макс ставка"
-                  prefix="₽"
-                ></v-text-field>
-                <v-text-field
-                  type="number"
-                  variant="filled"
-                  v-model="dailyBudget"
-                  label="Дневной бюджет"
-                  prefix="₽"
-                ></v-text-field>
+                <div class="flex">
+                  <v-text-field
+                    class="targetPosition mr-1 min-w-375px"
+                    type="text"
+                    :rules="[rangeRules, ruleRequired]"
+                    @input="handleInput"
+                    variant="filled"
+                    v-model="targetPosition"
+                    label="Целевая позиция"
+                  ></v-text-field>
+
+                  <v-text-field
+                    class="ml-1"
+                    type="number"
+                    :rules="[ruleRequired]"
+                    variant="filled"
+                    v-model="budget"
+                    label="Бюджет"
+                  ></v-text-field>
+                </div>
+                <div class="flex">
+                  <v-text-field
+                    class="mr-1"
+                    type="number"
+                    :rules="[ruleRequired]"
+                    variant="filled"
+                    v-model="maxBet"
+                    label="Макс ставка"
+                    prefix="₽"
+                  ></v-text-field>
+                  <v-text-field
+                    class="ml-1"
+                    type="number"
+                    variant="filled"
+                    v-model="dailyBudget"
+                    label="Дневной бюджет"
+                    prefix="₽"
+                  ></v-text-field>
+                </div>
               </v-col>
             </v-row>
 
-            <div class="mx-1">Если макс. ставка не соответствует, то:</div>
-            <v-radio-group
-              density="compact"
-              class="mx-1 my-0"
-              :rules="[ruleRequired]"
-              v-model="ifMaxBet"
-              column
-            >
-              <v-radio
-                label="Остановить кампанию"
-                density="comfortable"
-                value="Остановить кампанию"
-              ></v-radio>
-              <v-radio
-                density="comfortable"
-                label="Оставить последнюю ставку"
-                value="Оставить последнюю ставку"
-              ></v-radio>
-              <v-radio
-                label="Поставить макс. ставку"
-                density="comfortable"
-                value="Поставить макс. ставку"
-              ></v-radio>
-              <v-radio label="Выставить ставку" density="comfortable" value="Выставить ставку">
-              </v-radio>
-              <v-text-field
-                type="number"
-                :rules="isMaxBetTextValueRuleEnabled"
-                v-model="getBet"
-                density="compact"
-                :disabled="ifMaxBet == 'Выставить ставку' ? false : true"
-                variant="filled"
-                label="Ставка"
-                prefix="₽"
-                size="1"
-                style="margin-bottom: 0"
-              ></v-text-field>
-            </v-radio-group>
-
-            <div class="mx-1">Если ставка равна соседней, то:</div>
-            <v-radio-group class="mx-1" :rules="[ruleRequired]" v-model="ifBetEquals">
-              <v-radio
-                density="comfortable"
-                label="Увеличить ставку на 1 руб"
-                value="Увеличить ставку на 1 руб"
-              >
-              </v-radio>
-              <v-radio
-                density="comfortable"
-                label="Оставить последнюю ставку"
-                value="Оставить последнюю ставку"
-              ></v-radio>
-            </v-radio-group>
-
+            <div class="md:flex md:justify-center">
+              <div>
+                <v-radio-group
+                  label="Если макс. ставка не соответствует:"
+                  density="compact"
+                  class="mx-2"
+                  :rules="[ruleRequired]"
+                  v-model="ifMaxBet"
+                  column
+                >
+                  <v-radio
+                    label="Остановить кампанию"
+                    density="comfortable"
+                    value="Остановить кампанию"
+                  ></v-radio>
+                  <v-radio
+                    density="comfortable"
+                    label="Оставить последнюю ставку"
+                    value="Оставить последнюю ставку"
+                  ></v-radio>
+                  <v-radio
+                    label="Поставить макс. ставку"
+                    density="comfortable"
+                    value="Поставить макс. ставку"
+                  ></v-radio>
+                  <v-radio label="Выставить ставку" density="comfortable" value="Выставить ставку">
+                  </v-radio>
+                  <v-text-field
+                    type="number"
+                    :rules="isMaxBetTextValueRuleEnabled"
+                    v-model="getBet"
+                    :disabled="ifMaxBet == 'Выставить ставку' ? false : true"
+                    variant="filled"
+                    label="Ставка"
+                    prefix="₽"
+                    size="1"
+                    style="margin-bottom: 0"
+                    class="max-w-xs mb-5"
+                  ></v-text-field>
+                </v-radio-group>
+              </div>
+              <div v-if="props.campaign.type == 6">
+                <v-radio-group
+                  class="mx-2"
+                  :rules="[ruleRequired]"
+                  v-model="managementType"
+                  label="Тип управления:"
+                >
+                  <v-radio density="comfortable" label="Мастер-фраза" value="Мастер-фраза">
+                  </v-radio>
+                  <v-radio
+                    disabled
+                    density="comfortable"
+                    label="Мастер-фраза и плюс-фразы"
+                    value="Мастер-фраза и плюс-фразы"
+                  ></v-radio>
+                  <v-radio
+                    disabled
+                    density="comfortable"
+                    label="Мастер-фраза и все фразы"
+                    value="Мастер-фраза и все фразы"
+                  ></v-radio>
+                </v-radio-group>
+              </div>
+              <div>
+                <v-radio-group
+                  class="mx-1"
+                  :rules="[ruleRequired]"
+                  v-model="ifBetEquals"
+                  label="Если ставка равна соседней:"
+                >
+                  <v-radio
+                    density="comfortable"
+                    label="Увеличить ставку на 1 руб"
+                    value="Увеличить ставку на 1 руб"
+                  >
+                  </v-radio>
+                  <v-radio
+                    density="comfortable"
+                    label="Оставить последнюю ставку"
+                    value="Оставить последнюю ставку"
+                  ></v-radio>
+                </v-radio-group>
+              </div>
+            </div>
             <div v-if="props.campaign.type == 6">
-              <div class="mx-1">Тип управления:</div>
-              <v-radio-group class="mx-1" :rules="[ruleRequired]" v-model="managementType">
-                <v-radio density="comfortable" label="Мастер-фраза" value="Мастер-фраза"> </v-radio>
-                <v-radio
-                  disabled
-                  density="comfortable"
-                  label="Мастер-фраза и плюс-фразы"
-                  value="Мастер-фраза и плюс-фразы"
-                ></v-radio>
-                <v-radio
-                  disabled
-                  density="comfortable"
-                  label="Мастер-фраза и все фразы"
-                  value="Мастер-фраза и все фразы"
-                ></v-radio>
-                <v-text-field
-                  type="text"
-                  v-model="masterPhrase"
-                  density="default"
-                  variant="filled"
-                  label="Фраза"
-                  style="margin-bottom: 0"
-                  class="py-2"
-                  :maxLength="100"
-                ></v-text-field>
-              </v-radio-group>
+              <v-divider />
+              Мастер фраза
+              <v-text-field
+                clearable
+                clear-icon="mdi-close-circle"
+                single-line
+                hide-details
+                type="text"
+                v-model="masterPhrase"
+                variant="filled"
+                label="Введите мастер фразу"
+                style="margin-bottom: 0"
+                class="max-w-sm mx-2 my-2"
+                @keyup.enter=""
+              >
+                <template v-slot:append>
+                  <v-icon style="font-size: 30px" class="mb-1" @click="">mdi-magnify</v-icon>
+                </template>
+              </v-text-field>
+
+              <v-table class="rounded-lg pt-2 elevation-1 mb-3" density="default" :height="265">
+                <thead>
+                  <tr>
+                    <th class="text-left">Место</th>
+                    <th class="text-center">Изображение</th>
+                    <th class="text-center">Артикул</th>
+                    <th class="text-center">Актуальная ставка</th>
+                    <th class="text-center">Ставка WB</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="stat in stats">
+                    <td>{{ stat.position }}</td>
+                    <td>
+                      <v-img class="ml-auto mr-auto my-2" :width="60" :src="findImage(stat.nmId)">
+                        <template v-slot:placeholder>
+                          <div class="d-flex align-center justify-center fill-height">
+                            <v-progress-circular
+                              color="indigo-darken-2"
+                              indeterminate
+                            ></v-progress-circular>
+                          </div>
+                        </template>
+                        <v-tooltip
+                          activator="parent"
+                          transition="fade-transition"
+                          location="right"
+                          >{{ stat.nmId }}</v-tooltip
+                        >
+                      </v-img>
+                    </td>
+                    <td class="text-center">
+                      <div @click="openArticlePage(stat.nmId)" class="cursor-pointer text-primary">
+                        {{ stat.nmId }}
+                      </div>
+                    </td>
+                    <td class="text-center">{{ stat.cpm }}</td>
+                    <td class="text-center">{{ stat.wbCpm }}</td>
+                  </tr>
+                </tbody>
+              </v-table>
             </div>
           </div>
-          <div class="flex mb-2">
+          <div class="btns" v-if="props.campaign.type != 6">
             <v-btn
               variant="tonal"
               color="red"
-              class="ml-7"
               size="default"
               @click="deleteCampaign(props.campaign._id, true)"
               v-if="!deleteStatus"
+              class="ml-4"
               >Удалить</v-btn
             >
             <v-btn
               variant="tonal"
-              class="ml-7"
               size="default"
+              class="ml-4"
               @click="deleteCampaign(props.campaign._id, false)"
               v-if="deleteStatus"
               >Отмена</v-btn
             >
-            <v-spacer></v-spacer>
             <v-btn
               variant="tonal"
+              class="ml-4"
               type="submit"
-              class="mr-7"
+              size="default"
+              @click="adjustCampgain(campaign?._id)"
+            >
+              Сохранить</v-btn
+            >
+          </div>
+          <div class="btns-6" v-if="props.campaign.type == 6">
+            <v-btn
+              variant="tonal"
+              color="red"
+              size="default"
+              @click="deleteCampaign(props.campaign._id, true)"
+              v-if="!deleteStatus"
+              class="ml-4"
+              >Удалить</v-btn
+            >
+            <v-btn
+              variant="tonal"
+              size="default"
+              class="ml-4"
+              @click="deleteCampaign(props.campaign._id, false)"
+              v-if="deleteStatus"
+              >Отмена</v-btn
+            >
+            <v-btn
+              variant="tonal"
+              class="ml-4"
+              type="submit"
               size="default"
               @click="adjustCampgain(campaign?._id)"
             >
@@ -473,6 +579,38 @@ function submitForm() {
 <style>
 .v-input__details {
   min-height: 0;
+}
+
+.targetPosition {
+  min-width: 49%;
+}
+
+@media (min-width: 801px) {
+  .btns {
+    position: fixed;
+    left: 27%;
+    bottom: 5px;
+  }
+
+  .btns-6 {
+    position: fixed;
+    left: 34%;
+    bottom: 5px;
+  }
+}
+
+@media (max-width: 800px) {
+  .btns {
+    position: flex;
+    text-align: center;
+    margin-bottom: 10px;
+  }
+
+  .btns-6 {
+    position: flex;
+    text-align: center;
+    margin-bottom: 10px;
+  }
 }
 
 .dp__theme_dark {

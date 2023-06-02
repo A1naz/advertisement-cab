@@ -244,21 +244,23 @@ export const cabinetRouter = router({
         }
       });
 
-      campaignsForDelete.forEach(async (el: any) => {
-        if (!el.deleteCount) {
-          el.deleteCount = 0;
-          await el.save();
-        }
+      if (campaignsForDelete) {
+        campaignsForDelete.forEach(async (el: any) => {
+          if (!el.deleteCount) {
+            el.deleteCount = 0;
+            await el.save();
+          }
 
-        if (el.deleteCount >= 10) {
-          await Campaign.deleteOne({
-            _id: el._id,
-          });
-        } else {
-          el.deleteCount = el.deleteCount + 1;
-          await el.save();
-        }
-      });
+          if (el.deleteCount >= 10) {
+            await Campaign.deleteOne({
+              _id: el._id,
+            });
+          } else {
+            el.deleteCount = el.deleteCount + 1;
+            await el.save();
+          }
+        });
+      }
 
       finalCampaigns.forEach(async (el) => {
         if (el.advertId !== 0) {
