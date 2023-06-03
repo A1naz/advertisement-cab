@@ -21,6 +21,7 @@ const campaignStore = useCampaignStore();
 const theme = useTheme();
 const deleteStatus = ref();
 const stats = ref<any>([]);
+const loading = ref(false);
 
 const props: any = defineProps({ campaign: Object });
 
@@ -249,6 +250,27 @@ const width = ref(props.campaign.type === 6 ? 950 : 630);
 function openArticlePage(nm: any) {
   window.open(`https://www.wildberries.ru/catalog/${nm}/detail.aspx`);
 }
+
+async function getStatsByPhrase() {
+  loading.value = true;
+  if (!masterPhrase.value) {
+    loading.value = false;
+    return;
+  }
+  const { data, error } = await useAsyncData(() =>
+    $client.campaign.statsByPhrase.query(masterPhrase.value)
+  );
+
+  if (error.value) {
+    loading.value = false;
+    notify({ type: "error", text: error.value.message });
+  }
+
+  if (data.value) {
+    stats.value = data.value;
+    loading.value = false;
+  }
+}
 </script>
 <template>
   <div>
@@ -453,11 +475,10 @@ function openArticlePage(nm: any) {
             </div>
             <div v-if="props.campaign.type == 6">
               <v-divider />
-              Мастер фраза
+              <div class="ml-2 mt-1">Мастер фраза</div>
               <v-text-field
                 clearable
                 clear-icon="mdi-close-circle"
-                single-line
                 hide-details
                 type="text"
                 v-model="masterPhrase"
@@ -465,28 +486,38 @@ function openArticlePage(nm: any) {
                 label="Введите мастер фразу"
                 style="margin-bottom: 0"
                 class="max-w-sm mx-2 my-2"
-                @keyup.enter=""
+                @keyup.enter="getStatsByPhrase"
+                :loading="loading"
               >
                 <template v-slot:append>
-                  <v-icon style="font-size: 30px" class="mb-1" @click="">mdi-magnify</v-icon>
+                  <v-icon style="font-size: 30px" class="mb-1" @click="getStatsByPhrase"
+                    >mdi-magnify</v-icon
+                  >
                 </template>
               </v-text-field>
 
-              <v-table class="rounded-lg pt-2 elevation-1 mb-3" density="default" :height="265">
+              <v-table class="rounded-lg pt-2 elevation-1 mb-3" density="compact" :height="500">
                 <thead>
                   <tr>
-                    <th class="text-left">Место</th>
-                    <th class="text-center">Изображение</th>
-                    <th class="text-center">Артикул</th>
+                    <th class="text-left">Рекламное место</th>
+                    <th class="text-left">Фактическое место</th>
+                    <th class="text-center">Товар</th>
                     <th class="text-center">Актуальная ставка</th>
-                    <th class="text-center">Ставка WB</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr v-for="stat in stats">
-                    <td>{{ stat.position }}</td>
+                    <td>{{ stat.advertPlace }}</td>
+                    <td class="text-center">
+                      {{ stat.factPosition }}
+                    </td>
                     <td>
-                      <v-img class="ml-auto mr-auto my-2" :width="60" :src="findImage(stat.nmId)">
+                      <v-img
+                        class="ml-auto mr-auto my-2"
+                        @click="openArticlePage(stat.nmId)"
+                        :width="38"
+                        :src="findImage(stat.nmId)"
+                      >
                         <template v-slot:placeholder>
                           <div class="d-flex align-center justify-center fill-height">
                             <v-progress-circular
@@ -503,11 +534,7 @@ function openArticlePage(nm: any) {
                         >
                       </v-img>
                     </td>
-                    <td class="text-center">
-                      <div @click="openArticlePage(stat.nmId)" class="cursor-pointer text-primary">
-                        {{ stat.nmId }}
-                      </div>
-                    </td>
+
                     <td class="text-center">{{ stat.cpm }}</td>
                     <td class="text-center">{{ stat.wbCpm }}</td>
                   </tr>
@@ -545,8 +572,7 @@ function openArticlePage(nm: any) {
           </div>
           <div class="btns-6" v-if="props.campaign.type == 6">
             <v-btn
-              variant="tonal"
-              color="red"
+              color="red-accent-2"
               size="default"
               @click="deleteCampaign(props.campaign._id, true)"
               v-if="!deleteStatus"
@@ -554,20 +580,13 @@ function openArticlePage(nm: any) {
               >Удалить</v-btn
             >
             <v-btn
-              variant="tonal"
               size="default"
               class="ml-4"
               @click="deleteCampaign(props.campaign._id, false)"
               v-if="deleteStatus"
               >Отмена</v-btn
             >
-            <v-btn
-              variant="tonal"
-              class="ml-4"
-              type="submit"
-              size="default"
-              @click="adjustCampgain(campaign?._id)"
-            >
+            <v-btn class="ml-4" type="submit" size="default" @click="adjustCampgain(campaign?._id)">
               Сохранить</v-btn
             >
           </div>

@@ -286,8 +286,6 @@ export const campaignRouter = router({
           actualStats[index]["wbCpm"] = wbStats[index];
         });
       } else {
-        console.log("subject");
-
         const actualWbStats: any = await $fetch(
           `https://advert-api.wb.ru/adv/v0/cpm?type=6&param=${userWithSetId.params[0].subjectId}`,
           {
@@ -319,6 +317,69 @@ export const campaignRouter = router({
     }
 
     return actualStats;
+  }),
+
+  statsByPhrase: publicProcedure.input(z.string()).query(async (opts) => {
+    const session = opts.ctx.session as any;
+    if (!session) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "unauthorized",
+      });
+    }
+
+    const user = await User.findById(session._id);
+
+    if (!user) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "unauthorized",
+      });
+    }
+
+    const { input } = opts;
+    const keyWord: string = input.replaceAll(" ", "%20");
+
+    const campaigns: any = await $fetch(
+      `https://catalog-ads.wildberries.ru/api/v5/search?keyword=${keyWord}`,
+      {
+        method: "GET",
+      }
+    );
+
+    if (!campaigns.pages) {
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: "Ничего не найдено",
+      });
+    }
+
+    const campaignsCount = campaigns.adverts.length;
+    const resultCampaigns: any[] = [];
+    let curPage = 0;
+    let curPos = 0;
+
+    for (let i = 0; i < campaignsCount; i++) {
+      if (curPos >= 40) {
+        curPage += 1;
+        curPos -= 40;
+      }
+
+      if (i >= campaignsCount) {
+        break;
+      }
+
+      resultCampaigns.push({
+        advertPlace: i + 1,
+        factPosition: campaigns.pages[curPage].positions[curPos],
+        nmId: campaigns.adverts[i].id,
+        subject: campaigns.adverts[i].subject,
+        cpm: campaigns.adverts[i].cpm,
+      });
+      curPos += 1;
+    }
+
+    return resultCampaigns;
   }),
 
   campaigns: publicProcedure.query(async (opts) => {
