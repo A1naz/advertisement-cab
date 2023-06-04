@@ -354,6 +354,27 @@ export const campaignRouter = router({
       });
     }
 
+    const categories: any[] = [];
+    async function fetchData(apiKey: string) {
+      for (const el of campaigns.prioritySubjects) {
+        const subjectInfo: any[] = await $fetch(
+          `https://advert-api.wb.ru/adv/v0/params/subject?id=${el}`,
+          {
+            method: "GET",
+            headers: {
+              Authorization: apiKey,
+            },
+          }
+        );
+        categories.push({
+          id: subjectInfo[0].id,
+          name: subjectInfo[0].name,
+        });
+      }
+    }
+
+    await fetchData(user.apiKeyAdvertisement);
+
     const campaignsCount = campaigns.adverts.length;
     const resultCampaigns: any[] = [];
     let curPage = 0;
@@ -369,12 +390,14 @@ export const campaignRouter = router({
         break;
       }
 
+      const subjectName = categories.find((subject) => subject.id === campaigns.adverts[i].subject);
       resultCampaigns.push({
         advertPlace: i + 1,
         factPosition: campaigns.pages[curPage].positions[curPos],
         nmId: campaigns.adverts[i].id,
-        subject: campaigns.adverts[i].subject,
+        subject: `${subjectName.id} - ${subjectName.name}`,
         cpm: campaigns.adverts[i].cpm,
+        category: campaigns.adverts[i].subject,
       });
       curPos += 1;
     }

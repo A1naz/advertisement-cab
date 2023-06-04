@@ -25,6 +25,10 @@ const loading = ref(false);
 
 const props: any = defineProps({ campaign: Object });
 
+function submitForm() {
+  return;
+}
+
 function parseTime(input: string) {
   const groups = input.split("|");
 
@@ -107,6 +111,8 @@ async function deleteCampaign(id: string, status: boolean) {
 }
 
 async function adjustCampgain(id: string) {
+  submitForm();
+
   if (
     ruleRequired(budget.value) !== true ||
     ruleRequired(targetPosition.value) !== true ||
@@ -240,10 +246,6 @@ const isMaxBetTextValueRuleEnabled = computed(() => {
     return [ruleRequired];
   }
 });
-
-function submitForm() {
-  return;
-}
 
 const width = ref(props.campaign.type === 6 ? 950 : 630);
 
@@ -477,38 +479,42 @@ async function getStatsByPhrase() {
               <v-divider />
               <div class="ml-2 mt-1">Мастер фраза</div>
               <v-text-field
-                clearable
-                clear-icon="mdi-close-circle"
                 hide-details
                 type="text"
                 v-model="masterPhrase"
                 variant="filled"
+                @keyup.enter.prevent
                 label="Введите мастер фразу"
                 style="margin-bottom: 0"
                 class="max-w-sm mx-2 my-2"
-                @keyup.enter="getStatsByPhrase"
+                @keydown.enter.prevent="getStatsByPhrase"
                 :loading="loading"
               >
-                <template v-slot:append>
+                <template v-slot:append-inner>
                   <v-icon style="font-size: 30px" class="mb-1" @click="getStatsByPhrase"
                     >mdi-magnify</v-icon
                   >
                 </template>
               </v-text-field>
 
-              <v-table class="rounded-lg pt-2 elevation-1 mb-3" density="compact" :height="500">
+              <v-table
+                class="rounded-lg pt-2 mb-3"
+                density="compact"
+                :height="stats.length > 0 ? 500 : 40"
+              >
                 <thead>
-                  <tr>
-                    <th class="text-left">Рекламное место</th>
-                    <th class="text-left">Фактическое место</th>
-                    <th class="text-center">Товар</th>
-                    <th class="text-center">Актуальная ставка</th>
+                  <tr v-if="stats.length > 0">
+                    <th class="text-left text-xs max-w-0">Рекламное место</th>
+                    <th class="text-left text-xs max-w-0">Фактическое место</th>
+                    <th class="text-center text-xs">Товар</th>
+                    <th class="text-center text-xs">Актуальная ставка</th>
+                    <th class="text-center text-xs">Категория</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr v-for="stat in stats">
                     <td>{{ stat.advertPlace }}</td>
-                    <td class="text-center">
+                    <td class="text-left">
                       {{ stat.factPosition }}
                     </td>
                     <td>
@@ -536,6 +542,7 @@ async function getStatsByPhrase() {
                     </td>
 
                     <td class="text-center">{{ stat.cpm }}</td>
+                    <td class="text-center">{{ stat.subject }}</td>
                     <td class="text-center">{{ stat.wbCpm }}</td>
                   </tr>
                 </tbody>
@@ -586,7 +593,13 @@ async function getStatsByPhrase() {
               v-if="deleteStatus"
               >Отмена</v-btn
             >
-            <v-btn class="ml-4" type="submit" size="default" @click="adjustCampgain(campaign?._id)">
+            <v-btn
+              class="ml-4"
+              size="default"
+              type="submit"
+              @keyup.enter="null"
+              @click="adjustCampgain(campaign?._id)"
+            >
               Сохранить</v-btn
             >
           </div>
