@@ -386,10 +386,6 @@ export const campaignRouter = router({
         curPos -= 40;
       }
 
-      if (i >= campaignsCount) {
-        break;
-      }
-
       const subjectName = categories.find((subject) => subject.id === campaigns.adverts[i].subject);
       resultCampaigns.push({
         advertPlace: i + 1,

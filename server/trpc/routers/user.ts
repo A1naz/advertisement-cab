@@ -137,12 +137,19 @@ export const userRouter = router({
         user.apiKeyStatistics == ""
           ? user.apiKeyStatistics
           : user.apiKeyStatistics.slice(0, 5) + "*".repeat(129) + user.apiKeyStatistics.slice(-5),
+
       apiKeyAdvertisement:
         user.apiKeyAdvertisement == ""
           ? user.apiKeyAdvertisement
           : user.apiKeyAdvertisement.slice(0, 5) +
             "*".repeat(129) +
             user.apiKeyAdvertisement.slice(-5),
+
+      wbToken:
+        user.wbToken == ""
+          ? user.wbToken
+          : user.wbToken.slice(0, 5) + "*".repeat(129) + user.wbToken.slice(-5),
+
       phone: user.phone,
     };
 

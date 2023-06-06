@@ -11,157 +11,170 @@ export const cabinetRouter = router({
   createCabinet: publicProcedure
     .input(
       z.object({
-        // xSupplierId: z.string(),
-        apiKeyAdvertisement: z.string().min(10, "Некорректный ключ"),
-        // apiKeyStatistic: z.string(),
-        // wbToken: z.string(),
+        xSupplierId: z.string(),
+        apiKeyAdvertisement: z.string().min(10, "Некорректный апи-ключ рекламы"),
+        apiKeyStatistic: z.string().optional(),
+        wbToken: z.string(),
       })
     )
     .mutation(async (opts) => {
       const session = opts.ctx.session as any;
       const { input } = opts;
-      const {
-        // xSupplierId,
-        apiKeyAdvertisement,
-        // apiKeyStatistic,
-        // wbToken,
-      } = input;
-
-      if (!session) {
-        throw new TRPCError({
-          code: "FORBIDDEN",
-          message: "unauthorized",
-        });
-      }
-
-      const user = await User.findById(session._id);
-
-      if (!user) {
-        throw new TRPCError({
-          code: "FORBIDDEN",
-          message: "unauthorized",
-        });
-      }
-
-      const isApiKeyAvailable = await User.findOne({
-        apiKeyAdvertisement: apiKeyAdvertisement,
-      });
-
-      if (isApiKeyAvailable) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "Апи ключ уже занят",
-        });
-      }
-
-      // if (user.apiKeyAdvertisement === apiKeyAdvertisement) {
-      //   throw new TRPCError({
-      //     code: "BAD_REQUEST",
-      //     message: "Одинаковые ключи",
-      //   });
-      // }
-
+      const { xSupplierId, apiKeyAdvertisement, apiKeyStatistic, wbToken } = input;
       try {
-        const campaignsSearch: any[] = await $fetch(`https://advert-api.wb.ru/adv/v0/adverts`, {
-          method: "GET",
-          headers: {
-            Authorization: apiKeyAdvertisement,
-          },
-          params: {
-            type: 6, //Тип только Поиск
-          },
-        });
-
-        const campaignsCart: any[] = await $fetch(`https://advert-api.wb.ru/adv/v0/adverts`, {
-          method: "GET",
-          headers: {
-            Authorization: apiKeyAdvertisement,
-          },
-          params: {
-            type: 5,
-          },
-        });
-
-        const campaigns: any[] = [];
-        campaigns.push(...campaignsCart, ...campaignsSearch);
-
-        const isCabinetExist = await Campaign.findOne({
-          user: user._id,
-        });
-
-        if (isCabinetExist) {
-          await Campaign.deleteMany({ user: user._id });
+        if (!session) {
+          throw new TRPCError({
+            code: "FORBIDDEN",
+            message: "unauthorized",
+          });
         }
 
-        user.apiKeyAdvertisement = apiKeyAdvertisement;
-        await user.save();
+        const user = await User.findById(session._id);
 
-        campaigns.forEach(async (el) => {
-          const campaign: any = await $fetch(`https://advert-api.wb.ru/adv/v0/advert`, {
+        if (!user) {
+          throw new TRPCError({
+            code: "FORBIDDEN",
+            message: "unauthorized",
+          });
+        }
+
+        if (
+          xSupplierId.includes("****************") &&
+          apiKeyAdvertisement.includes("****************") &&
+          wbToken.includes("****************")
+        ) {
+          return;
+        }
+
+        if (xSupplierId && !xSupplierId.includes("****************")) {
+          user.xSupplierId = xSupplierId;
+          await user.save();
+        }
+
+        if (wbToken && !wbToken.includes("****************")) {
+          user.wbToken = wbToken;
+          await user.save();
+        }
+
+        if (apiKeyAdvertisement && !apiKeyAdvertisement.includes("****************")) {
+          if (apiKeyAdvertisement.length < 15) {
+            throw new TRPCError({
+              code: "BAD_REQUEST",
+              message: "Некорректный апи ключ рекламы",
+            });
+          }
+          const isApiKeyAvailable = await User.findOne({
+            apiKeyAdvertisement: apiKeyAdvertisement,
+          });
+
+          if (isApiKeyAvailable) {
+            throw new TRPCError({
+              code: "BAD_REQUEST",
+              message: "Апи ключ уже занят",
+            });
+          }
+
+          const campaignsSearch: any[] = await $fetch(`https://advert-api.wb.ru/adv/v0/adverts`, {
             method: "GET",
             headers: {
               Authorization: apiKeyAdvertisement,
             },
             params: {
-              id: el.advertId,
+              type: 6, //Тип только Поиск
             },
           });
 
-          const allItems: any[] = [];
-          campaign.params.forEach((item: any) => {
-            if (item.setName) {
-              const newItem = {
-                category: item.setName,
-                nms: item.nms,
-              };
-              allItems.push(newItem);
-            }
-
-            if (item.subjectName) {
-              const newItem = {
-                category: item.subjectName,
-                nms: item.nms,
-              };
-              allItems.push(newItem);
-            }
+          const campaignsCart: any[] = await $fetch(`https://advert-api.wb.ru/adv/v0/adverts`, {
+            method: "GET",
+            headers: {
+              Authorization: apiKeyAdvertisement,
+            },
+            params: {
+              type: 5,
+            },
           });
 
-          const items = allItems.map((item: any) => ({
-            category: item.category,
-            nms: item.nms.map((innerItem: any) => innerItem.nm),
-          }));
-          let showTimes = "";
+          const campaigns: any[] = [];
+          campaigns.push(...campaignsCart, ...campaignsSearch);
 
-          if (campaign.params[0].intervals) {
-            campaign.params[0].intervals.forEach((el: any) => {
-              if (showTimes.includes("|")) {
-                showTimes = showTimes + `${el.begin}:00-${el.end}:00`;
-              } else {
-                showTimes = showTimes + `${el.begin}:00-${el.end}:00|`;
-              }
-            });
+          const isCabinetExist = await Campaign.findOne({
+            user: user._id,
+          });
+
+          if (isCabinetExist) {
+            await Campaign.deleteMany({ user: user._id });
           }
 
-          const newCampaign = await Campaign.create({
-            uuid: uuid(),
-            advertId: campaign.advertId,
-            type: campaign.type,
-            name: campaign.name,
-            status: campaign.status,
-            dailyBudget: campaign.dailyBudget,
-            nms: items,
-            user: user._id,
-            createTime: campaign.createTime,
-            params: campaign.params,
-            showHours: showTimes,
+          user.apiKeyAdvertisement = apiKeyAdvertisement;
+          await user.save();
+
+          campaigns.forEach(async (el) => {
+            const campaign: any = await $fetch(`https://advert-api.wb.ru/adv/v0/advert`, {
+              method: "GET",
+              headers: {
+                Authorization: apiKeyAdvertisement,
+              },
+              params: {
+                id: el.advertId,
+              },
+            });
+
+            const allItems: any[] = [];
+            campaign.params.forEach((item: any) => {
+              if (item.setName) {
+                const newItem = {
+                  category: item.setName,
+                  nms: item.nms,
+                };
+                allItems.push(newItem);
+              }
+
+              if (item.subjectName) {
+                const newItem = {
+                  category: item.subjectName,
+                  nms: item.nms,
+                };
+                allItems.push(newItem);
+              }
+            });
+
+            const items = allItems.map((item: any) => ({
+              category: item.category,
+              nms: item.nms.map((innerItem: any) => innerItem.nm),
+            }));
+            let showTimes = "";
+
+            if (campaign.params[0].intervals) {
+              campaign.params[0].intervals.forEach((el: any) => {
+                if (showTimes.includes("|")) {
+                  showTimes = showTimes + `${el.begin}:00-${el.end}:00`;
+                } else {
+                  showTimes = showTimes + `${el.begin}:00-${el.end}:00|`;
+                }
+              });
+            }
+
+            const newCampaign = await Campaign.create({
+              uuid: uuid(),
+              advertId: campaign.advertId,
+              type: campaign.type,
+              name: campaign.name,
+              status: campaign.status,
+              dailyBudget: campaign.dailyBudget,
+              nms: items,
+              user: user._id,
+              createTime: campaign.createTime,
+              params: campaign.params,
+              showHours: showTimes,
+            });
           });
-        });
+        }
 
         return { status: "ok" };
       } catch (error) {
         throw new TRPCError({
           code: "FORBIDDEN",
-          message: "Неверный Api-ключ Реклама",
+          message: "Неверный Api-ключ",
         });
       }
     }),

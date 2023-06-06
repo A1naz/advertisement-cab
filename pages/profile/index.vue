@@ -9,10 +9,24 @@ const { $client } = useNuxtApp();
 const { ruleEmail, rulePassLen, ruleRequired, rulePhone } = useFormRules();
 const { notify } = useNotification();
 
-async function connectApiKeyAdvertisement() {
+async function connectWbCabinet() {
+  if (
+    ruleRequired(wbForm.apiKeyAdvertisement) !== true ||
+    ruleRequired(wbForm.xSupplierId) !== true ||
+    ruleRequired(wbForm.wbToken) !== true
+  ) {
+    notify({
+      type: "error",
+      text: "Введите все поля",
+    });
+    return;
+  }
+
   const { data, error } = await useAsyncData(() =>
     $client.cabinet.createCabinet.mutate({
-      apiKeyAdvertisement: client.apiKeyAdvertisement,
+      apiKeyAdvertisement: wbForm.apiKeyAdvertisement,
+      xSupplierId: wbForm.xSupplierId,
+      wbToken: wbForm.wbToken,
     })
   );
 
@@ -60,9 +74,10 @@ const passwordForm = reactive({
 });
 
 const wbForm = reactive({
-  apiKeyAdvertisement: "",
-  xSupplierId: "",
-  apiKeyStatistic: "",
+  apiKeyAdvertisement: client.apiKeyAdvertisement,
+  xSupplierId: client.xSupplierId,
+  apiKeyStatistic: client.apiKeyStatistic,
+  wbToken: client.wbToken,
 });
 
 async function savePassword() {
@@ -90,6 +105,14 @@ definePageMeta({
 
 const show1 = ref(false);
 const show2 = ref(false);
+
+const isBtnConnectActive = computed(() => {
+  return wbForm.apiKeyAdvertisement === client.apiKeyAdvertisement &&
+    wbForm.xSupplierId === client.xSupplierId &&
+    wbForm.wbToken === client.wbToken
+    ? true
+    : false;
+});
 </script>
 
 <template>
@@ -147,41 +170,55 @@ const show2 = ref(false);
         <h2>Подключение личного кабинета пользователя</h2>
       </v-col>
     </v-row>
-    <v-row>
-      <v-col>
-        <v-text-field
-          v-model="client.xSupplierId"
-          variant="filled"
-          :rules="[ruleRequired]"
-          label="X-Supplier-Id"
-        />
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col>
-        <v-text-field
-          variant="filled"
-          v-model="client.apiKeyAdvertisement"
-          :rules="[ruleRequired]"
-          label="Api-ключ Реклама"
-        />
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col>
-        <v-text-field
-          variant="filled"
-          v-model="client.apiKeyStatistic"
-          :rules="[ruleRequired]"
-          label="Api-ключ Статистика"
-        />
-      </v-col>
-    </v-row>
-    <v-row justify="end">
-      <v-col cols="12" lg="3">
-        <v-btn block @click="connectApiKeyAdvertisement"> Подключить </v-btn>
-      </v-col>
-    </v-row>
+    <v-form @submit.prevent>
+      <v-row>
+        <v-col>
+          <v-text-field
+            variant="filled"
+            v-model="wbForm.apiKeyAdvertisement"
+            :rules="[ruleRequired]"
+            label="Api-ключ Реклама"
+          />
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col>
+          <v-text-field
+            v-model="wbForm.wbToken"
+            :rules="[ruleRequired]"
+            variant="filled"
+            label="Wb-Token"
+          />
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col>
+          <v-text-field
+            v-model="wbForm.xSupplierId"
+            :rules="[ruleRequired]"
+            variant="filled"
+            label="X-Supplier-Id"
+          />
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col>
+          <v-text-field
+            variant="filled"
+            v-model="wbForm.apiKeyStatistic"
+            label="Api-ключ Статистика"
+          />
+        </v-col>
+      </v-row>
+      <v-row justify="end">
+        <v-col cols="12" lg="3">
+          <v-btn block @click="connectWbCabinet" :disabled="isBtnConnectActive" type="submit">
+            Подключить
+          </v-btn>
+        </v-col>
+      </v-row>
+    </v-form>
+
     <v-row class="mt-6">
       <v-col>
         <h2>Смена пароля</h2>

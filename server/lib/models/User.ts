@@ -51,6 +51,14 @@ const UserSchema = new Schema({
     type: String,
     default: "",
   },
+  wbToken: {
+    type: String,
+    default: "",
+  },
+  proxy: {
+    type: String,
+    default: "",
+  },
 });
 
 export const User = model("User", UserSchema);
