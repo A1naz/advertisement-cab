@@ -428,6 +428,7 @@ async function getStatsByPhrase() {
                     size="1"
                     style="margin-bottom: 0"
                     class="max-w-xs mb-5"
+                    hide-details
                   ></v-text-field>
                 </v-radio-group>
               </div>
@@ -476,8 +477,7 @@ async function getStatsByPhrase() {
               </div>
             </div>
             <div v-if="props.campaign.type == 6">
-              <v-divider />
-              <div class="ml-2 mt-1">Мастер фраза</div>
+              <div class="ml-2">Мастер фраза</div>
               <v-text-field
                 hide-details
                 type="text"
@@ -504,17 +504,17 @@ async function getStatsByPhrase() {
               >
                 <thead>
                   <tr v-if="stats.length > 0">
-                    <th class="text-left text-xs max-w-0">Рекламное место</th>
-                    <th class="text-left text-xs max-w-0">Фактическое место</th>
-                    <th class="text-center text-xs">Товар</th>
-                    <th class="text-center text-xs">Актуальная ставка</th>
-                    <th class="text-center text-xs">Категория</th>
+                    <th class="text-center text-xs max-w-0">Рекламное место</th>
+                    <th class="text-center text-xs max-w-0">Фактическое место</th>
+                    <th class="text-center text-xs max-w-0">Товар</th>
+                    <th class="text-center text-xs max-w-0">Актуальная ставка</th>
+                    <th class="text-center text-xs max-w-0">Категория</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr v-for="stat in stats">
-                    <td>{{ stat.advertPlace }}</td>
-                    <td class="text-left">
+                    <td class="text-center">{{ stat.advertPlace }}</td>
+                    <td class="text-center">
                       {{ stat.factPosition }}
                     </td>
                     <td>

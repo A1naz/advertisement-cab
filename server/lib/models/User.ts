@@ -59,6 +59,10 @@ const UserSchema = new Schema({
     type: String,
     default: "",
   },
+  wbUserId: {
+    type: String,
+    default: "",
+  },
 });
 
 export const User = model("User", UserSchema);

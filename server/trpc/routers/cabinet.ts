@@ -11,10 +11,10 @@ export const cabinetRouter = router({
   createCabinet: publicProcedure
     .input(
       z.object({
-        xSupplierId: z.string(),
+        xSupplierId: z.string().min(5, "Некорректный x-Supplier-Id"),
         apiKeyAdvertisement: z.string().min(10, "Некорректный апи-ключ рекламы"),
+        wbToken: z.string().min(10, "Некорректный wb-Token"),
         apiKeyStatistic: z.string().optional(),
-        wbToken: z.string(),
       })
     )
     .mutation(async (opts) => {
@@ -44,6 +44,34 @@ export const cabinetRouter = router({
           wbToken.includes("****************")
         ) {
           return;
+        }
+
+        if (
+          (xSupplierId && !xSupplierId.includes("****************")) ||
+          (wbToken && !wbToken.includes("****************"))
+        ) {
+          const authorization: any = await $fetch(
+            `https://cmp.wildberries.ru/passport/api/v2/auth/introspect`,
+            {
+              method: "GET",
+              headers: {
+                Cookie: `x-supplier-id-external=${xSupplierId}; WBToken=${wbToken}`,
+              },
+            }
+          );
+
+          if (!authorization.userID) {
+            throw new TRPCError({
+              code: "FORBIDDEN",
+              message: "Ошибка авторизации",
+            });
+          }
+          if (authorization.userID) {
+            user.xSupplierId = xSupplierId;
+            user.wbToken = wbToken;
+            user.wbUserId = authorization.userID;
+            await user.save();
+          }
         }
 
         if (xSupplierId && !xSupplierId.includes("****************")) {
@@ -90,7 +118,7 @@ export const cabinetRouter = router({
               Authorization: apiKeyAdvertisement,
             },
             params: {
-              type: 5,
+              type: 5, //Тип карточка
             },
           });
 
@@ -171,12 +199,7 @@ export const cabinetRouter = router({
         }
 
         return { status: "ok" };
-      } catch (error) {
-        throw new TRPCError({
-          code: "FORBIDDEN",
-          message: "Неверный Api-ключ",
-        });
-      }
+      } catch (error) {}
     }),
 
   updateCabinet: publicProcedure.query(async (opts) => {

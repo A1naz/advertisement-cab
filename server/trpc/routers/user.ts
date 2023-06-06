@@ -132,7 +132,7 @@ export const userRouter = router({
       xSupplierId:
         user.xSupplierId == ""
           ? user.xSupplierId
-          : user.xSupplierId.slice(0, 5) + "*".repeat(129) + user.xSupplierId.slice(-5),
+          : user.xSupplierId.slice(0, 5) + "*".repeat(30) + user.xSupplierId.slice(-5),
       apiKeyStatistics:
         user.apiKeyStatistics == ""
           ? user.apiKeyStatistics
@@ -148,7 +148,7 @@ export const userRouter = router({
       wbToken:
         user.wbToken == ""
           ? user.wbToken
-          : user.wbToken.slice(0, 5) + "*".repeat(129) + user.wbToken.slice(-5),
+          : user.wbToken.slice(0, 5) + "*".repeat(100) + user.wbToken.slice(-5),
 
       phone: user.phone,
     };

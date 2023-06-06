@@ -354,7 +354,7 @@ export const campaignRouter = router({
       });
     }
 
-    const categories: any[] = [];
+    const categories = new Map<any, any>();
     async function fetchData(apiKey: string) {
       for (const el of campaigns.prioritySubjects) {
         const subjectInfo: any[] = await $fetch(
@@ -366,10 +366,8 @@ export const campaignRouter = router({
             },
           }
         );
-        categories.push({
-          id: subjectInfo[0].id,
-          name: subjectInfo[0].name,
-        });
+
+        categories.set(subjectInfo[0].id, subjectInfo[0].name);
       }
     }
 
@@ -386,12 +384,13 @@ export const campaignRouter = router({
         curPos -= 40;
       }
 
-      const subjectName = categories.find((subject) => subject.id === campaigns.adverts[i].subject);
       resultCampaigns.push({
         advertPlace: i + 1,
         factPosition: campaigns.pages[curPage].positions[curPos],
         nmId: campaigns.adverts[i].id,
-        subject: `${subjectName.id} - ${subjectName.name}`,
+        subject: `${campaigns.adverts[i].subject} - ${categories.get(
+          campaigns.adverts[i].subject
+        )}`,
         cpm: campaigns.adverts[i].cpm,
         category: campaigns.adverts[i].subject,
       });
