@@ -63,6 +63,10 @@ const UserSchema = new Schema({
     type: String,
     default: "",
   },
+  checkStatsBot: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 export const User = model("User", UserSchema);
