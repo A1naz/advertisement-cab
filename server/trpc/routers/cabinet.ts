@@ -11,16 +11,14 @@ export const cabinetRouter = router({
   createCabinet: publicProcedure
     .input(
       z.object({
-        xSupplierId: z.string().min(5, "Некорректный x-Supplier-Id"),
         apiKeyAdvertisement: z.string().min(10, "Некорректный апи-ключ рекламы"),
-        wbToken: z.string().min(10, "Некорректный wb-Token"),
         apiKeyStatistic: z.string().optional(),
       })
     )
     .mutation(async (opts) => {
       const session = opts.ctx.session as any;
       const { input } = opts;
-      const { xSupplierId, apiKeyAdvertisement, apiKeyStatistic, wbToken } = input;
+      const { apiKeyAdvertisement, apiKeyStatistic } = input;
       try {
         if (!session) {
           throw new TRPCError({
@@ -38,51 +36,45 @@ export const cabinetRouter = router({
           });
         }
 
-        if (
-          xSupplierId.includes("****************") &&
-          apiKeyAdvertisement.includes("****************") &&
-          wbToken.includes("****************")
-        ) {
-          return;
-        }
+        console.log(apiKeyAdvertisement);
 
-        if (
-          (xSupplierId && !xSupplierId.includes("****************")) ||
-          (wbToken && !wbToken.includes("****************"))
-        ) {
-          const authorization: any = await $fetch(
-            `https://cmp.wildberries.ru/passport/api/v2/auth/introspect`,
-            {
-              method: "GET",
-              headers: {
-                Cookie: `x-supplier-id-external=${xSupplierId}; WBToken=${wbToken}`,
-              },
-            }
-          );
+        // if (
+        //   (xSupplierId && !xSupplierId.includes("****************")) ||
+        //   (wbToken && !wbToken.includes("****************"))
+        // ) {
+        //   const authorization: any = await $fetch(
+        //     `https://cmp.wildberries.ru/passport/api/v2/auth/introspect`,
+        //     {
+        //       method: "GET",
+        //       headers: {
+        //         Cookie: `x-supplier-id-external=${xSupplierId}; WBToken=${wbToken}`,
+        //       },
+        //     }
+        //   );
 
-          if (!authorization.userID) {
-            throw new TRPCError({
-              code: "FORBIDDEN",
-              message: "Ошибка авторизации",
-            });
-          }
-          if (authorization.userID) {
-            user.xSupplierId = xSupplierId;
-            user.wbToken = wbToken;
-            user.wbUserId = authorization.userID;
-            await user.save();
-          }
-        }
+        //   if (!authorization.userID) {
+        //     throw new TRPCError({
+        //       code: "FORBIDDEN",
+        //       message: "Ошибка авторизации",
+        //     });
+        //   }
+        //   if (authorization.userID) {
+        //     user.xSupplierId = xSupplierId;
+        //     user.wbToken = wbToken;
+        //     user.wbUserId = authorization.userID;
+        //     await user.save();
+        //   }
+        // }
 
-        if (xSupplierId && !xSupplierId.includes("****************")) {
-          user.xSupplierId = xSupplierId;
-          await user.save();
-        }
+        // if (xSupplierId && !xSupplierId.includes("****************")) {
+        //   user.xSupplierId = xSupplierId;
+        //   await user.save();
+        // }
 
-        if (wbToken && !wbToken.includes("****************")) {
-          user.wbToken = wbToken;
-          await user.save();
-        }
+        // if (wbToken && !wbToken.includes("****************")) {
+        //   user.wbToken = wbToken;
+        //   await user.save();
+        // }
 
         if (apiKeyAdvertisement && !apiKeyAdvertisement.includes("****************")) {
           if (apiKeyAdvertisement.length < 15) {
@@ -196,10 +188,20 @@ export const cabinetRouter = router({
               showHours: showTimes,
             });
           });
+        } else {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Неправильный апи ключ рекламы",
+          });
         }
 
         return { status: "ok" };
-      } catch (error) {}
+      } catch (error) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Неправильный апи ключ рекламы",
+        });
+      }
     }),
 
   updateCabinet: publicProcedure.query(async (opts) => {

@@ -12,23 +12,18 @@ const LKColor = computed(() => {
 
 const selectedDate = ref(1);
 const sale = ref(0.1);
-const price = ref(3900);
+const price = ref(1000);
+const secondPrice = ref(10000);
 const tickLabels = ref<any>({
   0: "1 мес.",
   1: "3 мес.",
   2: "6 мес.",
 });
-const priceWithSale = ref(
-  price.value *
-    (1 - sale.value * selectedDate.value) *
-    Number(tickLabels.value[selectedDate.value][0])
-);
 
-function calculatePrice() {
-  priceWithSale.value =
-    price.value *
-    (1 - sale.value * selectedDate.value) *
-    Number(tickLabels.value[selectedDate.value][0]);
+function getPriceWithSale(price: number) {
+  return (
+    price * (1 - sale.value * selectedDate.value) * Number(tickLabels.value[selectedDate.value][0])
+  );
 }
 </script>
 <template>
@@ -48,7 +43,6 @@ function calculatePrice() {
   <div>
     <v-dialog tabindex="0" v-model="dialog" width="800" transition="fade-transition">
       <template v-slot:activator="{ props }"> </template>
-
       <v-card>
         <v-card-title class="text-sm">
           <v-row class="flex justify-center">
@@ -70,12 +64,12 @@ function calculatePrice() {
             <v-col>
               <v-card title="Основной" subtitle="До 100 рекламных кампаний в управлении">
                 <v-card-text>
-                  Цена {{ priceWithSale }} ₽/ {{ tickLabels[selectedDate]
+                  Цена {{ getPriceWithSale(price) }} ₽/ {{ tickLabels[selectedDate]
                   }}<v-chip rounded class="ma-2" color="green" text-color="white">
                     - {{ sale * selectedDate * 100 }}%
                   </v-chip>
                   <div class="text-lg">
-                    {{ priceWithSale / Number(tickLabels[selectedDate][0]) }} ₽/мес.
+                    {{ getPriceWithSale(price) / Number(tickLabels[selectedDate][0]) }} ₽/мес.
                   </div>
                 </v-card-text>
                 <v-card-actions>
@@ -87,12 +81,12 @@ function calculatePrice() {
             <v-col>
               <v-card title="Продвинутый" subtitle="До 100 рекламных кампаний в управлении">
                 <v-card-text>
-                  Цена {{ priceWithSale }} ₽/ {{ tickLabels[selectedDate]
+                  Цена {{ getPriceWithSale(secondPrice) }} ₽/ {{ tickLabels[selectedDate]
                   }}<v-chip rounded class="ma-2" color="green" text-color="white">
                     - {{ sale * selectedDate * 100 }}%
                   </v-chip>
                   <div class="text-lg">
-                    {{ priceWithSale / Number(tickLabels[selectedDate][0]) }} ₽/мес.
+                    {{ getPriceWithSale(secondPrice) / Number(tickLabels[selectedDate][0]) }} ₽/мес.
                   </div>
                 </v-card-text>
                 <v-card-actions>
@@ -114,7 +108,6 @@ function calculatePrice() {
               show-ticks="always"
               tick-size="5"
               track-size="7"
-              @update:modelValue="calculatePrice"
             ></v-slider>
           </div>
         </v-card-actions>

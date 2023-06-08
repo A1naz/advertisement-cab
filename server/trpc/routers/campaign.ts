@@ -384,6 +384,8 @@ export const campaignRouter = router({
         curPos -= 40;
       }
 
+      
+
       resultCampaigns.push({
         advertPlace: i + 1,
         factPosition: campaigns.pages[curPage].positions[curPos],

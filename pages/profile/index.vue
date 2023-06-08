@@ -10,11 +10,7 @@ const { ruleEmail, rulePassLen, ruleRequired, rulePhone } = useFormRules();
 const { notify } = useNotification();
 
 async function connectWbCabinet() {
-  if (
-    ruleRequired(wbForm.apiKeyAdvertisement) !== true ||
-    ruleRequired(wbForm.xSupplierId) !== true ||
-    ruleRequired(wbForm.wbToken) !== true
-  ) {
+  if (ruleRequired(wbForm.apiKeyAdvertisement) !== true) {
     notify({
       type: "error",
       text: "Введите все поля",
@@ -22,15 +18,23 @@ async function connectWbCabinet() {
     return;
   }
 
+  if (wbForm.apiKeyAdvertisement.includes("*******")) {
+    notify({
+      type: "error",
+      text: "Введите валидный апи ключ рекламы",
+    });
+
+    return;
+  }
+
   const { data, error } = await useAsyncData(() =>
     $client.cabinet.createCabinet.mutate({
       apiKeyAdvertisement: wbForm.apiKeyAdvertisement,
-      xSupplierId: wbForm.xSupplierId,
-      wbToken: wbForm.wbToken,
     })
   );
 
   if (error.value) {
+
     notify({
       type: "error",
       text: error.value.message,
@@ -75,9 +79,7 @@ const passwordForm = reactive({
 
 const wbForm = reactive({
   apiKeyAdvertisement: client.apiKeyAdvertisement,
-  xSupplierId: client.xSupplierId,
   apiKeyStatistic: client.apiKeyStatistic,
-  wbToken: client.wbToken,
 });
 
 async function savePassword() {
@@ -107,11 +109,7 @@ const show1 = ref(false);
 const show2 = ref(false);
 
 const isBtnConnectActive = computed(() => {
-  return wbForm.apiKeyAdvertisement === client.apiKeyAdvertisement &&
-    wbForm.xSupplierId === client.xSupplierId &&
-    wbForm.wbToken === client.wbToken
-    ? true
-    : false;
+  return wbForm.apiKeyAdvertisement === client.apiKeyAdvertisement ? true : false;
 });
 </script>
 
@@ -181,26 +179,7 @@ const isBtnConnectActive = computed(() => {
           />
         </v-col>
       </v-row>
-      <v-row>
-        <v-col>
-          <v-text-field
-            v-model="wbForm.wbToken"
-            :rules="[ruleRequired]"
-            variant="filled"
-            label="Wb-Token"
-          />
-        </v-col>
-      </v-row>
-      <v-row>
-        <v-col>
-          <v-text-field
-            v-model="wbForm.xSupplierId"
-            :rules="[ruleRequired]"
-            variant="filled"
-            label="X-Supplier-Id"
-          />
-        </v-col>
-      </v-row>
+
       <v-row>
         <v-col>
           <v-text-field
