@@ -151,6 +151,7 @@ export const userRouter = router({
           : user.wbToken.slice(0, 5) + "*".repeat(100) + user.wbToken.slice(-5),
 
       phone: user.phone,
+      tariffs: user.tariffs,
     };
 
     return { user: format };

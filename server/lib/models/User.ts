@@ -67,6 +67,21 @@ const UserSchema = new Schema({
     type: Boolean,
     default: false,
   },
+  tariffs: {
+    type: [Object],
+    default: [
+      {
+        type: "default",
+        active: false,
+        date: "",
+      },
+      {
+        type: "advanced",
+        active: false,
+        date: "",
+      },
+    ],
+  },
 });
 
 export const User = model("User", UserSchema);

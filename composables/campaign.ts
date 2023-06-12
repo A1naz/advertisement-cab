@@ -8,7 +8,7 @@ export const useCampaignStore = defineStore("campaign", () => {
   const categories = ref<any>([]);
   const itemsByCategory = ref<any>([]);
   const sortValue = ref("turnOnOff");
-  const { $client } = useNuxtApp();
+  const { $client }: any = useNuxtApp();
   const isLoading = ref(false);
 
   async function getCampaigns() {

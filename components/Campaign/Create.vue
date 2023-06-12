@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useNotification } from "@kyvg/vue3-notification";
 
+const userStore = useUserStore();
 const campaignStore = useCampaignStore();
 const { $client } = useNuxtApp();
 const { ruleRequired, ruleNameLen } = useFormRules();
@@ -87,7 +88,12 @@ function submitForm() {
       ></v-progress-linear>
       <template v-if="!isLoading" v-slot:activator="{ props }">
         <div class="mr-3">
-          <v-btn color="primary" class="flex justify-end" v-bind="props">
+          <v-btn
+            v-if="userStore.isClientAdvanced"
+            color="primary"
+            class="flex justify-end"
+            v-bind="props"
+          >
             Создать новую кампанию
           </v-btn>
         </div>

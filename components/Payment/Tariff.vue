@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useTheme } from "vuetify";
 const theme = useTheme();
+const userStore = useUserStore();
 const dialog = ref(false);
 const LKColor = computed(() => {
   if (theme.global.name.value == "myCustomLightTheme") {
@@ -25,6 +26,9 @@ function getPriceWithSale(price: number) {
     price * (1 - sale.value * selectedDate.value) * Number(tickLabels.value[selectedDate.value][0])
   );
 }
+
+const isFirstChipVisible = ref(userStore.client.tariffs[0].active);
+const isSecondChipVisible = ref(userStore.client.tariffs[1].active);
 </script>
 <template>
   <div>
@@ -73,8 +77,16 @@ function getPriceWithSale(price: number) {
                   </div>
                 </v-card-text>
                 <v-card-actions>
-                  <v-spacer></v-spacer>
-                  <v-btn variant="outlined"> Приобрести </v-btn>
+                  <v-row>
+                    <v-col class="text-right" v-if="isFirstChipVisible">
+                      <v-chip variant="outlined" rounded color="green">
+                        Активен до: {{ userStore.client.tariffs[0].date.replaceAll("-", ".") }}
+                      </v-chip>
+                    </v-col>
+                    <v-col class="text-right">
+                      <v-btn variant="outlined"> Приобрести </v-btn>
+                    </v-col>
+                  </v-row>
                 </v-card-actions>
               </v-card>
             </v-col>
@@ -90,8 +102,16 @@ function getPriceWithSale(price: number) {
                   </div>
                 </v-card-text>
                 <v-card-actions>
-                  <v-spacer></v-spacer>
-                  <v-btn variant="outlined"> Приобрести </v-btn>
+                  <v-row>
+                    <v-col class="text-right" v-if="isSecondChipVisible">
+                      <v-chip variant="outlined" rounded color="green">
+                        Активен до: {{ userStore.client.tariffs[1].date.replaceAll("-", ".") }}
+                      </v-chip>
+                    </v-col>
+                    <v-col class="text-right">
+                      <v-btn variant="outlined"> Приобрести </v-btn>
+                    </v-col>
+                  </v-row>
                 </v-card-actions>
               </v-card>
             </v-col>

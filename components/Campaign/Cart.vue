@@ -1,5 +1,6 @@
 <script setup>
 const campaignStore = useCampaignStore();
+const userStore = useUserStore();
 </script>
 
 <template>
@@ -57,18 +58,18 @@ const campaignStore = useCampaignStore();
               <v-col>Дневн. бюджет: {{ campaign.dailyBudget }} </v-col>
             </v-row>
 
-            <v-row>
+            <v-row v-if="userStore.isClientAdvanced">
               <v-col>Затраты: {{ campaign.expences }} </v-col>
               <v-col>CPC. бюджет: {{ campaign.CPC }} </v-col>
             </v-row>
 
-            <v-row>
+            <v-row v-if="userStore.isClientAdvanced">
               <v-col>Показы: {{ campaign.shows }} </v-col>
               <v-col>Клики: {{ campaign.clicks }} </v-col>
               <v-col>CTR: {{ campaign.CTR }} </v-col>
             </v-row>
 
-            <v-row>
+            <v-row v-if="userStore.isClientAdvanced">
               <v-col>Корзина: {{ campaign.cart }} </v-col>
               <v-col>Заказы: {{ campaign.orders }} </v-col>
               <v-col>CR: {{ campaign.CR }} </v-col>
@@ -84,7 +85,7 @@ const campaignStore = useCampaignStore();
                 <div v-for="nms in campaign.nms" class="flex-col">
                   <v-row>
                     <v-col class="text-center" v-for="nm in nms.nms">
-                      <v-img class="w-16" :src="findImage(nm)" 
+                      <v-img class="w-16" :src="findImage(nm)"
                         ><v-tooltip activator="parent" location="top">{{ nm }}</v-tooltip>
                       </v-img>
                       &nbsp; &nbsp;</v-col
