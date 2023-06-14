@@ -73,10 +73,9 @@ export const campaignRouter = router({
     .input(
       z.object({
         _id: z.string(),
-        budget: z.number(),
+        budget: z.number().nullable().optional(),
         maxBet: z.number(),
         targetPosition: z.string(),
-        dailyBudget: z.number().optional() || z.null().optional(),
         ifMaxBetDoesntMatch: z.string().min(10),
         ifBetEqualsNear: z.string().min(10),
         showHours: z.string(),
@@ -92,7 +91,6 @@ export const campaignRouter = router({
         _id,
         budget,
         targetPosition,
-        dailyBudget,
         ifMaxBetDoesntMatch,
         ifBetEqualsNear,
         showHours,
@@ -131,20 +129,15 @@ export const campaignRouter = router({
         campaign.getBet = maxBetIncreaseTo;
       }
 
-      if (dailyBudget || dailyBudget === 0) {
-        campaign.dailyBudget = dailyBudget;
-      }
-      if (!dailyBudget || dailyBudget === null) {
-        campaign.dailyBudget = 0;
-      }
-
       if (campaign.type === 6) {
         campaign.managementType = managementType;
         campaign.masterPhrase = masterPhrase;
       }
 
       campaign.maxBet = maxBet;
-      campaign.budget = budget;
+      if (budget) {
+        campaign.budget = budget;
+      }
       campaign.targetPosition = targetPosition;
       campaign.ifMaxBetDoesntMatch = ifMaxBetDoesntMatch;
       campaign.ifBetEqualsNear = ifBetEqualsNear;
@@ -383,8 +376,6 @@ export const campaignRouter = router({
         curPage += 1;
         curPos -= 40;
       }
-
-      
 
       resultCampaigns.push({
         advertPlace: i + 1,

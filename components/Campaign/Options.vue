@@ -2,6 +2,7 @@
 import VueDatePicker from "@vuepic/vue-datepicker";
 import "@vuepic/vue-datepicker/dist/main.css";
 import { useTheme } from "vuetify";
+const userStore = useUserStore();
 const { $client } = useNuxtApp();
 const dialog = ref(false);
 const budget = ref("");
@@ -114,7 +115,7 @@ async function adjustCampgain(id: string) {
   submitForm();
 
   if (
-    ruleRequired(budget.value) !== true ||
+    (ruleRequired(budget.value) !== true && budget.value) ||
     ruleRequired(targetPosition.value) !== true ||
     ruleRequired(maxBet.value) !== true ||
     (ruleRequired(getBet.value) !== true && ifMaxBet.value === "Выставить ставку") ||
@@ -132,7 +133,7 @@ async function adjustCampgain(id: string) {
   }
 
   if (
-    typeof Number(budget.value) != "number" ||
+    (typeof Number(budget.value) != "number" && budget.value) ||
     typeof Number(targetPosition.value) != "number" ||
     typeof Number(dailyBudget.value) != "number"
   ) {
@@ -173,7 +174,6 @@ async function adjustCampgain(id: string) {
       _id: id,
       budget: Number(budget.value),
       targetPosition: targetPosition.value,
-      dailyBudget: Number(dailyBudget.value),
       ifMaxBetDoesntMatch: ifMaxBet.value,
       ifBetEqualsNear: ifBetEquals.value,
       showHours: finalTimes,
@@ -364,23 +364,24 @@ async function getStatsByPhrase() {
                     type="number"
                     :rules="[ruleRequired]"
                     variant="filled"
-                    v-model="budget"
-                    label="Бюджет"
-                  ></v-text-field>
-                </div>
-                <div class="flex">
-                  <v-text-field
-                    class="mr-1"
-                    type="number"
-                    :rules="[ruleRequired]"
-                    variant="filled"
                     v-model="maxBet"
                     label="Макс ставка"
                     prefix="₽"
                   ></v-text-field>
+                </div>
+
+                <div class="flex" v-if="userStore.isClientAdvanced">
                   <v-text-field
-                  disabled
-                    class="ml-1"
+                  class="targetPosition mr-1 min-w-375px"
+                    type="number"
+                    :rules="[ruleRequired]"
+                    variant="filled"
+                    v-model="budget"
+                    label="Бюджет"
+                  ></v-text-field>
+
+                  <v-text-field
+                  class="ml-1"
                     type="number"
                     variant="filled"
                     v-model="dailyBudget"
