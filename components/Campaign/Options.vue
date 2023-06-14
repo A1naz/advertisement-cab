@@ -379,6 +379,7 @@ async function getStatsByPhrase() {
                     prefix="₽"
                   ></v-text-field>
                   <v-text-field
+                  disabled
                     class="ml-1"
                     type="number"
                     variant="filled"
