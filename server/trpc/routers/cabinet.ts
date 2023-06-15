@@ -361,6 +361,7 @@ export const cabinetRouter = router({
             el.deleteCount = 0;
             await el.save();
           } else {
+            
             const isCampaignExist = await Campaign.findOne({ advertId: el.advertId });
 
             if (!isCampaignExist) {

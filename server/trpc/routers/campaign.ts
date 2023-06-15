@@ -125,6 +125,13 @@ export const campaignRouter = router({
 
       const campaign: any = await Campaign.findById(_id);
 
+      if (user.id !== campaign.user.valueOf()) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "unauthorized",
+        });
+      }
+
       if (maxBetIncreaseTo) {
         campaign.getBet = maxBetIncreaseTo;
       }
@@ -179,6 +186,13 @@ export const campaignRouter = router({
 
       const campaign: any = await Campaign.findById(_id);
 
+      if (user.id !== campaign.user.valueOf()) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "unauthorized",
+        });
+      }
+
       campaign.isTurnOn = status;
       await campaign.save();
 
@@ -218,6 +232,13 @@ export const campaignRouter = router({
       }
 
       const campaign: any = await Campaign.findById(_id);
+
+      if (user.id !== campaign.user.valueOf()) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "unauthorized",
+        });
+      }
 
       campaign.deleteMark = status;
       await campaign.save();
