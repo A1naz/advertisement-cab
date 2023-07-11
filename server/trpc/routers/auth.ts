@@ -105,34 +105,34 @@ export const authRouter = router({
       const { input } = opts;
       const { email, password, username, phone, lastName } = input;
 
-      const isUserExist = await User.findOne({ email: email.toLowerCase() });
-      if (isUserExist) {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "Пользователь уже существует",
-        });
-      }
-      let truePhone;
+      // const isUserExist = await User.findOne({ email: email.toLowerCase() });
+      // if (isUserExist) {
+      //   throw new TRPCError({
+      //     code: "BAD_REQUEST",
+      //     message: "Пользователь уже существует",
+      //   });
+      // }
+      // let truePhone;
 
-      if (phone.includes("+")) {
-        truePhone = phone.replace("+", "");
-      }
+      // if (phone.includes("+")) {
+      //   truePhone = phone.replace("+", "");
+      // }
 
-      const url = config.public.PUBLIC_SITE_URL;
-      const user = await User.create({
-        email: email.toLowerCase(),
-        password: bcrypt.hashSync(password, 7),
-        username,
-        lastName,
-        phone: truePhone,
-        uuid: uuid(),
-      });
-      const link = `${url}/activate?uuid=${user.uuid}`;
-      const emailSend = await mailService.sendActivationMail(email, link);
+      // const url = config.public.PUBLIC_SITE_URL;
+      // const user = await User.create({
+      //   email: email.toLowerCase(),
+      //   password: bcrypt.hashSync(password, 7),
+      //   username,
+      //   lastName,
+      //   phone: truePhone,
+      //   uuid: uuid(),
+      // });
+      // const link = `${url}/activate?uuid=${user.uuid}`;
+      // const emailSend = await mailService.sendActivationMail(email, link);
       return {
         status: "ok",
-        email: user.email,
-        username: user.username,
+        // email: user.email,
+        // username: user.username,
       };
     }),
 });

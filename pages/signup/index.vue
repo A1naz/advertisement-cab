@@ -104,9 +104,9 @@ async function submit() {
                 />
               </div>
               <div class="mt-5">
-                <VBtn type="submit" block min-height="45" class="gradient bg-primary">
+                <!-- <VBtn type="submit" block min-height="45" class="gradient bg-primary">
                   Создать аккаунт
-                </VBtn>
+                </VBtn> -->
               </div>
             </VForm>
             <p class="text-body-2 mt-10">
