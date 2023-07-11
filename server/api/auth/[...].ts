@@ -55,17 +55,17 @@ export default NuxtAuthHandler({
         if (!email || !password) return null;
 
         const user = await User.findOne({ email: email.toLowerCase() });
-
+        
         if (!user) throw new Error("Неверный email или пароль");
-
+        
         if (!user.password) throw new Error("Неверный email или пароль");
-
+        
         const isValid = await bcrypt.compare(password, user.password);
-
+        
         if (!isValid) throw new Error("Неверный email или пароль");
-
-        if (!user.isEmailConfirmed) throw new Error("Подтверждите почту");
-
+        
+        if (!user.isEmailConfirmed) throw new Error("Подтвердите почту");
+        
         return user;
       },
     }),

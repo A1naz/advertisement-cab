@@ -1,6 +1,11 @@
 {
     "prettier.singleQuote": true,
-    "editor.lineHeight": 1.8,
+    "editor.lineHeight": 2,
     "workbench.editor.pinnedTabSizing": "normal",
-    "window.zoomLevel": 0.35
+    "window.zoomLevel": 0,
+    "editor.fontFamily": "'Fira Code', Consolas, 'Courier New', monospace",
+    "editor.fontLigatures": true,
+    "editor.fontSize": 16,
+    "editor.inlayHints.fontFamily": "'Fira Code', Consolas, 'Courier New', monospace",
+    "debug.console.fontFamily": "'Fira Code', Consolas, 'Courier New', monospace"
 }
