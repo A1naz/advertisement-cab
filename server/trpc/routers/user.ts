@@ -152,9 +152,38 @@ export const userRouter = router({
 
       phone: user.phone,
       tariffs: user.tariffs,
+      isApiPlusTokenEnabled: user.isApiPlusTokenEnabled
     };
 
     return { user: format };
+  }),
+  turnOnOffApiPlusToken: publicProcedure.query(async (opts) => {
+    const session = opts.ctx.session as any;
+    if (!session) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "unauthorized",
+      });
+    }
+    const user = await User.findById(session._id);
+    if (!user) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "unauthorized",
+      });
+    }
+
+    if (!user.tariffs[1].active) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "unauthorized",
+      });
+    }
+
+    user.isApiPlusTokenEnabled = !user.isApiPlusTokenEnabled;
+    await user.save();
+
+    return { status: "ok" };
   }),
 });
 // export type definition of API

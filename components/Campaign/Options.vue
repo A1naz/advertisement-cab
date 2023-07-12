@@ -3,7 +3,7 @@ import VueDatePicker from "@vuepic/vue-datepicker";
 import "@vuepic/vue-datepicker/dist/main.css";
 import { useTheme } from "vuetify";
 const userStore = useUserStore();
-const { $client } = useNuxtApp();
+const { $client }: any = useNuxtApp();
 const dialog = ref(false);
 const budget = ref("");
 const onOff = ref(false);
@@ -199,7 +199,7 @@ async function adjustCampgain(id: string) {
 }
 
 async function turnOnOff(id: string) {
-  const { data, error } = await useAsyncData(() =>
+  const { data, error }: any = await useAsyncData(() =>
     $client.campaign.turnOnOffCampgain.mutate({
       _id: id,
       status: onOff.value,

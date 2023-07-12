@@ -3,7 +3,7 @@ import { useNotification } from "@kyvg/vue3-notification";
 
 const userStore = useUserStore();
 const campaignStore = useCampaignStore();
-const { $client } = useNuxtApp();
+const { $client }: any = useNuxtApp();
 const { ruleRequired, ruleNameLen } = useFormRules();
 const { notify } = useNotification();
 
@@ -141,6 +141,7 @@ function submitForm() {
                   :rules="[ruleRequired]"
                   :items="campaignStore.categories"
                   v-model="selectedCategory"
+                  no-data-text="Нет предметов"
                 ></v-select>
               </v-col>
               <v-col cols="12">

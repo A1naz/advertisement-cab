@@ -12,6 +12,8 @@ export const cabinetRouter = router({
     .input(
       z.object({
         apiKeyAdvertisement: z.string().min(10, "Некорректный апи-ключ рекламы"),
+        wbToken: z.string().min(10, "Некорректный апи-ключ рекламы").optional(),
+        xSupplierId: z.string().min(10, "Некорректный апи-ключ рекламы").optional(),
         apiKeyStatistic: z.string().optional(),
       })
     )
@@ -35,8 +37,6 @@ export const cabinetRouter = router({
             message: "unauthorized",
           });
         }
-
-        console.log(apiKeyAdvertisement);
 
         // if (
         //   (xSupplierId && !xSupplierId.includes("****************")) ||

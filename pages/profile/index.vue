@@ -5,9 +5,12 @@ const userStore = useUserStore();
 const campaignStore = useCampaignStore();
 if (status.value === "authenticated") userStore.getClient();
 let client = userStore.client;
-const { $client } = useNuxtApp();
+const { $client }: any = useNuxtApp();
 const { ruleEmail, rulePassLen, ruleRequired, rulePhone } = useFormRules();
 const { notify } = useNotification();
+
+const apiTokenSwitch = ref(false);
+apiTokenSwitch.value = client.isApiPlusTokenEnabled;
 
 async function connectWbCabinet() {
   if (ruleRequired(wbForm.apiKeyAdvertisement) !== true) {
@@ -30,11 +33,12 @@ async function connectWbCabinet() {
   const { data, error } = await useAsyncData(() =>
     $client.cabinet.createCabinet.mutate({
       apiKeyAdvertisement: wbForm.apiKeyAdvertisement,
+      wbToken: wbForm.apiKeyAdvertisement,
+      xSupplierId: wbForm.apiKeyAdvertisement,
     })
   );
 
   if (error.value) {
-
     notify({
       type: "error",
       text: error.value.message,
@@ -82,6 +86,11 @@ const wbForm = reactive({
   apiKeyStatistic: client.apiKeyStatistic,
 });
 
+const apiForm = reactive({
+  wbToken: client.apiKeyAdvertisement,
+  xSupplierId: client.apiKeyStatistic,
+});
+
 async function savePassword() {
   const { data, error } = await useAsyncData(() =>
     $client.user.editPassword.mutate({
@@ -109,8 +118,20 @@ const show1 = ref(false);
 const show2 = ref(false);
 
 const isBtnConnectActive = computed(() => {
-  return wbForm.apiKeyAdvertisement === client.apiKeyAdvertisement ? true : false;
+  return wbForm.apiKeyAdvertisement === client.apiKeyAdvertisement &&
+    wbForm.apiKeyStatistic === client.apiKeyStatistic
+    ? true
+    : false;
 });
+const isBtnConnectApiActive = computed(() => {
+  return apiForm.wbToken === client.wbToken && apiForm.xSupplierId === client.xSupplierId
+    ? true
+    : false;
+});
+
+async function turnOnOffApiPlusToken() {
+  const { data, error } = await $client.user.turnOnOffApiPlusToken.query();
+}
 </script>
 
 <template>
@@ -179,7 +200,6 @@ const isBtnConnectActive = computed(() => {
           />
         </v-col>
       </v-row>
-
       <v-row>
         <v-col>
           <v-text-field
@@ -192,6 +212,61 @@ const isBtnConnectActive = computed(() => {
       <v-row justify="end">
         <v-col cols="12" lg="3">
           <v-btn block @click="connectWbCabinet" :disabled="isBtnConnectActive" type="submit">
+            Подключить
+          </v-btn>
+        </v-col>
+      </v-row>
+    </v-form>
+
+    <v-row class="mt-6">
+      <v-col>
+        <div class="w-40">
+          <v-tooltip
+            activator="parent"
+            text="Для доступа к этой функции необходимо приобрести продвинутый тариф"
+            :disabled="userStore.isClientAdvanced"
+            transition="fade-transition"
+          >
+            <template v-slot:activator="{ props }">
+              <v-switch
+                @update:modelValue="turnOnOffApiPlusToken"
+                :disabled="!userStore.isClientAdvanced"
+                v-model="apiTokenSwitch"
+                label="api + token"
+                color="primary"
+                inset
+                hide-details
+              />
+            </template>
+          </v-tooltip>
+        </div>
+      </v-col>
+    </v-row>
+
+    <v-form @submit.prevent v-if="apiTokenSwitch">
+      <v-row>
+        <v-col>
+          <v-text-field
+            variant="filled"
+            v-model="apiForm.wbToken"
+            :rules="[ruleRequired]"
+            label="WB-Token"
+          />
+        </v-col>
+      </v-row>
+      <v-row>
+        <v-col>
+          <v-text-field
+            variant="filled"
+            :rules="[ruleRequired]"
+            v-model="apiForm.xSupplierId"
+            label="X-Supplier-Id"
+          />
+        </v-col>
+      </v-row>
+      <v-row justify="end">
+        <v-col cols="12" lg="3">
+          <v-btn block @click="connectWbCabinet" :disabled="isBtnConnectApiActive" type="submit">
             Подключить
           </v-btn>
         </v-col>

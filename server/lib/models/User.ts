@@ -82,6 +82,10 @@ const UserSchema = new Schema({
       },
     ],
   },
+  isApiPlusTokenEnabled: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 export const User = model("User", UserSchema);
