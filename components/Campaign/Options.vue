@@ -370,7 +370,7 @@ async function getStatsByPhrase() {
                   ></v-text-field>
                 </div>
 
-                <div class="flex" v-if="userStore.isClientAdvanced">
+                <div class="flex" v-if="userStore.client.isApiPlusTokenEnabled">
                   <v-text-field
                   class="targetPosition mr-1 min-w-375px"
                     type="number"

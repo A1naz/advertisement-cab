@@ -70,9 +70,9 @@ function sortByCreateTime() {
           <th class="text-left">Статус</th>
           <th class="text-left">Настройки</th>
           <th class="text-left">Бюджет</th>
-          <th v-if="userStore.isClientAdvanced" class="text-left">Затраты</th>
-          <th v-if="userStore.isClientAdvanced" class="text-left">Показатели</th>
-          <th v-if="userStore.isClientAdvanced" class="text-left">Конверсия</th>
+          <th v-if="userStore.client.isApiPlusTokenEnabled" class="text-left">Затраты</th>
+          <th v-if="userStore.client.isApiPlusTokenEnabled" class="text-left">Показатели</th>
+          <th v-if="userStore.client.isApiPlusTokenEnabled" class="text-left">Конверсия</th>
           <th class="text-left">Управление</th>
         </tr>
       </thead>
@@ -133,16 +133,16 @@ function sortByCreateTime() {
             <div class="mb-1 text-sm">Общий: {{ campaign.budget }}</div>
             <div class="mt-1 text-sm">Дневной: {{ campaign.dailyBudget }}</div>
           </td>
-          <td v-if="userStore.isClientAdvanced">
+          <td v-if="userStore.client.isApiPlusTokenEnabled">
             <div class="mb-1 text-sm">Затраты: {{ campaign.expences }}</div>
             <div class="mt-1 text-sm">CPC: {{ campaign.CPC }}</div>
           </td>
-          <td v-if="userStore.isClientAdvanced" class="text-sm">
+          <td v-if="userStore.client.isApiPlusTokenEnabled" class="text-sm">
             <div>Показы: {{ campaign.shows }}</div>
             <div>Клики: {{ campaign.clicks }}</div>
             <div>CTR: {{ campaign.CTR }}</div>
           </td>
-          <td v-if="userStore.isClientAdvanced" class="text-sm">
+          <td v-if="userStore.client.isApiPlusTokenEnabled" class="text-sm">
             <div>Корзина: {{ campaign.cart }}</div>
             <div>Заказы: {{ campaign.orders }}</div>
             <div>CR: {{ campaign.CR }}</div>

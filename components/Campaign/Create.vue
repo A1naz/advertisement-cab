@@ -89,7 +89,7 @@ function submitForm() {
       <template v-if="!isLoading" v-slot:activator="{ props }">
         <div class="mr-3">
           <v-btn
-            v-if="userStore.isClientAdvanced"
+            v-if="userStore.client.isApiPlusTokenEnabled"
             color="primary"
             class="flex justify-end"
             v-bind="props"

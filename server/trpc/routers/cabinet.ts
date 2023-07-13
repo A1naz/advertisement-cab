@@ -20,7 +20,7 @@ export const cabinetRouter = router({
     .mutation(async (opts) => {
       const session = opts.ctx.session as any;
       const { input } = opts;
-      const { apiKeyAdvertisement, apiKeyStatistic } = input;
+      const { apiKeyAdvertisement, apiKeyStatistic, wbToken, xSupplierId } = input;
       try {
         if (!session) {
           throw new TRPCError({
@@ -29,7 +29,7 @@ export const cabinetRouter = router({
           });
         }
 
-        const user = await User.findById(session._id);
+        const user: any = await User.findById(session._id);
 
         if (!user) {
           throw new TRPCError({
@@ -38,43 +38,43 @@ export const cabinetRouter = router({
           });
         }
 
-        // if (
-        //   (xSupplierId && !xSupplierId.includes("****************")) ||
-        //   (wbToken && !wbToken.includes("****************"))
-        // ) {
-        //   const authorization: any = await $fetch(
-        //     `https://cmp.wildberries.ru/passport/api/v2/auth/introspect`,
-        //     {
-        //       method: "GET",
-        //       headers: {
-        //         Cookie: `x-supplier-id-external=${xSupplierId}; WBToken=${wbToken}`,
-        //       },
-        //     }
-        //   );
+        if (
+          (xSupplierId && !xSupplierId.includes("****************")) ||
+          (wbToken && !wbToken.includes("****************"))
+        ) {
+          const authorization: any = await $fetch(
+            `https://cmp.wildberries.ru/passport/api/v2/auth/introspect`,
+            {
+              method: "GET",
+              headers: {
+                Cookie: `x-supplier-id-external=${xSupplierId}; WBToken=${wbToken}`,
+              },
+            }
+          );
 
-        //   if (!authorization.userID) {
-        //     throw new TRPCError({
-        //       code: "FORBIDDEN",
-        //       message: "Ошибка авторизации",
-        //     });
-        //   }
-        //   if (authorization.userID) {
-        //     user.xSupplierId = xSupplierId;
-        //     user.wbToken = wbToken;
-        //     user.wbUserId = authorization.userID;
-        //     await user.save();
-        //   }
-        // }
+          if (!authorization.userID) {
+            throw new TRPCError({
+              code: "FORBIDDEN",
+              message: "Ошибка авторизации",
+            });
+          }
+          if (authorization.userID) {
+            user.xSupplierId = xSupplierId;
+            user.wbToken = wbToken;
+            user.wbUserId = authorization.userID;
+            await user.save();
+          }
+        }
 
-        // if (xSupplierId && !xSupplierId.includes("****************")) {
-        //   user.xSupplierId = xSupplierId;
-        //   await user.save();
-        // }
+        if (xSupplierId && !xSupplierId.includes("****************")) {
+          user.xSupplierId = xSupplierId;
+          await user.save();
+        }
 
-        // if (wbToken && !wbToken.includes("****************")) {
-        //   user.wbToken = wbToken;
-        //   await user.save();
-        // }
+        if (wbToken && !wbToken.includes("****************")) {
+          user.wbToken = wbToken;
+          await user.save();
+        }
 
         if (apiKeyAdvertisement && !apiKeyAdvertisement.includes("****************")) {
           if (apiKeyAdvertisement.length < 15) {
@@ -388,7 +388,7 @@ export const cabinetRouter = router({
     } catch (error) {
       throw new TRPCError({
         code: "FORBIDDEN",
-        message: "Неверный Api-ключ Реклама",
+        message: "Неверный ключ",
       });
     }
   }),

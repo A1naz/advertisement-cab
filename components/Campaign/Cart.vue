@@ -58,18 +58,18 @@ const userStore = useUserStore();
               <v-col>Дневн. бюджет: {{ campaign.dailyBudget }} </v-col>
             </v-row>
 
-            <v-row v-if="userStore.isClientAdvanced">
+            <v-row v-if="userStore.client.isApiPlusTokenEnabled">
               <v-col>Затраты: {{ campaign.expences }} </v-col>
               <v-col>CPC. бюджет: {{ campaign.CPC }} </v-col>
             </v-row>
 
-            <v-row v-if="userStore.isClientAdvanced">
+            <v-row v-if="userStore.client.isApiPlusTokenEnabled">
               <v-col>Показы: {{ campaign.shows }} </v-col>
               <v-col>Клики: {{ campaign.clicks }} </v-col>
               <v-col>CTR: {{ campaign.CTR }} </v-col>
             </v-row>
 
-            <v-row v-if="userStore.isClientAdvanced">
+            <v-row v-if="userStore.client.isApiPlusTokenEnabled">
               <v-col>Корзина: {{ campaign.cart }} </v-col>
               <v-col>Заказы: {{ campaign.orders }} </v-col>
               <v-col>CR: {{ campaign.CR }} </v-col>
