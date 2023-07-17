@@ -92,6 +92,15 @@ const apiForm = reactive({
 });
 
 async function savePassword() {
+  if (client.hasPassword) {
+    if (passwordForm.oldPassword.length < 6) {
+      notify({
+        type: "error",
+        text: "Не менее 6 символов",
+      });
+      return;
+    }
+  }
   const { data, error } = await useAsyncData(() =>
     $client.user.editPassword.mutate({
       oldPassword: passwordForm.oldPassword,
@@ -132,6 +141,39 @@ const isBtnConnectApiActive = computed(() => {
 async function turnOnOffApiPlusToken() {
   const { data, error } = await $client.user.turnOnOffApiPlusToken.query();
 }
+
+function onTelegramLink(data: any) {
+  if (data.status === "ok") {
+    notify({
+      type: "success",
+      text: "Telegram успешно привязан",
+    });
+  } else {
+    notify({
+      type: "error",
+      text: "Произошла ошибка",
+    });
+  }
+}
+
+async function unLinckTelegram() {
+  const { data, error } = await useAsyncData(() => $client.user.unLinkTelegram.query());
+
+  if (error.value) {
+    notify({
+      type: "error",
+      text: error.value.message,
+    });
+  }
+  if (data.value) {
+    notify({
+      type: "success",
+      text: "Telegram успешно отвязан",
+    });
+
+    userStore.client.telegram = '';
+  }
+}
 </script>
 
 <template>
@@ -160,6 +202,26 @@ async function turnOnOffApiPlusToken() {
           variant="filled"
         />
       </v-col>
+      <v-col cols="12">
+        <div class="flex">
+          <v-text-field
+            disabled
+            v-model="userStore.client.telegram"
+            :rules="[rulePhone]"
+            label="Telegram"
+            type="text"
+            variant="filled"
+            class="mr-2"
+          />
+          <div>
+            <LinkTelegram v-if="!userStore.client.telegram" />
+            <vBtn v-if="userStore.client.telegram" class="ml-2 px-6 mt-2" @click="unLinckTelegram"
+              >Отвязать</vBtn
+            >
+          </div>
+        </div>
+      </v-col>
+
       <v-col>
         <v-text-field
           v-model="client.firstName"
@@ -279,7 +341,7 @@ async function turnOnOffApiPlusToken() {
       </v-col>
     </v-row>
     <v-row>
-      <v-col cols="12" lg="6">
+      <v-col v-if="client.hasPassword">
         <v-text-field
           variant="filled"
           v-model="passwordForm.oldPassword"
@@ -290,7 +352,7 @@ async function turnOnOffApiPlusToken() {
           :type="show1 ? 'text' : 'password'"
         />
       </v-col>
-      <v-col cols="12" lg="6">
+      <v-col>
         <v-text-field
           variant="filled"
           v-model="passwordForm.newPassword"

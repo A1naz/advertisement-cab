@@ -63,7 +63,7 @@ export const userRouter = router({
   editPassword: publicProcedure
     .input(
       z.object({
-        oldPassword: z.string().min(6, "Не менее 6 символов"),
+        oldPassword: z.string(),
         newPassword: z.string().min(6, "Не менее 6 символов"),
       })
     )
@@ -88,13 +88,7 @@ export const userRouter = router({
         });
       }
 
-      if (!user.password) {
-        user.password = await bcrypt.hashSync(newPassword, 7);
-      }
-
-      console.log(bcrypt.compareSync(oldPassword, user.password));
-
-      if (!bcrypt.compareSync(oldPassword, user.password)) {
+      if (user.password && !bcrypt.compareSync(oldPassword, user.password)) {
         throw new TRPCError({
           code: "FORBIDDEN",
           message: "Неверный пароль",
@@ -102,6 +96,43 @@ export const userRouter = router({
       }
 
       user.password = bcrypt.hashSync(newPassword, 7);
+
+      await user.save();
+      return {
+        status: "ok",
+      };
+    }),
+
+  setTelegram: publicProcedure
+    .input(
+      z.object({
+        telegram: z.string(),
+        telegramUserId: z.string(),
+      })
+    )
+    .mutation(async (opts) => {
+      const session = opts.ctx.session as any;
+
+      if (!session) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "unauthorized",
+        });
+      }
+
+      const { input } = opts;
+      const { telegram, telegramUserId } = input;
+      const user = await User.findById(session._id);
+
+      if (!user) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "unauthorized",
+        });
+      }
+
+      user.telegram = telegram;
+      user.telegramUserId = telegramUserId;
 
       await user.save();
       return {
@@ -152,9 +183,14 @@ export const userRouter = router({
 
       phone: user.phone,
       tariffs: user.tariffs,
-      isApiPlusTokenEnabled: user.isApiPlusTokenEnabled
+      isApiPlusTokenEnabled: user.isApiPlusTokenEnabled,
+      hasPassword: true,
+      telegram: user.telegram,
     };
 
+    if (!user.password) {
+      format.hasPassword = false;
+    }
     return { user: format };
   }),
   turnOnOffApiPlusToken: publicProcedure.query(async (opts) => {
@@ -185,6 +221,38 @@ export const userRouter = router({
 
     return { status: "ok" };
   }),
+
+  unLinkTelegram: publicProcedure.query(async (opts) => {
+    const session = opts.ctx.session as any;
+    if (!session) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "unauthorized",
+      });
+    }
+    const user = await User.findById(session._id);
+    if (!user) {
+      throw new TRPCError({
+        code: "FORBIDDEN",
+        message: "unauthorized",
+      });
+    }
+    
+    if (!user.email || !user.password) {
+      
+      throw new TRPCError({
+        code: "BAD_REQUEST",
+        message: "Сначала укажите почту и пароль",
+      });
+   }
+
+   user.telegram = ''
+   user.telegramUserId = ''
+
+   await user.save()
+    return { status: "ok" };
+  }),
+
 });
 // export type definition of API
 export type AppRouter = typeof userRouter;

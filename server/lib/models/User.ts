@@ -4,11 +4,11 @@ const UserSchema = new Schema({
   email: {
     type: String,
     unique: true,
-    required: true,
+    required: false,
   },
   password: {
     type: String,
-    required: true,
+    required: false,
   },
   role: {
     type: [{ type: String }],
@@ -67,6 +67,9 @@ const UserSchema = new Schema({
     type: Boolean,
     default: false,
   },
+  telegram: { type: String, required: false },
+  telegramUserId: { type: String, required: false },
+  telegramUnlinkEmailSend: { type: Date, required: false },
   tariffs: {
     type: [Object],
     default: [

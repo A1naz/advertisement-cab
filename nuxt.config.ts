@@ -45,6 +45,8 @@ export default defineNuxtConfig({
       siteDescription: "Рекламный кабинет Wildberries",
       language: "ru",
       PUBLIC_SITE_URL: process.env.PUBLIC_SITE_URL,
+      BOT_ID: process.env.BOT_ID,
+      BOT_LOGIN: process.env.BOT_LOGIN,
     },
     MONGO_URI: process.env.MONGO_URI,
     SECRET: process.env.SECRET,
@@ -54,6 +56,7 @@ export default defineNuxtConfig({
     smtpPort: process.env.smtpPort,
     smtpUser: process.env.smtpUser,
     smtpHost: process.env.smtpHost,
+    BOT_TOKEN: process.env.BOT_TOKEN,
   },
   app: {
     head: {

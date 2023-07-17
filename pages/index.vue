@@ -89,6 +89,14 @@ const show1 = ref(false);
               <div class="mt-5">
                 <VBtn type="submit" block min-height="44" class="gradient bg-primary"> Войти </VBtn>
               </div>
+              <div class="flex my-2">
+                <v-divider class="mt-3 mx-2"></v-divider>
+                Или
+                <v-divider  class="mt-3 mx-2"></v-divider>
+              </div>
+              <div>
+                <TelegramLoginButton mode="callback" class="rounded-lg m-auto" />
+              </div>
             </VForm>
             <p class="text-body-2 mt-10">
               <NuxtLink to="/reset-password" class="font-weight-bold text-primary">

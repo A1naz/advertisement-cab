@@ -2,6 +2,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcrypt";
 import { User } from "~/server/lib/models/User";
 import { NuxtAuthHandler } from "#auth";
+import { checkSignature } from "~~/server/lib/telegram/mod";
 
 const runtimeConfig = useRuntimeConfig();
 export default NuxtAuthHandler({
@@ -37,6 +38,41 @@ export default NuxtAuthHandler({
   providers: [
     // @ts-expect-error You need to use .default here for it to work during SSR. May be fixed via Vite at some point
     CredentialsProvider.default({
+      id: "telegram-login",
+      name: "Telegram Login",
+      credentials: {},
+      async authorize(credentials: any, req: any) {
+        const user = { ...req.body };
+        delete user.callbackUrl;
+        delete user.csrfToken;
+        delete user.redirect;
+        delete user.json;
+        const valid = checkSignature(runtimeConfig.BOT_TOKEN, user);
+
+        if (!valid) throw new Error("invalid signature");
+
+        const foundUser = await User.findOne({ telegram: user.username });
+        // console.log(foundUser);
+
+        if (foundUser) {
+          return foundUser;
+        } else {
+          const newUser = new User({
+            uuid: user.id.toString(),
+            telegram: user.username,
+            username: user.username,
+            telegramUserId: user.id.toString(),
+            firstName: user.first_name,
+            lastName: user.last_name,
+            emailConfirmed: false,
+          });
+          await newUser.save();
+          return newUser;
+        }
+      },
+    }),
+    // @ts-expect-error You need to use .default here for it to work during SSR. May be fixed via Vite at some point
+    CredentialsProvider.default({
       name: "Credentials",
       credentials: {
         email: {
@@ -55,17 +91,17 @@ export default NuxtAuthHandler({
         if (!email || !password) return null;
 
         const user = await User.findOne({ email: email.toLowerCase() });
-        
+
         if (!user) throw new Error("Неверный email или пароль");
-        
+
         if (!user.password) throw new Error("Неверный email или пароль");
-        
+
         const isValid = await bcrypt.compare(password, user.password);
-        
+
         if (!isValid) throw new Error("Неверный email или пароль");
-        
+
         if (!user.isEmailConfirmed) throw new Error("Подтвердите почту");
-        
+
         return user;
       },
     }),
