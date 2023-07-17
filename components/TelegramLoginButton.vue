@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { onMounted, ref } from "vue";
 const userStore = useUserStore();
-const config = useRuntimeConfig()
+const config = useRuntimeConfig();
 
 const props = defineProps({
   mode: {
@@ -14,19 +14,23 @@ const props = defineProps({
 });
 const emit = defineEmits(["callback"]);
 const { signIn } = useAuth();
-const bot_id = '6344667744';
-const bot_login = 'wbPromotion_authBot';
+const bot_id = "6344667744";
+const bot_login = "wbPromotion_authBot";
 
-async function onTelegramAuth(user: any) {    
-    const { error, url } = await signIn("telegram-login", { ...user, redirect: false });
-    
-    if (error) {
+async function onTelegramAuth(user: any) {
+  const { error, url } = await signIn("telegram-login", {
+    ...user,
+    redirect: false,
+    callbackUrl: "/profile",
+  });
+
+  if (error) {
     console.log(error);
   } else {
     // No error, continue with the sign in, e.g., by following the returned redirect:
     userStore.getClient();
 
-    return navigateTo("/profile", { external: true });
+    return navigateTo(url, { external: true });
   }
 }
 const telegram = ref();
@@ -35,9 +39,8 @@ function login() {
   const telegramLogin = bot_login;
   // @ts-expect-error window global var
   window.Telegram.Login.auth({ bot_id, request_access: true }, (data: any) => {
-
     if (!data) {
-      // user cancelled login    
+      // user cancelled login
       return;
     }
 
