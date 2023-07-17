@@ -29,10 +29,10 @@ async function onTelegramAuth(user: any) {
   } else {
     // No error, continue with the sign in, e.g., by following the returned redirect:
     userStore.getClient();
-
     return navigateTo(url, { external: true });
   }
 }
+
 const telegram = ref();
 
 function login() {

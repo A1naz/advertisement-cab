@@ -3,6 +3,10 @@ import { email, helpers, minLength, required } from "@vuelidate/validators";
 const { status, data, signIn, signOut } = useAuth();
 const $router = useRouter();
 
+if (status.value === "authenticated") {
+  navigateTo("/profile");
+}
+
 definePageMeta({
   auth: {
     unauthenticatedOnly: true,
@@ -92,7 +96,7 @@ const show1 = ref(false);
               <div class="flex my-2">
                 <v-divider class="mt-3 mx-2"></v-divider>
                 Или
-                <v-divider  class="mt-3 mx-2"></v-divider>
+                <v-divider class="mt-3 mx-2"></v-divider>
               </div>
               <div>
                 <TelegramLoginButton mode="callback" class="rounded-lg m-auto" />
