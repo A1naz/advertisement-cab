@@ -12,15 +12,13 @@ export const cabinetRouter = router({
     .input(
       z.object({
         apiKeyAdvertisement: z.string().min(10, "Некорректный апи-ключ рекламы"),
-        wbToken: z.string().min(10, "Некорректный апи-ключ рекламы").optional(),
-        xSupplierId: z.string().min(10, "Некорректный апи-ключ рекламы").optional(),
         apiKeyStatistic: z.string().optional(),
       })
     )
     .mutation(async (opts) => {
       const session = opts.ctx.session as any;
       const { input } = opts;
-      const { apiKeyAdvertisement, apiKeyStatistic, wbToken, xSupplierId } = input;
+      const { apiKeyAdvertisement, apiKeyStatistic } = input;
       try {
         if (!session) {
           throw new TRPCError({
@@ -38,42 +36,11 @@ export const cabinetRouter = router({
           });
         }
 
-        if (
-          (xSupplierId && !xSupplierId.includes("****************")) ||
-          (wbToken && !wbToken.includes("****************"))
-        ) {
-          const authorization: any = await $fetch(
-            `https://cmp.wildberries.ru/passport/api/v2/auth/introspect`,
-            {
-              method: "GET",
-              headers: {
-                Cookie: `x-supplier-id-external=${xSupplierId}; WBToken=${wbToken}`,
-              },
-            }
-          );
-
-          if (!authorization.userID) {
-            throw new TRPCError({
-              code: "FORBIDDEN",
-              message: "Ошибка авторизации",
-            });
-          }
-          if (authorization.userID) {
-            user.xSupplierId = xSupplierId;
-            user.wbToken = wbToken;
-            user.wbUserId = authorization.userID;
-            await user.save();
-          }
-        }
-
-        if (xSupplierId && !xSupplierId.includes("****************")) {
-          user.xSupplierId = xSupplierId;
-          await user.save();
-        }
-
-        if (wbToken && !wbToken.includes("****************")) {
-          user.wbToken = wbToken;
-          await user.save();
+        if (user.apiKeyAdvertisement === apiKeyAdvertisement) {
+          throw new TRPCError({
+            code: "FORBIDDEN",
+            message: "У вас уже подключен данный апи ключ рекламы",
+          });
         }
 
         if (apiKeyAdvertisement && !apiKeyAdvertisement.includes("****************")) {
@@ -83,6 +50,7 @@ export const cabinetRouter = router({
               message: "Некорректный апи ключ рекламы",
             });
           }
+
           const isApiKeyAvailable = await User.findOne({
             apiKeyAdvertisement: apiKeyAdvertisement,
           });
@@ -188,18 +156,89 @@ export const cabinetRouter = router({
               showHours: showTimes,
             });
           });
-        } else {
-          throw new TRPCError({
-            code: "BAD_REQUEST",
-            message: "Неправильный апи ключ рекламы",
-          });
         }
 
         return { status: "ok" };
       } catch (error) {
+        if (error instanceof Error) {
+          const errorMessage = error.message;
+
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: error.message,
+          });
+        } else {
+          console.log("Произошла неизвестная ошибка");
+        }
+      }
+    }),
+
+  connectGrayApi: publicProcedure
+    .input(
+      z.object({
+        wbToken: z.string().min(10, "Некорректный апи-ключ рекламы"),
+        xSupplierId: z.string().min(10, "Некорректный апи-ключ рекламы"),
+      })
+    )
+    .mutation(async (opts) => {
+      const session = opts.ctx.session as any;
+      const { input } = opts;
+      const { wbToken, xSupplierId } = input;
+
+      const user: any = await User.findById(session._id);
+
+      if (!user) {
+        throw new TRPCError({
+          code: "FORBIDDEN",
+          message: "unauthorized",
+        });
+      }
+      try {
+        if (
+          (xSupplierId && !xSupplierId.includes("****************")) ||
+          (wbToken && !wbToken.includes("****************"))
+        ) {
+          const authorization: any = await $fetch(
+            `https://cmp.wildberries.ru/passport/api/v2/auth/introspect`,
+            {
+              method: "GET",
+              headers: {
+                Cookie: `x-supplier-id-external=${xSupplierId}; WBToken=${wbToken}`,
+              },
+            }
+          );
+
+          if (!authorization.userID) {
+            throw new TRPCError({
+              code: "FORBIDDEN",
+              message: "Ошибка авторизации",
+            });
+          }
+
+          if (authorization.userID) {
+            user.xSupplierId = xSupplierId;
+            user.wbToken = wbToken;
+            user.wbUserId = authorization.userID;
+            await user.save();
+          }
+        }
+
+        if (xSupplierId && !xSupplierId.includes("****************")) {
+          user.xSupplierId = xSupplierId;
+          await user.save();
+        }
+
+        if (wbToken && !wbToken.includes("****************")) {
+          user.wbToken = wbToken;
+          await user.save();
+        }
+        return { status: "ok" };
+      } catch (error) {
+        console.log(error);
+
         throw new TRPCError({
           code: "BAD_REQUEST",
-          message: "Неправильный апи ключ рекламы",
+          message: "Ошибка авторизации",
         });
       }
     }),
@@ -361,7 +400,6 @@ export const cabinetRouter = router({
             el.deleteCount = 0;
             await el.save();
           } else {
-            
             const isCampaignExist = await Campaign.findOne({ advertId: el.advertId });
 
             if (!isCampaignExist) {

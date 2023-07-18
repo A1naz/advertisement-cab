@@ -21,24 +21,49 @@ async function connectWbCabinet() {
     return;
   }
 
-  if (wbForm.apiKeyAdvertisement.includes("*******")) {
-    notify({
-      type: "error",
-      text: "Введите валидный апи ключ рекламы",
-    });
-
-    return;
-  }
-
   const { data, error } = await useAsyncData(() =>
     $client.cabinet.createCabinet.mutate({
       apiKeyAdvertisement: wbForm.apiKeyAdvertisement,
-      wbToken: wbForm.apiKeyAdvertisement,
-      xSupplierId: wbForm.apiKeyAdvertisement,
     })
   );
 
   if (error.value) {
+    console.log(error.value.message);
+
+    notify({
+      type: "error",
+      text: error.value.message,
+    });
+  }
+
+  if (data.value) {
+    notify({ type: "success", text: "Личный кабинет подключен" });
+
+    await userStore.getClient();
+    await campaignStore.getCampaigns();
+    wbForm.apiKeyAdvertisement = client.apiKeyAdvertisement;
+  }
+}
+
+async function connectGrayApi() {
+  if (ruleRequired(apiForm.wbToken) !== true && ruleRequired(apiForm.xSupplierId) !== true) {
+    notify({
+      type: "error",
+      text: "Заполните все поля",
+    });
+    return;
+  }
+
+  const { data, error } = await useAsyncData(() =>
+    $client.cabinet.connectGrayApi.mutate({
+      wbToken: apiForm.wbToken,
+      xSupplierId: apiForm.xSupplierId,
+    })
+  );
+
+  if (error.value) {
+    console.log(error.value.message);
+
     notify({
       type: "error",
       text: error.value.message,
@@ -87,8 +112,8 @@ const wbForm = reactive({
 });
 
 const apiForm = reactive({
-  wbToken: client.apiKeyAdvertisement,
-  xSupplierId: client.apiKeyStatistic,
+  wbToken: client.wbToken,
+  xSupplierId: client.xSupplierId,
 });
 
 async function savePassword() {
@@ -171,7 +196,7 @@ async function unLinckTelegram() {
       text: "Telegram успешно отвязан",
     });
 
-    userStore.client.telegram = '';
+    userStore.client.telegram = "";
   }
 }
 </script>
@@ -328,7 +353,7 @@ async function unLinckTelegram() {
       </v-row>
       <v-row justify="end">
         <v-col cols="12" lg="3">
-          <v-btn block @click="connectWbCabinet" :disabled="isBtnConnectApiActive" type="submit">
+          <v-btn block @click="connectGrayApi" :disabled="isBtnConnectApiActive" type="submit">
             Подключить
           </v-btn>
         </v-col>
